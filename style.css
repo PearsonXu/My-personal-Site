@@ -557,10 +557,10 @@ a.tag:hover { color:#04121a; background:var(--acc); border-color:var(--acc); tra
 .essay__read { color:var(--faint); }
 .essay__lens { margin-left:auto; padding:1px 8px; border-radius:4px; border:1px solid var(--line-2); color:var(--dim); font-size:.62rem; text-transform:uppercase; }
 .essay__title { font-size:1.14rem; line-height:1.4; font-weight:600; }
-.essay__title a { position:relative; display:inline; background-image:linear-gradient(var(--acc),var(--acc)); background-size:0% 1px; background-repeat:no-repeat; background-position:0 100%; transition:background-size .45s var(--out),color var(--dur) var(--ease); }
+.essay__title a { display:inline; background-image:linear-gradient(var(--acc),var(--acc)); background-size:0% 1px; background-repeat:no-repeat; background-position:0 100%; transition:background-size .45s var(--out),color var(--dur) var(--ease); }
 .essay__title a:hover { color:var(--acc); background-size:100% 1px; }
-/* 整卡可点：标题链接拉伸覆盖卡片 */
-.essay__title a::after { content:''; position:absolute; inset:-14px -20px; border-radius:var(--r); z-index:1; }
+/* 整卡可点：a 不定位，::after 便相对 .essay 定位并精确覆盖整张卡片 */
+.essay__title a::after { content:''; position:absolute; inset:0; border-radius:var(--r); z-index:1; }
 .essay__ex { font-size:.92rem; color:var(--dim); line-height:1.85; }
 .essay .chips { margin-top:auto; padding-top:6px; }
 /* ── Digital Garden：Bento 便签墙 ─────────────────────────── */
@@ -768,6 +768,7 @@ a.tag:hover { color:#04121a; background:var(--acc); border-color:var(--acc); tra
   :root { --head-h:58px; --sp8:56px; }
   .nav-toggle { display:flex; }
   .kbd-btn { display:none; }
+  .head__act { margin-left:auto; }   /* nav 变为 fixed 后仍需右对齐 */
   .nav {
     position:fixed; top:var(--head-h); left:0; right:0; z-index:99; margin:0;
     padding:12px var(--sp4) calc(18px + env(safe-area-inset-bottom,0px));
