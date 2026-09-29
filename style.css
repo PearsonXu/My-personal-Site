@@ -305,6 +305,29 @@ strong { font-weight:600; color:#fff; }
 .mode__btn.is-on { color:#fff; }
 .mode__amp { color:var(--acc); opacity:.85; padding:0 1px; }
 
+/* ── 语言切换器（中 / EN） ─────────────────────────────────── */
+.lang {
+  position:relative; display:flex; align-items:center; gap:1px; padding:3px;
+  border:1px solid var(--line-2); border-radius:999px;
+  background:rgba(9,12,19,.72); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+}
+.lang__sep { font-family:var(--font-m); font-size:.66rem; color:var(--faint); user-select:none; padding:0 1px; }
+.lang__btn {
+  padding:5px 8px; border:0; background:none; border-radius:999px;
+  font-family:var(--font-m); font-size:.7rem; line-height:1.1; color:var(--mute);
+  cursor:pointer; transition:color .3s var(--ease),background .3s var(--ease),box-shadow .3s var(--ease);
+}
+.lang__btn:hover { color:var(--dim); }
+.lang__btn.is-on {
+  color:#04121a; font-weight:700;
+  background:linear-gradient(120deg,var(--acc),rgba(var(--acc2-rgb),.92));
+  box-shadow:0 0 18px -6px rgba(var(--acc-rgb),.9);
+}
+.lang__btn:focus-visible { outline:2px solid var(--acc); outline-offset:2px; }
+@media (max-width:1080px) { .lang__btn { padding:5px 7px; font-size:.68rem; } }
+@media (max-width:900px) { .lang__sep { display:none; } .lang { padding:2px; } }
+@media (max-width:560px) { .lang__btn { padding:5px 6px; } }
+
 /* 移动端：Mode 收缩为一枚紧凑胶囊（不做 fixed —— header 的 backdrop-filter 会成为 fixed 的包含块） */
 @media (max-width:900px) {
   .mode__label { display:none; }
@@ -459,6 +482,36 @@ a.tag:hover { color:#04121a; background:var(--acc); border-color:var(--acc); tra
 .tag--pdf { color:var(--acc-2); border-color:rgba(var(--acc2-rgb),.3); }
 .tag--code { color:var(--ok); border-color:rgba(110,231,168,.28); }
 .tag--draft { color:var(--warn); border-color:rgba(255,207,107,.3); background:rgba(255,207,107,.07); border-style:dashed; }
+.tag--cofirst { color:var(--acc); border-color:rgba(var(--acc-rgb),.34); background:rgba(var(--acc-rgb),.09); font-weight:600; }
+
+/* ── 教学 / 荣誉 / 联系补充（真实学术信息） ───────────────── */
+.philosophy { margin:0 0 var(--sp4); font-size:.94rem; line-height:1.8; color:var(--dim); max-width:72ch; }
+.philosophy__zh { display:block; font-family:var(--font-s); font-style:italic; font-size:1.06rem; line-height:1.7; color:var(--text); margin-bottom:10px; }
+.philosophy__zh::before { content:'“'; color:var(--acc); margin-right:2px; }
+.philosophy__zh::after { content:'”'; color:var(--acc); margin-left:2px; }
+.courses { list-style:none; margin:0 0 var(--sp4); padding:0; display:grid; gap:6px; }
+.course { display:grid; grid-template-columns:100px minmax(0,1fr) auto; align-items:baseline; gap:12px; padding:9px 14px; border:1px solid var(--line); border-radius:var(--r-sm); background:linear-gradient(180deg,rgba(var(--acc-rgb),.05),transparent); transition:border-color var(--dur) var(--ease),transform var(--dur) var(--ease); }
+.course:hover { border-color:rgba(var(--acc-rgb),.34); transform:translateX(2px); }
+.course__code { font-family:var(--font-m); font-size:.74rem; color:var(--acc); letter-spacing:.04em; }
+.course__name { font-size:.9rem; color:var(--text); }
+.course__term { font-family:var(--font-m); font-size:.72rem; color:var(--mute); white-space:nowrap; }
+.ta-line { margin:0 0 var(--sp6); font-size:.85rem; line-height:1.85; color:var(--dim); max-width:78ch; }
+.ta-line__label { display:inline-block; font-family:var(--font-m); font-size:.68rem; letter-spacing:.09em; text-transform:uppercase; color:var(--mute); border:1px solid var(--line-2); border-radius:999px; padding:2px 10px; margin-right:9px; }
+.honors { list-style:none; margin:0 0 var(--sp5); padding:0; display:grid; }
+.honor { display:flex; justify-content:space-between; align-items:baseline; gap:16px; padding:9px 2px; border-bottom:1px dashed var(--line); font-size:.9rem; color:var(--dim); }
+.honor:last-child { border-bottom:0; }
+.honor b { color:var(--text); font-weight:600; }
+.honor__what { flex:1 1 auto; min-width:0; }
+.honor__when { font-family:var(--font-m); font-size:.72rem; color:var(--mute); white-space:nowrap; }
+.contact__meta { display:flex; flex-wrap:wrap; gap:6px 16px; margin:var(--sp4) 0 0; font-size:.84rem; color:var(--mute); }
+.contact__meta span { display:inline-flex; align-items:center; gap:7px; }
+.contact__meta span::before { content:'◆'; font-size:.5em; color:var(--line-3); }
+.sec__foot { display:flex; flex-wrap:wrap; align-items:center; gap:10px 22px; }
+@media (max-width:700px) {
+  .course { grid-template-columns:88px minmax(0,1fr); row-gap:2px; }
+  .course__term { grid-column:2; }
+  .honor { flex-direction:column; gap:2px; }
+}
 
 /* ── 方法卡（数学展示） ───────────────────────────────────── */
 .methods { display:grid; grid-template-columns:repeat(auto-fit,minmax(310px,1fr)); gap:var(--sp4); }
@@ -609,6 +662,12 @@ a.tag:hover { color:#04121a; background:var(--acc); border-color:var(--acc); tra
   color:var(--text); height:236px; margin-top:6px;
 }
 .vert p { border-left:1px solid rgba(255,255,255,.06); padding-left:2px; }
+/* 英文模式下竖排不再合适：改为横排（与窄屏一致的处理） */
+html[data-lang="en"] .vert {
+  writing-mode:horizontal-tb; text-orientation:mixed; height:auto;
+  line-height:2.0; letter-spacing:.01em; text-align:left; font-size:1rem;
+}
+html[data-lang="en"] .vert p { border-left:0; padding-left:0; }
 .stamp { font-family:var(--font-s); font-style:italic; font-size:.86rem; color:var(--acc-2); }
 .tile--poem .tile__foot { width:100%; justify-content:center; }
 

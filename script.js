@@ -73,13 +73,13 @@
     if (href && href !== '#') return;      /* 真实锚点放行 */
     ev.preventDefault();
     var label = (a.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 24);
-    toast((label ? '「' + label + '」' : '该条目') + ' 的链接待补充', 'warn');
+    toast(tr('链接待补充') + (label ? ' · ' + label : ''), 'warn');
   });
 
   /* ── 复制到剪贴板 ───────────────────────────────────────── */
   function copyText(text) {
-    var done = function () { toast('已复制：' + text, 'ok'); };
-    var fail = function () { toast('复制失败，请手动选择', 'bad'); };
+    var done = function () { toast(tr('已复制：') + text, 'ok'); };
+    var fail = function () { toast(tr('复制失败，请手动选择'), 'bad'); };
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(done).catch(function () { legacyCopy(text) ? done() : fail(); });
     } else {
@@ -121,12 +121,12 @@
   if (clockEl) { tickClock(); window.setInterval(tickClock, 1000); }
   /* ── 终端：Focus 打字机轮播 ─────────────────────────────── */
   var FOCUS = [
-    'Structure-Preserving Algorithms',
-    'Numerical Analysis of PDEs',
-    'Scientific Computing & CFD',
-    'Energy-Stable Schemes (SAV / IEQ)',
-    'Teaching Calculus @ UofSC',
-    'Writing & Uncharted Ideas'
+    'Phase-Field Dendritic Growth',
+    'Energy-Stable IMEX-RK Schemes',
+    'Maximum Bound Principle',
+    'Dihedral-Symmetry Spectral Methods',
+    'Collective Behavior · Euler-Alignment',
+    'Teaching Calculus @ UofSC'
   ];
   var STATUSES = ['status: solving', 'status: deriving', 'status: teaching', 'status: writing', 'status: coffee → code'];
   var focusEl = $('#focusText'), statusEl = $('#statusText'), statusDot = $('#statusDot');
@@ -376,7 +376,7 @@
         return s.id === id && s.getAttribute('data-lens-section') !== lens;
       });
       a.classList.toggle('is-empty', hidden);
-      if (hidden) a.setAttribute('title', '该视角下已隐藏 · 切回 All 可见');
+      if (hidden) a.setAttribute('title', tr('该视角下已隐藏 · 切回 All 可见'));
       else a.removeAttribute('title');
     });
   }
@@ -410,14 +410,11 @@
     onScroll();
 
     store.set('zx-lens', lens);
-    try {
-      var h = window.location.hash;
-      if (!h || /^#lens=/.test(h)) window.history.replaceState(null, '', '#lens=' + lens);
-    } catch (e) { /* file:// 等受限环境忽略 */ }
+    if (hashWritable()) setHashParam('lens', lens);
 
     if (window.__lab && window.__lab.repaint) window.__lab.repaint();
     if (changed && !opts.silent) {
-      toast('视角 → ' + LENS_LABEL[lens], lens === 'life' ? 'warn' : 'ok', 1800);
+      toast(tr('视角 → ') + LENS_LABEL[lens], lens === 'life' ? 'warn' : 'ok', 1800);
     }
     return lens;
   }
@@ -449,8 +446,10 @@
       btn.focus();
     });
   }
-  $$('[data-lens-reset]').forEach(function (b) {
-    b.addEventListener('click', function () { setLens('all'); });
+  /* 事件委托：双语切换会重建 .sec__empty 里的按钮，直接绑定会随 innerHTML 替换而丢失 */
+  document.addEventListener('click', function (ev) {
+    var b = (ev.target && ev.target.closest) ? ev.target.closest('[data-lens-reset]') : null;
+    if (b) setLens('all');
   });
 
   /* 初始视角：hash > localStorage > all */
@@ -472,7 +471,187 @@
   }
   window.addEventListener('resize', rafThrottle(moveThumb));
   window.setTimeout(moveThumb, 320);
-  /* ── KaTeX 公式渲染（失败则保留 Unicode 兜底） ──────────── */
+  /* ── KaTeX 公式渲染 ─────────────────────────────────────────
+     注意：必须放在 i18n 采集之后（见下方），否则 KaTeX 会改写段落
+     innerHTML，导致双语词典的键随渲染状态漂移。 */
+
+  /* ── 双语（中 / EN）───────────────────────────────────────────
+     中文是源文，直接写在 HTML 里；英文放在 lang.en.js 的词典中。
+     做法：遍历 DOM，把「最外层的含中文文本单元」整块当作翻译单位，
+     以其规范化 innerHTML 为键查表替换；切回中文时还原原始 innerHTML。
+     不含中文的节点（公式、代码、英文标签）自动跳过，KaTeX 不受影响。 */
+  var I18N = window.ZX_I18N_EN || null;
+  var PAGE_TITLE_ZH = document.title;
+  var CJK_RE = /[\u3000-\u303f\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\uff00-\uffef]/;
+  var INLINE_TAGS = { A:1, SPAN:1, STRONG:1, EM:1, B:1, I:1, CODE:1, BR:1, TIME:1, CITE:1, KBD:1, SMALL:1, SUB:1, SUP:1, ABBR:1, MARK:1, U:1, S:1, Q:1, WBR:1, LABEL:1, BUTTON:1, FIGCAPTION:1, INS:1, DEL:1, DATA:1, RUBY:1, RT:1, RP:1 };
+  var SKIP_TAGS = { SCRIPT:1, STYLE:1, NOSCRIPT:1, INPUT:1, TEXTAREA:1, IFRAME:1 };
+  var SKIP_IDS = { clock:1, focusText:1, statusText:1, caret:1, statusDot:1, progressBar:1, year:1, labCfl:1, labNorm:1, labSteps:1, labSchemeName:1, labBadge:1, labHint:1, labDtVal:1, spotlight:1, paletteList:1 };
+  var i18nUnits = null, i18nAttrs = null, currentLang = 'zh';
+  var zhHTML = new Map(), zhAttr = new Map();
+
+  function normHTML(s) { return (s || '').replace(/\s+/g, ' ').trim(); }
+  function isSvg(el) { return !!(el.namespaceURI && el.namespaceURI.indexOf('svg') >= 0); }
+  function skipEl(el) {
+    if (!el || !el.tagName) return true;
+    var tag = el.tagName.toUpperCase();
+    if (SKIP_TAGS[tag] || isSvg(el)) return true;
+    if (el.hasAttribute('data-tex') || el.hasAttribute('data-tex-done')) return true;
+    if (el.getAttribute('aria-hidden') === 'true') return true;
+    if (el.id && SKIP_IDS[el.id]) return true;
+    var cl = el.classList;
+    if (cl && (cl.contains('lang') || cl.contains('toasts'))) return true;
+    return false;
+  }
+  function tr(zhStr) {
+    if (currentLang !== 'en' || !I18N || !I18N.js) return zhStr;
+    var v = I18N.js[zhStr];
+    return (typeof v === 'string') ? v : zhStr;
+  }
+  function collectI18n() {
+    if (i18nUnits) return;
+    i18nUnits = [];
+    var missing = [];
+    (function walk(el) {
+      var kids = el.children || [], i, j, c, g, block, gt;
+      for (i = 0; i < kids.length; i++) {
+        c = kids[i];
+        if (skipEl(c)) continue;
+        block = false;
+        for (j = 0; j < (c.children || []).length; j++) {
+          g = c.children[j];
+          if (g.getAttribute && g.getAttribute('aria-hidden') === 'true') continue;
+          if (isSvg(g)) { block = true; break; }
+          gt = (g.tagName || '').toUpperCase();
+          if (!INLINE_TAGS[gt]) { block = true; break; }
+        }
+        if (block) { walk(c); continue; }
+        if (CJK_RE.test(c.textContent || '')) {
+          var key = normHTML(c.innerHTML);
+          i18nUnits.push({ el: c, key: key });
+          if (!I18N || !I18N.html || !Object.prototype.hasOwnProperty.call(I18N.html, key)) missing.push(key);
+        } else { walk(c); }
+      }
+    })(document.body);
+
+    i18nAttrs = [];
+    var nodes = document.body.querySelectorAll('[placeholder],[aria-label],[title]');
+    Array.prototype.forEach.call(nodes, function (el) {
+      if (skipEl(el)) return;
+      ['placeholder', 'aria-label', 'title'].forEach(function (a) {
+        var v = el.getAttribute(a);
+        if (!v || !CJK_RE.test(v)) return;
+        var k = a + '|' + v;
+        i18nAttrs.push({ el: el, attr: a, key: k });
+        if (!I18N || !I18N.attr || !Object.prototype.hasOwnProperty.call(I18N.attr, k)) missing.push(k);
+      });
+    });
+    if (missing.length && window.console && console.info) {
+      console.info('[i18n] 缺少英文条目 ' + missing.length + ' 条（清单见 window.__zxMissingI18n）');
+      window.__zxMissingI18n = missing;
+    }
+  }
+
+  /* URL hash 参数维护：lens 与 lang 共存，互不覆盖 */
+  function hashWritable() {
+    var h = window.location.hash || '';
+    if (!h) return true;
+    var body = h.replace(/^#/, '');
+    return /^lens=/.test(body) || /(^|&)lang=/.test(body);
+  }
+  function setHashParam(name, val) {
+    try {
+      var body = (window.location.hash || '').replace(/^#/, '');
+      var pairs = body.split('&').filter(Boolean).filter(function (p) { return p.split('=')[0] !== name; });
+      pairs.push(name + '=' + val);
+      window.history.replaceState(null, '', '#' + pairs.join('&'));
+    } catch (e) { /* file:// 等受限环境忽略 */ }
+  }
+  function applyLang(lang, opts) {
+    opts = opts || {};
+    lang = (lang === 'en') ? 'en' : 'zh';
+    collectI18n();
+    var changed = (lang !== currentLang);
+    currentLang = lang;
+    var de = document.documentElement;
+    de.setAttribute('data-lang', lang);
+    de.setAttribute('lang', lang === 'en' ? 'en' : 'zh-CN');
+
+    i18nUnits.forEach(function (u) {
+      var el = u.el;
+      if (lang === 'en') {
+        var v = (I18N && I18N.html) ? I18N.html[u.key] : null;
+        if (typeof v === 'string') {
+          if (!zhHTML.has(el)) zhHTML.set(el, el.innerHTML);
+          el.innerHTML = v;
+        }
+      } else if (zhHTML.has(el)) {
+        el.innerHTML = zhHTML.get(el);
+        zhHTML.delete(el);
+      }
+    });
+    i18nAttrs.forEach(function (a) {
+      var el = a.el;
+      if (lang === 'en') {
+        var v = (I18N && I18N.attr) ? I18N.attr[a.key] : null;
+        if (typeof v === 'string') {
+          if (!zhAttr.has(el)) zhAttr.set(el, {});
+          var bag = zhAttr.get(el);
+          if (!Object.prototype.hasOwnProperty.call(bag, a.attr)) bag[a.attr] = el.getAttribute(a.attr);
+          el.setAttribute(a.attr, v);
+        }
+      } else {
+        var bag2 = zhAttr.get(el);
+        if (bag2 && Object.prototype.hasOwnProperty.call(bag2, a.attr)) el.setAttribute(a.attr, bag2[a.attr]);
+      }
+    });
+    renderMath();                                  /* 英文串里可能带 data-tex */
+    /* 由 JS 动态写入的文案也要跟着换语言 */
+    if (window.__lab && window.__lab.refresh) window.__lab.refresh();
+    updateNavDimming(currentLens);
+    document.title = tr(PAGE_TITLE_ZH);
+    syncLangToggle();
+    if (pList) renderList();
+
+    store.set('zx-lang', lang);
+    /* 仅用户主动切换时写 hash：启动恢复保持 URL 干净 */
+    if (!opts.silent && hashWritable()) setHashParam('lang', lang);
+
+    if (changed && !opts.silent) {
+      toast(lang === 'en' ? 'Language → English' : '语言 → 中文', 'ok', 1800);
+    }
+    return lang;
+  }
+  function getLang() { return currentLang; }
+  function toggleLang() { applyLang(currentLang === 'en' ? 'zh' : 'en'); }
+  function syncLangToggle() {
+    $$('[data-lang-set]').forEach(function (b) {
+      var on = b.getAttribute('data-lang-set') === currentLang;
+      b.classList.toggle('is-on', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+  var langBox = $('#langSwitch');
+  if (langBox) {
+    langBox.addEventListener('click', function (ev) {
+      var b = (ev.target && ev.target.closest) ? ev.target.closest('[data-lang-set]') : null;
+      if (!b) return;
+      applyLang(b.getAttribute('data-lang-set'));
+      b.focus();
+    });
+  }
+  /* 启动：按 hash / localStorage 恢复语言（静默，不弹提示） */
+  (function bootLang() {
+    var want = 'zh';
+    try {
+      var m = (window.location.hash || '').match(/lang=(zh|en)/);
+      want = m ? m[1] : (store.get('zx-lang') || 'zh');
+    } catch (e) { /* 忽略 */ }
+    applyLang(want, { silent: true });
+  })();
+
+  /* ── KaTeX 公式渲染（失败则保留 Unicode 兜底） ──────────────
+     位置说明：放在 i18n 采集之后，保证词典键基于「未渲染」的原始
+     innerHTML，浏览器与提取脚本得到完全一致的键。 */
   function renderMath() {
     var nodes = $$('[data-tex]');
     if (!nodes.length) return 0;
@@ -577,10 +756,10 @@
       if (el.norm) {
         el.norm.textContent = !isFinite(mx) ? '∞' : (mx > 99 ? mx.toExponential(1) : mx.toFixed(3));
       }
-      var state = 'stable', label = 'stable', hint = HINT[scheme] || '';
-      if (blown) { state = 'blow'; label = 'blow-up'; hint = '数值解已发散：显式格式的稳定性边界不可谈判。点 Reset 重来。'; }
-      else if (v > 1) { state = 'warn'; label = 'unstable'; hint = 'CFL 被破坏（|ν| > 1）：扰动每步被放大，发散只是时间问题。'; }
-      else if (v > 0.86) { state = 'warn'; label = 'critical'; hint = '接近 CFL 极限：留意色散与耗散误差的形状变化。'; }
+      var state = 'stable', label = 'stable', hint = tr(HINT[scheme] || '');
+      if (blown) { state = 'blow'; label = 'blow-up'; hint = tr('数值解已发散：显式格式的稳定性边界不可谈判。点 Reset 重来。'); }
+      else if (v > 1) { state = 'warn'; label = 'unstable'; hint = tr('CFL 被破坏（|ν| > 1）：扰动每步被放大，发散只是时间问题。'); }
+      else if (v > 0.86) { state = 'warn'; label = 'critical'; hint = tr('接近 CFL 极限：留意色散与耗散误差的形状变化。'); }
       if (el.badge) {
         el.badge.classList.toggle('is-warn', state === 'warn');
         el.badge.classList.toggle('is-blow', state === 'blow');
@@ -723,7 +902,7 @@
       el.sel.addEventListener('change', function () {
         scheme = el.sel.value || 'upwind';
         reset();
-        toast('格式 → ' + scheme.toUpperCase(), 'ok', 1600);
+        toast(tr('格式 → ') + scheme.toUpperCase(), 'ok', 1600);
       });
     }
     if (el.play) {
@@ -767,6 +946,7 @@
     return {
       repaint: draw,
       reset: reset,
+      refresh: updateReadout,          /* 语言切换后重算读数与提示文案 */
       start: function () { setRunning(true); },
       stop: function () { setRunning(false); },
       toggle: function () { if (blown) reset(); setRunning(!running); },
@@ -781,7 +961,7 @@
 
   function goTo(sel) {
     var t = $(sel);
-    if (!t) { toast('目标不存在（可能已被当前视角隐藏）', 'warn'); return; }
+    if (!t) { toast(tr('目标不存在（可能已被当前视角隐藏）'), 'warn'); return; }
     if (t.classList.contains('is-gone')) setLens('all');
     window.setTimeout(function () {
       t.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
@@ -791,6 +971,8 @@
     { g:'视角 Mode', ico:'◉', label:'All — 全部内容', kw:'all mode 全部 所有', run:function () { setLens('all'); } },
     { g:'视角 Mode', ico:'∂', label:'Research & Math — 只看研究与数学', kw:'research math 研究 数学 学术', run:function () { setLens('research'); } },
     { g:'视角 Mode', ico:'✦', label:'Thoughts & Life — 只看思考与生活', kw:'life thoughts 生活 随笔 灵感', run:function () { setLens('life'); } },
+    { g:'语言 Language', ico:'中', label:'切换到中文', kw:'chinese zh 中文 语言 language', run:function () { applyLang('zh'); } },
+    { g:'语言 Language', ico:'EN', label:'Switch to English', kw:'english en 英文 语言 language', run:function () { applyLang('en'); } },
     { g:'跳转 Go to', ico:'01', label:'Research — 学术空间', kw:'research papers 论文 学术', run:function () { goTo('#research'); } },
     { g:'跳转 Go to', ico:'∑', label:'Math & Method — 离散化思想', kw:'math method katex 公式 方法', run:function () { goTo('#methods'); } },
     { g:'跳转 Go to', ico:'▶', label:'CFL Lab — 稳定性实验台', kw:'lab cfl 实验 数值 demo', run:function () { goTo('#lab'); } },
@@ -798,12 +980,15 @@
     { g:'跳转 Go to', ico:'03', label:'Digital Garden — 灵感切片', kw:'garden notes fragments 花园 便签 诗', run:function () { goTo('#garden'); } },
     { g:'跳转 Go to', ico:'04', label:'Sandbox — 项目与实验', kw:'project sandbox code 项目 代码', run:function () { goTo('#sandbox'); } },
     { g:'跳转 Go to', ico:'05', label:'Contact — 联系方式', kw:'contact email mail 联系 邮箱', run:function () { goTo('#contact'); } },
-    { g:'动作 Action', ico:'⧉', label:'复制邮箱 806864070@qq.com', kw:'copy mail email 邮箱 复制', run:function () { copyText('806864070@qq.com'); } },
-    { g:'动作 Action', ico:'↗', label:'打开学术主页 www.zhaoqingxu.com', kw:'academic homepage scholar 主页', run:function () { window.open('https://www.zhaoqingxu.com', '_blank', 'noopener'); } },
+    { g:'动作 Action', ico:'⧉', label:'复制邮箱 zhaoqing@email.sc.edu', kw:'copy mail email 邮箱 复制', run:function () { copyText('zhaoqing@email.sc.edu'); } },
+    { g:'动作 Action', ico:'↗', label:'打开学术主页 www.zhaoqingxu.com', kw:'academic homepage about 主页 关于', run:function () { window.open('https://www.zhaoqingxu.com', '_blank', 'noopener'); } },
+    { g:'动作 Action', ico:'↗', label:'打开论文与报告列表 Research', kw:'publications papers research sisc cmame sinum 论文 报告', run:function () { window.open('https://www.zhaoqingxu.com/research/', '_blank', 'noopener'); } },
+    { g:'动作 Action', ico:'↗', label:'下载 CV (PDF)', kw:'cv resume pdf 简历', run:function () { window.open('https://www.zhaoqingxu.com/cv.pdf', '_blank', 'noopener'); } },
+    { g:'动作 Action', ico:'↗', label:'打开随笔 Musings · 漫谈', kw:'musings notes blog 随笔 漫谈 文章', run:function () { window.open('https://www.zhaoqingxu.com/notes/', '_blank', 'noopener'); } },
     { g:'动作 Action', ico:'↗', label:'打开 GitHub @PearsonXu', kw:'github repo 仓库', run:function () { window.open('https://github.com/PearsonXu', '_blank', 'noopener'); } },
-    { g:'动作 Action', ico:'✉', label:'写一封邮件给我', kw:'mail email write 邮件 写信', run:function () { window.location.href = 'mailto:806864070@qq.com'; } },
+    { g:'动作 Action', ico:'✉', label:'写一封邮件给我', kw:'mail email write 邮件 写信', run:function () { window.location.href = 'mailto:zhaoqing@email.sc.edu'; } },
     { g:'动作 Action', ico:'⇄', label:'运行 / 暂停 CFL 实验台', kw:'lab run pause 实验 运行', run:function () {
-        if (!window.__lab) { toast('实验台不可用（浏览器不支持 canvas）', 'bad'); return; }
+        if (!window.__lab) { toast(tr('实验台不可用（浏览器不支持 canvas）'), 'bad'); return; }
         goTo('#lab'); window.__lab.toggle();
       } },
     { g:'动作 Action', ico:'↑', label:'回到顶部', kw:'top up 顶部', run:function () {
@@ -814,7 +999,7 @@
   function norm(s) { return (s || '').toLowerCase().replace(/\s+/g, ''); }
   function matchCmd(c, q) {
     if (!q) return true;
-    var hay = norm(c.label + ' ' + c.kw + ' ' + c.g);
+    var hay = norm(c.label + ' ' + tr(c.label) + ' ' + c.kw + ' ' + c.g + ' ' + tr(c.g));
     return q.split(/\s+/).filter(Boolean).every(function (tok) { return hay.indexOf(norm(tok)) >= 0; });
   }
   function renderList() {
@@ -826,7 +1011,7 @@
     if (!hits.length) {
       var empty = document.createElement('li');
       empty.className = 'palette__empty';
-      empty.textContent = q ? '没有匹配的命令：' + q : '没有可用命令';
+      empty.textContent = q ? tr('没有匹配的命令：') + q : tr('没有可用命令');
       pList.appendChild(empty);
       return;
     }
@@ -837,7 +1022,7 @@
         var gh = document.createElement('li');
         gh.className = 'palette__group';
         gh.setAttribute('aria-hidden', 'true');
-        gh.textContent = c.g;
+        gh.textContent = tr(c.g);
         pList.appendChild(gh);
       }
       var li = document.createElement('li');
@@ -849,7 +1034,7 @@
       btn.setAttribute('aria-selected', 'false');
       btn.innerHTML = '<span class="pi-ico" aria-hidden="true"></span><span class="pi-label"></span><span class="pi-hint" aria-hidden="true">↵</span>';
       btn.querySelector('.pi-ico').textContent = c.ico;
-      btn.querySelector('.pi-label').textContent = c.label;
+      btn.querySelector('.pi-label').textContent = tr(c.label);
       btn.addEventListener('click', function () { runCmd(c); });
       li.appendChild(btn);
       pList.appendChild(li);
@@ -868,7 +1053,7 @@
   }
   function runCmd(c) {
     closePalette();
-    try { c.run(); } catch (e) { toast('命令执行失败', 'bad'); }
+    try { c.run(); } catch (e) { toast(tr('命令执行失败'), 'bad'); }
   }
   function openPalette() {
     if (!palette || !pInput) return;
@@ -926,11 +1111,16 @@
 
     if (ev.key === 'Escape') { closeNav(); return; }
     if (ev.key === '/') { ev.preventDefault(); openPalette(); return; }
-    if (ev.key === '?') { toast('⌘K 面板 · M 切换视角 · / 搜索 · G G 回顶部', 'ok', 4200); return; }
+    if (ev.key === '?') { toast(tr('⌘K 面板 · M 切换视角 · L 切换语言 · / 搜索 · G G 回顶部'), 'ok', 4600); return; }
     if (ev.key === 'm' || ev.key === 'M') {
       ev.preventDefault();
       var i = LENSES.indexOf(getLens());
       setLens(LENSES[(i + 1) % LENSES.length]);
+      return;
+    }
+    if (ev.key === 'l' || ev.key === 'L') {
+      ev.preventDefault();
+      toggleLang();
       return;
     }
     if (ev.key === 'g' || ev.key === 'G') {
@@ -946,9 +1136,22 @@
   if (!store.get('zx-hinted')) {
     store.set('zx-hinted', '1');
     window.setTimeout(function () {
-      toast('按 M 或右上角 Mode 切换「研究 / 生活」视角', 'ok', 4200);
+      toast(tr('按 M 切换「研究 / 生活」视角 · 按 L 切换中 / EN'), 'ok', 4600);
     }, 2400);
   }
+
+  /* ── 对外暴露：便于调试与自动化测试 ─────────────────────── */
+  window.__i18n = {
+    get: getLang,
+    set: applyLang,
+    toggle: toggleLang,
+    hasDict: function () { return !!I18N; },
+    units: function () { collectI18n(); return i18nUnits.length; },
+    /* 全量键（DOM 顺序）：供 tools/extract-i18n.js 生成词典骨架 */
+    keys: function () { collectI18n(); return i18nUnits.map(function (u) { return u.key; }); },
+    attrKeys: function () { collectI18n(); return i18nAttrs.map(function (a) { return a.key; }); },
+    missing: function () { collectI18n(); return window.__zxMissingI18n || []; }
+  };
 
   /* ── 控制台签名 ─────────────────────────────────────────── */
   if (window.console && console.log) {
