@@ -605,6 +605,9 @@
       }
     });
     renderMath();                                  /* 英文串里可能带 data-tex */
+    /* 竖排诗容器：排版由 CSS 的 html[data-lang="en"] .vert 处理，这里同步语义标注 */
+    var vert = document.querySelector('.vert');
+    if (vert) vert.setAttribute('lang', lang === 'en' ? 'en' : 'zh-Hans');
     /* 由 JS 动态写入的文案也要跟着换语言 */
     if (window.__lab && window.__lab.refresh) window.__lab.refresh();
     updateNavDimming(currentLens);
