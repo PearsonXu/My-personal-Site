@@ -48,6 +48,30 @@ python3 -m http.server 8000
 4. **文章链接**（`§02`）：5 篇随笔均为 `data-draft`，指向真实文章后请去掉该属性
 5. `canonical` / `og:url` 已按 `https://pearsonxu.github.io/My-personal-Site/` 设置，如改用自定义域名请一并更新
 
+已确证并填好的外链：**Academic Site = `https://www.zhaoqingxu.com`**（Hero 引言、Contact 矩阵、页脚、⌘K 命令共 4 处）与 **GitHub = `https://github.com/PearsonXu`**。
+
 ## GitHub Pages
 
 Settings → Pages → Build and deployment → Source: `Deploy from a branch` → Branch: `main` / `/ (root)` → Save。
+上线地址：<https://pearsonxu.github.io/My-personal-Site/>
+
+### ⚠ 不要把自定义域名绑到本仓库
+
+域名拓扑（已用 `dig` / `curl -I` 核实）：
+
+| 站点 | 地址 | 内容 |
+| --- | --- | --- |
+| 用户级 Pages | `pearsonxu.github.io` | Hugo 0.164.0 学术主页 |
+| 自定义域名 | `www.zhaoqingxu.com` | `CNAME → pearsonxu.github.io.`，即上面那个 Hugo 站 |
+| **本仓库** | `pearsonxu.github.io/My-personal-Site/` | 项目级 Pages，本页 |
+
+`www.zhaoqingxu.com` 已被学术站占用。**不要**在本仓库添加 `CNAME` 文件、也不要在本仓库的 Pages 设置里填 Custom domain，
+否则域名会被抢走、Hugo 学术站直接掉线。本页应长期停留在 `/My-personal-Site/` 子路径。
+
+若也想挂到自有域名下，两条安全路线：
+
+1. **子路径**：把 `index.html` / `style.css` / `script.js` 放进 Hugo 仓库的 `static/lab/`，即可由 `www.zhaoqingxu.com/lab/` 访问；
+   同时把 `canonical` / `og:url` 改成该地址（相对路径引用，无需改资源链接）。
+2. **子域名**：给 DNS 加一条 `life` 的 CNAME 记录指向 `pearsonxu.github.io`，再在本仓库根目录加 `CNAME` 文件写入 `life.zhaoqingxu.com`。
+   每个仓库的 `CNAME` 文件互相独立，不会与 `www` 冲突。
+

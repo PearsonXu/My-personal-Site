@@ -799,7 +799,7 @@
     { g:'跳转 Go to', ico:'04', label:'Sandbox — 项目与实验', kw:'project sandbox code 项目 代码', run:function () { goTo('#sandbox'); } },
     { g:'跳转 Go to', ico:'05', label:'Contact — 联系方式', kw:'contact email mail 联系 邮箱', run:function () { goTo('#contact'); } },
     { g:'动作 Action', ico:'⧉', label:'复制邮箱 806864070@qq.com', kw:'copy mail email 邮箱 复制', run:function () { copyText('806864070@qq.com'); } },
-    { g:'动作 Action', ico:'↗', label:'打开学术主页 pearsonxu.github.io', kw:'academic homepage scholar 主页', run:function () { window.open('https://pearsonxu.github.io/', '_blank', 'noopener'); } },
+    { g:'动作 Action', ico:'↗', label:'打开学术主页 www.zhaoqingxu.com', kw:'academic homepage scholar 主页', run:function () { window.open('https://www.zhaoqingxu.com', '_blank', 'noopener'); } },
     { g:'动作 Action', ico:'↗', label:'打开 GitHub @PearsonXu', kw:'github repo 仓库', run:function () { window.open('https://github.com/PearsonXu', '_blank', 'noopener'); } },
     { g:'动作 Action', ico:'✉', label:'写一封邮件给我', kw:'mail email write 邮件 写信', run:function () { window.location.href = 'mailto:806864070@qq.com'; } },
     { g:'动作 Action', ico:'⇄', label:'运行 / 暂停 CFL 实验台', kw:'lab run pause 实验 运行', run:function () {
