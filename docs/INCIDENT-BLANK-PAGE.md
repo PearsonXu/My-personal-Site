@@ -155,11 +155,14 @@ x-github-request-id: 382A:3E880C:190AFDB:1AC307F:6AFEC983
   - `node tools/verify-live.mjs` → **18 PASS · 1 N/A · 0 FAIL**
     （单曲深链接 `/songs/qingchun-dagai/` 直达 200 + canonical + 播放按钮 + 音源 **206 audio/mpeg**）
   - `node tools/browser-live.mjs` → **45 / 45**
-  - `node tools/probe-regression.mjs --base https://www.xuzhaoqing.com` → **73 / 73**
+  - `node tools/probe-regression.mjs --base https://www.xuzhaoqing.com` → **76 / 76**
     其中「首页 → 手记 → 曲库 → 专辑 → 我的 → 首页」在桌面与手机上
     **每一步路径正确、样式生效（4 张样式表 + head sticky）、零失败请求、零 Console 错误**，
     刷新后仍正常；`/notes/songs/` 的 404 页正常显示并能一键回首页。
+    另含「**11 个页面逐个直接打开 + 原地刷新**」全量 sweep，全部正常。
     恢复页截图：`docs/screenshots-live/recovery-404.png`
+  - `node tools/audit-links.mjs --base https://www.xuzhaoqing.com` → **0 问题**
+    （11 个页面共 300+ 个 href/src 逐个实测 200，CSS/JS 的 Content-Type 全部正确）
 
 ## 六、受影响用户怎么恢复
 

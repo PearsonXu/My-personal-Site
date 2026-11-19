@@ -10,9 +10,10 @@
 | 项 | 命令 | 结果 |
 | --- | --- | --- |
 | 类型检查 | `npm run typecheck`（`tsc --noEmit`，checkJs） | **PASS · 0 error** |
-| 单元 + jsdom 集成 | `npm test` | **PASS · 164 / 164** |
-| 真实浏览器验收 | `npm run browser:check` | **PASS · 213 / 213** |
-| 白屏故障专项取证 | `npm run probe:regression` | **PASS · 73 / 73** |
+| 单元 + jsdom 集成 | `npm test` | **PASS · 167 / 167** |
+| 真实浏览器验收 | `npm run browser:check` | **PASS · 215 / 215** |
+| 白屏故障专项取证 | `npm run probe:regression` | **PASS · 76 / 76**（线上同项亦 76/76） |
+| 全站链接与资源审计 | `npm run audit:links` | **PASS · 0 问题**（11 页全部引用 200 + MIME 正确） |
 | 生产构建 | `npm run build` | **PASS** · 排除 DEMO，空状态正确 |
 | DEMO 构建 | `npm run build:demo` | **PASS** · 15 页面 |
 | 产物完整性 | `node tools/check-assets.mjs --dist dist` | **PASS** |

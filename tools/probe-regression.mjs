@@ -25,6 +25,7 @@ const browser = await puppeteer.launch({
 });
 
 let pass = 0; let fail = 0;
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const ok = (n, d = '') => { pass++; console.log(`  ✓ ${n}${d ? ` — ${d}` : ''}`); };
 const bad = (n, d = '') => { fail++; console.log(`  ✗ ${n} — ${d}`); };
 const check = (n, cond, d = '') => (cond ? ok(n, d) : bad(n, d));
@@ -213,6 +214,30 @@ await chain('旧数据用户（dark + grid + lyrics）', {
   await new Promise((r) => setTimeout(r, 900));
   const back = await snap(page);
   check('从 404 页点「回首页」能恢复', new URL(back.url).pathname === '/' && back.mainTextLen > 50, back.url);
+  await page.close();
+}
+
+/* ── 直接打开每个子页面 + 原地刷新 ─────────────────── */
+{
+  console.log('\n── 直接访问 + 刷新（全部页面）──');
+  const mf = await (await fetch(`${B}/assets/data/build-manifest.json`)).json();
+  const { page, errors, failed } = await newPage();
+  const bad = [];
+  for (const p of mf.pages) {
+    const route = `/${p.route}`;
+    await page.goto(`${B}${route}`, { waitUntil: 'domcontentloaded' });
+    await sleep(250);
+    let s = await snap(page);
+    if (!styled(s) || s.mainTextLen < 20) bad.push(`${route} 直接打开异常`);
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await sleep(350);
+    s = await snap(page);
+    if (!styled(s) || s.mainTextLen < 20) bad.push(`${route} 刷新后异常`);
+    if (new URL(s.url).pathname !== route) bad.push(`${route} 刷新后跳到了 ${s.url}`);
+  }
+  check(`${mf.pages.length} 个页面直接打开与刷新都正常`, bad.length === 0, bad.slice(0, 4).join('; '));
+  check('全程无失败请求', failed.length === 0, failed.slice(0, 3).join(' | '));
+  check('全程无 Console 错误', errors.length === 0, errors.slice(0, 3).join(' | '));
   await page.close();
 }
 
