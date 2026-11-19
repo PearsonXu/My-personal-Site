@@ -39,6 +39,22 @@
 | 快速切歌不串歌词 | `_token` 守卫 | `player` A→B→C + B:「快速切歌」 |
 | 进度 / 队列恢复且不自动出声 | `Player.restore` | `player` + B:「刷新后恢复」 |
 
+## 首页文案与空状态
+
+| 功能 | 实现 | 在哪验证 |
+| --- | --- | --- |
+| 小标签「音乐爱好者」、无在线绿点 | `site.eyebrow` + `eyebrow--plain` | `home-copy.test.mjs` |
+| 展示语与介绍分层（字号/颜色/间距） | `.hero__tagline` / `.hero__intro` | `home-copy` 逐字 + CSS 断言 |
+| 只保留「听听音乐」「关于我」两个真实链接 | `home.mjs` | `home-copy` 链接集合断言 |
+| 首屏只留一句听歌提示 | `site.listenHint` | `home-copy` 禁词断言 |
+| 「最近分享」标题与说明 | `home.mjs` | `home-copy` |
+| 首屏留白收紧，桌面更早看到歌 | `.hero--home` / `.sec--near` | `home-copy` + 桌面截图 |
+| 有歌：真实封面推荐卡片 + 播放入口 | `.hero__pick` | `home-copy` + B: 六组合首页截图 |
+| 没歌：去掉占位、回退单栏 | `hero__in--single` | `home-copy` + 空状态截图 |
+| 空状态文案温和、隐藏无意义入口 | `songList/songGrid/library` | `home-copy` + 线上浏览器复验 |
+| 公开页面无 npm / 开发者说明 | 全部模板 | `home-copy` 可见文案扫描 |
+| 「关于我」统一入口与新介绍 | `misc.mjs` / `site.author.bio` | `home-copy` |
+
 ## 播放器控件与图标
 
 | 功能 | 实现 | 在哪验证 |

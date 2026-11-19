@@ -1,11 +1,11 @@
 import { escapeHtml as esc, escapeAttr as attr } from '../../../../assets/js/core/util.js';
-import { sectionHead, backendTable, emptyState } from '../components.mjs';
+import { sectionHead, emptyState } from '../components.mjs';
 import { icon } from '../../../../assets/js/core/icons.js';
 
 export function renderAbout(model, { rel }) {
   const { site } = model;
   const body = `<section class="sec"><div class="wrap wrap--prose">
-  ${sectionHead({ no: '§ 关于', kicker: 'About', title: '关于金石竹青', lede: esc(site.author?.bio || '') })}
+  ${sectionHead({ no: '§ 关于', kicker: 'About', title: '关于我', lede: esc(site.author?.bio || '') })}
   <dl class="kv">
     <div><dt>署名</dt><dd>${esc(site.author?.name || '')}</dd></div>
     ${site.author?.github ? `<div><dt>GitHub</dt><dd><a class="link" href="${attr(site.author.github)}" target="_blank" rel="noopener">${esc(site.author.github)} ↗</a></dd></div>` : ''}
@@ -13,17 +13,16 @@ export function renderAbout(model, { rel }) {
 
   <h2 class="sub">这里放什么</h2>
   <ul class="bullets">
-    <li><strong>歌</strong>：单曲、专辑、歌单。每首都有自己的页面和链接，可以直接分享。</li>
-    <li><strong>手记</strong>：写歌、录音、以及做这个站点时留下的字。</li>
-    <li><strong>歌词</strong>：能跟着唱的那种，当前句会高亮，点一句就跳过去。</li>
+    <li><strong>音乐</strong>：喜欢的歌、自己的尝试，收在单曲、专辑和歌单里。每首都有自己的页面，可以直接分享。</li>
+    <li><strong>手记</strong>：旋律带来的故事与心情，还有听歌时想到的事。</li>
+    <li><strong>歌词</strong>：能跟着唱的那种，当前句会亮起来，点一句就跳过去。</li>
   </ul>
 
   <h2 class="sub">怎么听</h2>
   <ul class="bullets">
-    <li>免登录。打开就能听，第一次需要你自己点一下播放——这是浏览器的规矩，不是页面坏了。</li>
-    <li>站内翻页面、读手记、换外观都<strong>不会断歌</strong>：全站复用同一个音频实例。</li>
-    <li>收藏、最近播放、队列和进度只存在<strong>当前这台设备的这个浏览器</strong>里，不是账号，也不是云同步。</li>
-    <li>想长时间收听、锁屏继续，建议用系统浏览器；微信里请点右上角「在浏览器打开」。</li>
+    <li>无需登录，点开就能听。</li>
+    <li>在站内翻页面、读手记、换外观，歌都不会断。</li>
+    <li>收藏、最近播放和进度只留在这台设备的这个浏览器里，不是账号，也不会同步到别处。</li>
   </ul>
 
   <h2 class="sub">三套外观</h2>
@@ -31,9 +30,6 @@ export function renderAbout(model, { rel }) {
   <strong>森林音乐小屋</strong>（森林绿 / 暖纸 / 琥珀）、<strong>午夜黑胶</strong>（深蓝紫 / 夜景 / 黑胶）。
   布局另有「自动 / 桌面 / 手机」三档，和外观互相独立。换这些都不会打断正在放的歌。</p>
   <p class="hero__cta"><button class="btn btn--pri" type="button" data-act="open-appearance">${icon('palette', { size: 18 })} 打开外观与布局</button></p>
-
-  <h2 class="sub">需要外部服务的能力</h2>
-  ${backendTable(site, rel)}
 </div></section>`;
 
   return {
@@ -46,13 +42,7 @@ export function renderAbout(model, { rel }) {
 export function renderMe(model, { rel }) {
   const { site } = model;
   const body = `<section class="sec"><div class="wrap">
-  ${sectionHead({ no: '§ 我的', kicker: 'Local', title: '我的（本地数据）', lede: '下面这些数据保存在<strong>当前浏览器的 localStorage</strong> 里。换设备、换浏览器、清理站点数据都会丢失——这不是账号，也不是云同步。' })}
-
-  <div class="panel panel--muted">
-    <p class="panel__head">跨设备同步</p>
-    <p class="c-dim">${esc(site.backends?.accountSync?.note || '')}</p>
-    <p class="note">当前状态：<span data-backend-status="accountSync">未配置</span></p>
-  </div>
+  ${sectionHead({ no: '§ 我的', kicker: 'Local', title: '我的', lede: '收藏、最近播放和进度都留在这台设备的这个浏览器里。换设备、换浏览器或清理站点数据就会没有了——不是账号，也不会同步到别处。' })}
 
   <h2 class="sub">收藏 <span class="count" id="favCount">0</span></h2>
   <div id="favList">${emptyState({ icon: 'heart', title: '还没有收藏', text: '在任意歌曲上点心形图标即可收藏。收藏只存在这台设备的这个浏览器里。' })}</div>
@@ -63,14 +53,14 @@ export function renderMe(model, { rel }) {
   <h2 class="sub">当前队列 <span class="count" id="queueCount">0</span></h2>
   <div id="queueList">${emptyState({ icon: 'queue', title: '队列是空的', text: '去曲库挑几首，或者播放一张专辑 / 歌单。' })}</div>
 
-  <h2 class="sub">本地数据管理</h2>
+  <h2 class="sub">整理一下</h2>
   <div class="hero__cta">
-    <button class="btn" type="button" data-act="export-local">${icon('download', { size: 18 })} 导出为 JSON</button>
+    <button class="btn" type="button" data-act="export-local">${icon('download', { size: 18 })} 导出备份</button>
     <button class="btn btn--quiet" type="button" data-act="clear-favorites">清空收藏</button>
     <button class="btn btn--quiet" type="button" data-act="clear-recent">清空最近播放</button>
-    <button class="btn btn--danger" type="button" data-act="clear-all">清空全部本地数据</button>
+    <button class="btn btn--danger" type="button" data-act="clear-all">清空全部</button>
   </div>
-  <p class="note">导出的 JSON 只包含你自己的收藏 / 历史 / 队列，可以手动搬到另一台设备（导入功能属于账号同步扩展点，当前未配置）。</p>
+  <p class="note">导出的是你自己的收藏、最近播放和队列，留个备份就好。</p>
 </div></section>`;
   return {
     kind: 'me', slug: null,
@@ -81,53 +71,42 @@ export function renderMe(model, { rel }) {
 export function renderStatus(model, { rel }) {
   const { site } = model;
   const body = `<section class="sec"><div class="wrap">
-  ${sectionHead({ no: '§ 状态', kicker: 'Status', title: '服务状态与自检', lede: '这一页把「已经能用的」和「需要外部服务的」分开列清楚，并提供可在浏览器里直接跑的自检工具。' })}
+  ${sectionHead({ no: '§ 自检', kicker: 'Check', title: '播放自检', lede: '如果听不了或者拖不动进度，来这里点两下，看看是这台设备的浏览器的问题，还是音源的问题。' })}
 
-  <h2 class="sub">后端适配层</h2>
-  ${backendTable(site, rel)}
-
-  <h2 class="sub">浏览器能力自检</h2>
-  <p class="c-dim">点下面的按钮，结果直接来自当前浏览器，不是猜测。</p>
+  <h2 class="sub">这台设备能不能好好播</h2>
+  <p class="c-dim">点一下，结果直接来自你当前的浏览器。</p>
   <div class="hero__cta">
-    <button class="btn btn--pri" type="button" data-act="run-diagnostics">${icon('play', { size: 20 })} 运行自检</button>
+    <button class="btn btn--pri" type="button" data-act="run-diagnostics">${icon('play', { size: 20 })} 开始自检</button>
   </div>
-  <div id="diagOut" class="diag"><p class="c-mute">尚未运行。</p></div>
+  <div id="diagOut" class="diag"><p class="c-mute">还没开始。</p></div>
 
-  <h2 class="sub">音频服务自检（MIME / Range / 206）</h2>
-  <p class="c-dim">对当前曲库的第一首歌发起 <code>Range: bytes=0-1023</code> 请求，检查返回码、<code>Content-Type</code>、<code>Accept-Ranges</code> 与 <code>Content-Range</code>。拖动进度条能不能用，取决于这一步。</p>
+  <h2 class="sub">能不能边下边播、能不能拖进度</h2>
+  <p class="c-dim">拿曲库里的第一首歌试一下。拖动进度条好不好用，取决于这一步。</p>
   <div class="hero__cta">
-    <button class="btn" type="button" data-act="probe-audio">${icon('probe', { size: 18 })} 探测音频响应头</button>
+    <button class="btn" type="button" data-act="probe-audio">${icon('probe', { size: 18 })} 试一试</button>
   </div>
-  <div id="probeOut" class="diag"><p class="c-mute">尚未运行。</p></div>
+  <div id="probeOut" class="diag"><p class="c-mute">还没开始。</p></div>
 
-  <h2 class="sub">实验性增强</h2>
+  <h2 class="sub">一个实验性开关</h2>
   <div class="panel">
-    <p class="panel__head">Audio Session（iOS）</p>
-    <p class="c-dim">把 <code>navigator.audioSession.type</code> 设为 <code>playback</code>，在部分 iOS 版本上有助于后台播放。默认<strong>关闭</strong>，可随时关掉。它不是后台播放的保证。</p>
-    <label class="switch"><input type="checkbox" id="audioSessionToggle" data-act="toggle-audio-session"><span>启用实验性 Audio Session</span></label>
-    <p class="note" id="audioSessionState">状态未知，运行自检后可见。</p>
+    <p class="panel__head">锁屏继续播放（iOS）</p>
+    <p class="c-dim">iPhone 上的一个实验性设置，有些系统版本里能帮上忙。默认<strong>关闭</strong>，随时可以关掉——它不是保证。</p>
+    <label class="switch"><input type="checkbox" id="audioSessionToggle" data-act="toggle-audio-session"><span>试试这个开关</span></label>
+    <p class="note" id="audioSessionState">先跑一次自检就能看到状态。</p>
   </div>
 
-  <h2 class="sub">后台播放的真实边界</h2>
+  <h2 class="sub">关于后台播放，说点实话</h2>
   <ul class="bullets">
-    <li><strong>当前这首歌</strong>切后台 / 锁屏继续播：在 iOS Safari、Android Chrome 上通常成立。</li>
-    <li><strong>后台自动接下一首</strong>：不保证。页面被系统挂起后 JavaScript 可能冻结，<code>ended</code> 里的换歌逻辑就跑不了。</li>
-    <li>本站不使用隐藏 video、静音循环或定时器来假装绕过后台限制，也不把 Service Worker 当作无限后台执行权限。</li>
-    <li>微信内置浏览器策略更严格且随版本变化，长时间收听请用系统浏览器。</li>
+    <li><strong>当前这首歌</strong>切到后台或锁屏继续播：手机自带浏览器一般可以。</li>
+    <li><strong>播完自动接下一首</strong>：不保证。页面被系统睡过去之后，就没法帮你换歌了。</li>
+    <li>这里不用任何小手段去假装绕过限制。</li>
+    <li>想长时间听，建议用手机自带的浏览器；微信里可以点右上角「在浏览器打开」。</li>
   </ul>
-  <p class="note">逐项设备验收记录见仓库 <code>docs/ACCEPTANCE.md</code>：没测的标 NOT_RUN，缺条件的标 BLOCKED。</p>
-
-  <h2 class="sub">部署信息</h2>
-  <dl class="kv">
-    <div><dt>站点地址</dt><dd><code>${esc(site.url)}</code></dd></div>
-    <div><dt>音频来源</dt><dd><code>${esc(site.mediaBase || '仓库内相对路径（assets/audio/…）')}</code></dd></div>
-    <div><dt>运行时 base</dt><dd><code data-diag-base>—</code></dd></div>
-    <div><dt>构建模式</dt><dd>${model.includeDemo ? '<span class="badge badge--demo">含 DEMO 测试音</span>' : '生产（不含 DEMO）'}</dd></div>
-  </dl>
+  <p class="note">上面只说明「这台设备的浏览器支持什么」。后台能不能连续切歌，需要在真机上实际听过才知道。</p>
 </div></section>`;
   return {
     kind: 'status', slug: null,
-    meta: { title: `服务状态与自检 — ${site.title}`, description: '后端适配层状态、浏览器能力自检、音频 MIME/Range 探测与后台播放边界说明。', image: 'assets/img/og/default.png' },
+    meta: { title: `播放自检 — ${site.title}`, description: '检查这台设备的浏览器能不能好好播放：能力自检、边下边播与拖进度、后台播放的真实边界。', image: 'assets/img/og/default.png' },
     body
   };
 }

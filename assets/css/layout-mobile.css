@@ -35,6 +35,11 @@
 .table th,.table td { padding:8px 6px; }
 .sec__title { font-size:1.5rem; }
 .hero__cta { gap:var(--sp2); }
+.hero--home { padding-block:20px 12px; }
+.hero__intro p { font-size:.94rem; }
+.sec--near { padding-top:var(--sp4); }
+.hero__pick { grid-template-columns:72px minmax(0,1fr); padding:10px; }
+.hero__pick__cover img { width:72px; height:72px; }
 .aboutgrid { grid-template-columns:1fr; }
 
 /* 迷你播放器：三个主控都保留，主按钮 56px */

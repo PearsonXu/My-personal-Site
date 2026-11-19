@@ -172,7 +172,6 @@ h1,h2,h3,h4 { font-family:var(--font-d); font-weight:600; line-height:1.2; lette
 .hero { padding-block:clamp(36px,6vw,72px); }
 .hero__in { display:grid; grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr); gap:clamp(24px,4vw,56px); align-items:center; }
 .eyebrow { display:inline-flex; align-items:center; gap:9px; font-family:var(--font-m); font-size:.7rem; letter-spacing:.13em; text-transform:uppercase; color:var(--dim); padding:5px 13px; border:1px solid var(--line); border-radius:999px; background:rgba(var(--acc-rgb),.05); margin-bottom:var(--sp4); }
-.dot { width:7px; height:7px; border-radius:50%; background:var(--ok); box-shadow:0 0 10px var(--ok); }
 .hero__title { font-size:clamp(2rem,5vw,3.2rem); letter-spacing:var(--title-spacing); margin-bottom:var(--sp4); color:var(--text); }
 .hero__lede { color:var(--dim); max-width:56ch; }
 .hero__cta { display:flex; flex-wrap:wrap; gap:var(--sp3); margin-top:var(--sp5); }
@@ -180,6 +179,48 @@ h1,h2,h3,h4 { font-family:var(--font-d); font-weight:600; line-height:1.2; lette
 .hero__art img { border-radius:var(--r-lg); border:1px solid var(--line-2); box-shadow:var(--shadow); }
 .hero__cap { margin-top:var(--sp3); font-family:var(--font-m); font-size:.72rem; color:var(--mute); text-align:center; }
 .hero__placeholder { display:grid; place-items:center; aspect-ratio:1; border-radius:var(--r-lg); border:1px dashed var(--line-2); font-size:4rem; color:var(--faint); }
+
+/* ── 首页首屏：展示语与介绍分层 ─────────────────────── */
+.hero--home { padding-block:clamp(24px,3.6vw,44px) clamp(16px,2.4vw,28px); }
+.hero__in--single { grid-template-columns:minmax(0,720px); }
+.eyebrow--plain { gap:0; }
+.hero__tagline {
+  margin-top:var(--sp3); font-family:var(--font-d); font-weight:500;
+  font-size:clamp(1.12rem,2.1vw,1.45rem); line-height:1.5; color:var(--text);
+  letter-spacing:var(--title-spacing);
+}
+.hero__intro { margin-top:var(--sp4); display:grid; gap:4px; max-width:54ch; }
+.hero__intro p { color:var(--dim); font-size:.97rem; line-height:1.85; }
+.hero--home .hero__cta { margin-top:var(--sp5); }
+.hero--home .hero__hint { margin-top:var(--sp3); font-size:.84rem; color:var(--mute); }
+
+/* 推荐歌曲卡片：真实封面 + 歌名 + 播放入口 */
+.hero__pick {
+  max-width:300px; margin-left:auto; padding:12px;
+  border:1px solid var(--line); border-radius:var(--r-lg); background:var(--panel);
+  box-shadow:var(--shadow);
+}
+.hero__pick__cover { display:block; border-radius:var(--r); overflow:hidden; }
+/* height:auto 必须写：HTML 上的 height 属性会压过 aspect-ratio，把封面撑成长方形 */
+.hero__pick__cover img { width:100%; height:auto; aspect-ratio:1; object-fit:cover; }
+.hero__pick__row { display:flex; align-items:center; gap:var(--sp3); margin-top:12px; }
+.hero__pick__meta { min-width:0; flex:1; }
+.hero__pick__label { font-family:var(--font-m); font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; color:var(--mute); }
+.hero__pick__title { font-family:var(--font-d); font-size:.98rem; font-weight:600; margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.hero__pick__title a:hover { color:var(--acc); }
+.hero__pick__artist { font-size:.78rem; color:var(--mute); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.hero__pick__play {
+  flex:0 0 auto; display:grid; place-items:center; width:44px; height:44px; border-radius:50%;
+  border:none; background:var(--acc); color:var(--on-acc); cursor:pointer;
+  box-shadow:0 6px 18px -10px rgba(var(--acc-rgb),.95);
+  transition:box-shadow var(--dur) var(--ease),transform .12s var(--out);
+}
+.hero__pick__play:hover { box-shadow:0 8px 22px -8px rgba(var(--acc-rgb),1); }
+.hero__pick__play:active { transform:scale(.94); }
+.hero__pick__play:focus-visible { outline:2px solid var(--acc); outline-offset:3px; }
+
+/* 首屏与「最近分享」之间收紧，桌面端更早看到歌 */
+.sec--near { padding-top:var(--sp5); }
 
 /* ── 歌曲列表 ───────────────────────────────────────── */
 .rows { display:flex; flex-direction:column; gap:2px; }

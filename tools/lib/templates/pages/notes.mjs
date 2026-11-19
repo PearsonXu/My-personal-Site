@@ -1,18 +1,13 @@
 import { escapeHtml as esc, escapeAttr as attr } from '../../../../assets/js/core/util.js';
 import { canonicalUrl } from '../../../../assets/js/core/paths.js';
-import { sectionHead, collectionGrid, songList, backendStatus } from '../components.mjs';
+import { sectionHead, collectionGrid, songList } from '../components.mjs';
 import { icon } from '../../../../assets/js/core/icons.js';
 
 export function renderNotes(model, { rel }) {
   const { site, notes } = model;
   const body = `<section class="sec"><div class="wrap">
-  ${sectionHead({ no: '§ 手记', kicker: 'Notes', title: '创作手记', lede: `共 ${notes.length} 篇。图文帖子，可以关联歌曲、专辑与歌单。默认只有站长发布，访客免登录阅读与听歌。` })}
-  ${collectionGrid(notes, rel, 'notes', '在 <code>content/notes/</code> 新建一个 Markdown 文件（JSON frontmatter + 正文）即可发布。')}
-  <div class="panel panel--muted">
-    <p class="panel__head">访客发帖 / 评论</p>
-    <p class="c-dim">当前：${backendStatus(site.backends?.guestPosts)} 发帖 · ${backendStatus(site.backends?.comments)} 评论</p>
-    <p class="note">未配置后端时，这里不显示输入框，也不会假装能提交。扩展点已经预留在 <code>assets/js/adapters.js</code>。</p>
-  </div>
+  ${sectionHead({ no: '§ 手记', kicker: 'Notes', title: '手记', lede: notes.length ? `${notes.length} 篇。旋律带来的故事与心情，还有听歌时想到的事。` : '旋律带来的故事与心情，写下来放在这里。' })}
+  ${collectionGrid(notes, rel, 'notes', '想到什么就记下来，慢慢会有。')}
 </div></section>`;
   return {
     kind: 'notes',
@@ -40,7 +35,7 @@ export function renderNote(model, { rel, note, qrSvg }) {
     <span aria-current="page">${esc(note.title)}</span>
   </nav>
   <header class="article__head">
-    <p class="eyebrow"><span class="dot" aria-hidden="true"></span>${esc(note.date)} · 约 ${note.readingMinutes} 分钟</p>
+    <p class="eyebrow">${esc(note.date)} · 约 ${note.readingMinutes} 分钟</p>
     <h1 class="article__title">${esc(note.title)}</h1>
     ${note.excerpt ? `<p class="article__lede">${esc(note.excerpt)}</p>` : ''}
   </header>
@@ -58,16 +53,8 @@ export function renderNote(model, { rel, note, qrSvg }) {
       <button class="btn" type="button" data-act="copy-link" data-url="${attr(url)}">${icon('copy', { size: 18 })} 复制链接</button>
     </div>
     <div class="share__qr"><div class="qr" aria-label="链接二维码">${qrSvg || ''}</div>
-      <p class="note">阅读时音乐不会中断——站内切换页面复用同一个音频元素。</p></div>
+      <p class="note">读手记的时候，歌不会断。</p></div>
   </div>
-
-  <section class="sec--inner">
-    <h2 class="sub">评论</h2>
-    <div class="panel panel--muted">
-      <p class="c-dim">评论功能：${backendStatus(site.backends?.comments)}</p>
-      <p class="note">${esc(site.backends?.comments?.note || '')}</p>
-    </div>
-  </section>
 </div></article>`;
 
   return {

@@ -119,9 +119,9 @@ async function main() {
   await check('目录与空状态', '曲库为空时显示正确空状态', async () => {
     if (catalog.songs.length > 0) return { na: true, detail: `已有 ${catalog.songs.length} 首真实歌曲` };
     const lib = await (await fetch(`${BASE}/songs/`)).text();
-    assert(/曲库还是空的|这里还没有歌/.test(lib), '缺少空状态文案');
+    assert(/第一首歌，正在路上/.test(lib), '缺少空状态文案');
     const home = await (await fetch(`${BASE}/`)).text();
-    assert(/曲库还是空的|这里还没有歌/.test(home), '首页缺少空状态文案');
+    assert(/第一首歌，正在路上/.test(home), '首页缺少空状态文案');
     return '首页与曲库均为空状态文案，非假内容';
   });
 

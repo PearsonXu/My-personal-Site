@@ -1,11 +1,15 @@
 {
   "slug": "demo-night-ferry",
   "title": "夜渡 · 测试音源 A",
-  "artist": "合成测试音（非站长作品）",
-  "composer": "tools/make-demo-audio.mjs",
-  "lyricist": "占位歌词，仅用于验证 LRC 高亮",
+  "artist": "合成测试音（非本人作品）",
+  "composer": "合成音源",
+  "lyricist": "占位歌词",
   "album": "demo-fixtures",
-  "tags": ["demo", "ambient", "test"],
+  "tags": [
+    "demo",
+    "ambient",
+    "test"
+  ],
   "date": "2026-11-18",
   "duration": 36,
   "cover": "auto",
@@ -17,6 +21,9 @@
   "lyrics": "demo-night-ferry.lrc",
   "instrumental": false,
   "demo": true,
-  "about": "这是**工程验证用的合成音源**，由 `tools/make-demo-audio.mjs` 生成的正弦叠加音，不是金石竹青的作品。它存在的唯一目的：在没有真实歌曲时，也能把播放、后台、歌词、分享链路跑通。上线前请用 `npm run new:song` 添加真实歌曲，并用 `npm run build`（不带 --demo）构建，本条会自动从曲库中消失。",
-  "credits": ["合成：Node + lamejs", "用途：播放器 / 后台 / 歌词自动化验证"]
+  "about": "这是**工程验证用的合成音源**，不是金石竹青的作品。放一段正弦叠加的声音，用来确认播放、歌词和分享都正常。正式上线时会自动移除。",
+  "credits": [
+    "合成测试音",
+    "用途：确认播放与歌词正常"
+  ]
 }

@@ -1,10 +1,14 @@
 {
   "slug": "demo-paper-boat",
   "title": "纸船 · 测试音源 B（纯音乐）",
-  "artist": "合成测试音（非站长作品）",
-  "composer": "tools/make-demo-audio.mjs",
+  "artist": "合成测试音（非本人作品）",
+  "composer": "合成音源",
   "album": "demo-fixtures",
-  "tags": ["demo", "instrumental", "test"],
+  "tags": [
+    "demo",
+    "instrumental",
+    "test"
+  ],
   "date": "2026-11-17",
   "duration": 28,
   "cover": "auto",
@@ -16,6 +20,9 @@
   "lyrics": null,
   "instrumental": true,
   "demo": true,
-  "about": "第二条**工程验证用合成音源**，故意设为纯音乐（无歌词），用来验证「无歌词 / 纯音乐」的空状态，以及 A→B→C 快速切歌时歌词不会串台。同样不是站长作品。",
-  "credits": ["合成：Node + lamejs", "用途：纯音乐空状态 / 切歌竞态验证"]
+  "about": "第二条**工程验证用的合成音源**，故意做成纯音乐，用来确认「没有歌词」时的显示是否正常。同样不是金石竹青的作品，正式上线时会自动移除。",
+  "credits": [
+    "合成测试音",
+    "用途：确认纯音乐的显示"
+  ]
 }

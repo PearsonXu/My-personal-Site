@@ -906,7 +906,7 @@ function writeMarkdown(summary) {
     '',
     `> 由 \`node tools/browser-check.mjs\` 自动生成。浏览器：${summary.browser}`,
     `> 运行时间：${summary.ranAt}`,
-    '> 音频：真实 MP3（合成测试音，非站长作品），Chrome 真实解码并推进 currentTime。',
+    '> 音频：真实 MP3（合成测试音，非本人作品），Chrome 真实解码并推进 currentTime。',
     `> **${summary.passed} / ${summary.total} 通过，${summary.failed} 失败。**`,
     ''
   ];

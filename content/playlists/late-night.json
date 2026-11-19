@@ -1,10 +1,16 @@
 {
   "slug": "late-night",
   "title": "深夜写公式",
-  "about": "深夜循环的那几首。歌单页支持一键播放整张，也可以逐首加入队列。当前收录的是工程验证音源，真实歌曲上传后替换 `songs` 数组即可。",
+  "about": "深夜循环的那几首。可以整张放，也可以一首一首加进来。目前收录的是工程验证音源，真实歌曲上传后会替换掉。",
   "cover": "auto",
-  "tags": ["demo", "focus"],
+  "tags": [
+    "demo",
+    "focus"
+  ],
   "date": "2026-11-18",
   "demo": true,
-  "songs": ["demo-night-ferry", "demo-paper-boat"]
+  "songs": [
+    "demo-night-ferry",
+    "demo-paper-boat"
+  ]
 }

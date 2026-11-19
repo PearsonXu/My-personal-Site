@@ -1,6 +1,6 @@
 import { escapeHtml as esc, escapeAttr as attr, formatTime } from '../../../../assets/js/core/util.js';
 import { canonicalUrl } from '../../../../assets/js/core/paths.js';
-import { songList, tags, demoBadge, emptyState, backendStatus } from '../components.mjs';
+import { songList, tags, demoBadge, emptyState } from '../components.mjs';
 import { icon } from '../../../../assets/js/core/icons.js';
 
 function lyricsBlock(song) {
@@ -8,7 +8,7 @@ function lyricsBlock(song) {
     return emptyState({ icon: 'disc', title: '纯音乐', text: '这首没有歌词。播放器会显示进度与封面，不做歌词高亮。' });
   }
   if (!song.lyricsLines?.length) {
-    return emptyState({ icon: 'lyrics', title: '暂无歌词', text: '如果你写了歌词，把 LRC 放进 <code>content/lyrics/</code> 并在歌曲 JSON 里填 <code>lyrics</code> 字段即可。' });
+    return emptyState({ icon: 'lyrics', title: '这首歌还没有歌词。', text: '先把旋律留在这里，歌词以后补上。' });
   }
   const timed = song.lyricsFormat === 'lrc';
   const items = song.lyricsLines.map((line) => timed
@@ -27,20 +27,18 @@ function shareBlock(song, site, rel, qrSvg) {
   <div class="share__row">
     <input class="share__url" id="shareUrl" type="text" readonly value="${attr(url)}" aria-label="歌曲分享链接">
     <button class="btn" type="button" data-act="copy-link" data-url="${attr(url)}">${icon('copy', { size: 18 })} 复制链接</button>
-    <button class="btn btn--quiet" type="button" data-act="make-poster" data-slug="${attr(song.slug)}"><span aria-hidden="true">▣</span> 歌词海报</button>
+    <button class="btn btn--quiet" type="button" data-act="make-poster" data-slug="${attr(song.slug)}">${icon('cover', { size: 18 })} 歌词海报</button>
   </div>
   <div class="share__qr">
     <div class="qr" aria-label="歌曲链接二维码">${qrSvg || ''}</div>
     <div class="share__tips">
-      <p><strong>微信里怎么听</strong></p>
+      <p><strong>在微信里听</strong></p>
       <ul class="bullets">
-        <li>打开后有一个明显的播放按钮，<strong>需要你点一下</strong>才会出声——这是浏览器的自动播放策略，不是页面故障。</li>
-        <li>想长时间收听、锁屏继续，请点右上角「在浏览器打开」。微信内置浏览器的后台策略更严格。</li>
-        <li>链接会保留这首歌与播放起点，换到系统浏览器可以接着听。</li>
+        <li>打开后点一下播放按钮就会出声。</li>
+        <li>想长时间听、锁屏也继续，点右上角「在浏览器打开」。</li>
+        <li>链接会带着这首歌，换到浏览器可以接着听。</li>
       </ul>
-      <p class="note">微信 JS-SDK 自定义分享：${backendStatus(wechat)}
-      ${wechat.signEndpoint ? '' : '未配置签名服务时，复制链接与二维码照常可用，听歌不受影响。'}</p>
-      <p class="note">Open Graph 元数据是通用回退，<strong>不保证</strong>决定微信卡片的样式；朋友圈与聊天的自定义分享需要分别配置。</p>
+      <p class="note">复制链接和扫码都能用，不需要登录。</p>
     </div>
   </div>
 </div>`;
@@ -68,7 +66,7 @@ export function renderSong(model, { rel, song, qrSvg }) {
         <img src="${attr(rel + song.coverPath)}" alt="${attr(song.title)} 封面" width="420" height="420" decoding="async" fetchpriority="high">
       </div>
       <div class="song__info">
-        <p class="eyebrow"><span class="dot" aria-hidden="true"></span>单曲 ${demoBadge(song)}</p>
+        <p class="eyebrow">单曲 ${demoBadge(song)}</p>
         <h1 class="song__title">${esc(song.title)}</h1>
         <p class="song__artist">${esc(song.artist)}</p>
         <dl class="kv kv--inline">
@@ -86,11 +84,11 @@ export function renderSong(model, { rel, song, qrSvg }) {
           <button class="btn" type="button" data-act="queue-next" data-slug="${attr(song.slug)}">${icon('queue-next', { size: 18 })} 下一首播放</button>
           <button class="btn btn--quiet" type="button" data-act="fav" data-slug="${attr(song.slug)}" aria-pressed="false">${icon('heart', { size: 18 })} 收藏</button>
         </div>
-        <p class="note" data-play-hint>免登录试听。浏览器要求首次播放由你点击触发；打开页面不会自动出声。</p>
+        <p class="note" data-play-hint>无需登录，点一下就能听。</p>
       </div>
     </div>
 
-    ${song.demo ? '<p class="warn"><strong>这是工程验证用的合成测试音源，不是站长的作品。</strong>它只用于验证播放 / 后台 / 歌词 / 分享链路。生产构建（<code>npm run build</code>）会自动排除它。</p>' : ''}
+    ${song.demo ? '<p class="warn"><strong>这是工程验证用的合成测试音，不是金石竹青的作品。</strong>只用来确认播放和歌词正常，正式上线时会自动移除。</p>' : ''}
 
     ${song.aboutHtml ? `<section class="sec--inner"><h2 class="sub">关于这首歌</h2><div class="prose">${song.aboutHtml}</div></section>` : ''}
     ${song.credits?.length ? `<p class="credits">${song.credits.map((c) => esc(c)).join(' · ')}</p>` : ''}

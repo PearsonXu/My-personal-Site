@@ -114,12 +114,12 @@ function footer({ site, rel }) {
         <li><a href="${attr(rel)}me/">我的（本地数据）</a></li>
       </ul>
     </nav>
-    <nav class="foot__col" aria-label="站长">
-      <p class="foot__head">站长</p>
+    <nav class="foot__col" aria-label="关于">
+      <p class="foot__head">关于</p>
       <ul>
-        <li><a href="${attr(rel)}about/">关于${esc(site.author?.name || '')}</a></li>
+        <li><a href="${attr(rel)}about/">关于我</a></li>
         ${site.author?.github ? `<li><a href="${attr(site.author.github)}" target="_blank" rel="noopener">GitHub ↗</a></li>` : ''}
-        <li><a href="${attr(rel)}status/">服务状态与自检</a></li>
+        <li><a href="${attr(rel)}status/">播放自检</a></li>
       </ul>
     </nav>
     <div class="foot__col">

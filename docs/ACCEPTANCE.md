@@ -10,7 +10,7 @@
 | 项 | 命令 | 结果 |
 | --- | --- | --- |
 | 类型检查 | `npm run typecheck`（`tsc --noEmit`，checkJs） | **PASS · 0 error** |
-| 单元 + jsdom 集成 | `npm test` | **PASS · 132 / 132** |
+| 单元 + jsdom 集成 | `npm test` | **PASS · 144 / 144** |
 | 真实浏览器验收 | `npm run browser:check` | **PASS · 207 / 207** |
 | 生产构建 | `npm run build` | **PASS** · 排除 DEMO，空状态正确 |
 | DEMO 构建 | `npm run build:demo` | **PASS** · 15 页面 |

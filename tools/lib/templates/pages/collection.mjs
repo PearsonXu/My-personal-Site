@@ -7,10 +7,9 @@ function indexPage(model, ctx, kind) {
   const { site } = model;
   const items = kind === 'albums' ? model.albums : model.playlists;
   const label = kind === 'albums' ? '专辑' : '歌单';
-  const dir = kind === 'albums' ? 'content/albums/' : 'content/playlists/';
   const body = `<section class="sec"><div class="wrap">
   ${sectionHead({ no: `§ ${label}`, kicker: kind === 'albums' ? 'Albums' : 'Playlists', title: label, lede: `共 ${items.length} 个。每个都有独立链接，可以一键播放或整张加入队列。` })}
-  ${collectionGrid(items, ctx.rel, kind, `还没有${label}。在 <code>${dir}</code> 新建一个 JSON 文件即可。`)}
+  ${collectionGrid(items, ctx.rel, kind, `慢慢整理，会有的。`)}
 </div></section>`;
   return {
     kind,
@@ -48,7 +47,7 @@ export function renderCollection(model, { rel, item, kind, qrSvg }) {
   <div class="song__head">
     <div class="song__art"><img src="${attr(rel + item.coverPath)}" alt="${attr(item.title)} 封面" width="420" height="420" decoding="async" fetchpriority="high"></div>
     <div class="song__info">
-      <p class="eyebrow"><span class="dot" aria-hidden="true"></span>${esc(label)} ${demoBadge(item)}</p>
+      <p class="eyebrow">${esc(label)} ${demoBadge(item)}</p>
       <h1 class="song__title">${esc(item.title)}</h1>
       ${isAlbum ? `<p class="song__artist">${esc(item.artist)}</p>` : ''}
       <dl class="kv kv--inline">
@@ -61,11 +60,11 @@ export function renderCollection(model, { rel, item, kind, qrSvg }) {
     </div>
   </div>
 
-  ${item.demo ? '<p class="warn"><strong>这是工程验证用的示例，收录的是合成测试音，不是站长作品。</strong>生产构建会自动排除。</p>' : ''}
+  ${item.demo ? '<p class="warn"><strong>这是工程验证用的示例，收录的是合成测试音，非本人作品。</strong>正式上线时会自动移除。</p>' : ''}
   ${item.aboutHtml ? `<div class="prose">${item.aboutHtml}</div>` : ''}
 
   <h2 class="sub">曲目${isAlbum ? '（按专辑顺序）' : '（按歌单顺序）'}</h2>
-  ${songList(tracks, rel, { ordered: true, emptyText: `这个${label}还没有曲目。编辑 <code>${isAlbum ? 'content/albums' : 'content/playlists'}/${esc(item.slug)}.json</code> 的 ${isAlbum ? 'tracks' : 'songs'} 数组。` })}
+  ${songList(tracks, rel, { ordered: true, emptyText: '曲目还在整理，慢慢会放进来。' })}
 
   <div class="share">
     <h3 class="sub">分享这个${label}</h3>

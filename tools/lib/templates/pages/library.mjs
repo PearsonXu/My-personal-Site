@@ -5,6 +5,7 @@ import { icon } from '../../../../assets/js/core/icons.js';
 export function renderLibrary(model, { rel }) {
   const { site, songs } = model;
   const allTags = [...new Set(songs.flatMap((s) => s.tags))].sort();
+  const hasSongs = songs.length > 0;
 
   const body = `<section class="sec">
   <div class="wrap">
@@ -12,10 +13,12 @@ export function renderLibrary(model, { rel }) {
     no: '§ 曲库',
     kicker: 'Library',
     title: '曲库',
-    lede: `共 ${songs.length} 首。可以按歌名、专辑、标签、歌词搜索——歌词全文也在索引里。`
+    lede: hasSongs
+      ? `这里放着 ${songs.length} 首歌。可以按歌名、专辑、标签或歌词找。`
+      : '这里以后放我分享的音乐。'
   })}
 
-    <div class="libbar" data-library>
+    ${hasSongs ? `<div class="libbar" data-library>
       <div class="search">
         <span class="search__icon">${icon('search', { size: 18 })}</span>
         <input id="libSearch" class="search__input" type="search" placeholder="搜索歌名 / 专辑 / 标签 / 歌词…" aria-label="搜索曲库" autocomplete="off" spellcheck="false">
@@ -36,7 +39,7 @@ export function renderLibrary(model, { rel }) {
     <p class="libcount" id="libCount" role="status" aria-live="polite">${songs.length} 首</p>
 
     <div class="viewbox" data-viewbox="library" data-view="list">
-      <div data-viewpane="list" id="libList">${songList(songs, rel, { emptyText: '曲库还是空的。用 <code>npm run new:song -- "歌名"</code> 添加第一首歌；想先看效果可以跑 <code>npm run build:demo</code>（合成测试音，非站长作品）。' })}</div>
+      <div data-viewpane="list" id="libList">${songList(songs, rel)}</div>
       <div data-viewpane="grid" id="libGrid" hidden>${songGrid(songs, rel)}</div>
       <div data-viewpane="vinyl" id="libVinyl" hidden>${songGrid(songs, rel)}</div>
     </div>
@@ -46,7 +49,7 @@ export function renderLibrary(model, { rel }) {
     <div class="libbulk">
       <button class="btn" type="button" data-act="play-all">${icon('play', { size: 20 })} 播放当前列表</button>
       <button class="btn btn--quiet" type="button" data-act="queue-all">${icon('plus', { size: 18 })} 当前列表加入队列</button>
-    </div>
+    </div>` : emptyState({ icon: 'note', title: '第一首歌，正在路上。', text: '小屋慢慢布置，音乐也会陆续到来。' })}
   </div>
 </section>`;
 
@@ -55,7 +58,9 @@ export function renderLibrary(model, { rel }) {
     slug: null,
     meta: {
       title: `曲库 — ${site.title}`,
-      description: `${site.title}的全部歌曲，共 ${songs.length} 首。支持按歌名、专辑、标签与歌词搜索，免登录试听。`,
+      description: hasSongs
+        ? `${site.title}里分享的音乐，共 ${songs.length} 首。可以按歌名、专辑、标签或歌词找，无需登录。`
+        : `${site.title}的曲库。音乐还在陆续到来，无需登录，点开就能听。`,
       image: songs[0]?.ogPath || 'assets/img/og/default.png'
     },
     body,

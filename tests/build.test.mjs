@@ -100,7 +100,7 @@ test('build · 站长署名为金石竹青', () => {
   const home = read('index.html');
   assert.match(home, /<title>金石竹青的音乐小屋/);
   assert.match(home, /金石竹青/);
-  assert.match(read('about/index.html'), /关于金石竹青/);
+  assert.match(read('about/index.html'), /关于我/);
   const catalog = JSON.parse(read('assets/data/catalog.json'));
   assert.equal(catalog.site.author.name, '金石竹青');
   assert.equal(catalog.site.author.nameEn, undefined);
@@ -124,7 +124,7 @@ test('build · 生产构建排除 DEMO，并给出空状态而不是假内容', 
   assert.equal(manifest.counts.songs, 0);
   assert.ok(!exists('songs/demo-night-ferry/index.html'));
   const home = read('index.html');
-  assert.match(home, /曲库还是空的|这里还没有歌/);
+  assert.match(home, /第一首歌，正在路上/);
   assert.ok(!home.includes('DEMO'), '生产页面不应出现 DEMO 标记');
 });
 

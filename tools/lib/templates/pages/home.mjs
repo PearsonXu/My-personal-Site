@@ -2,65 +2,78 @@ import { escapeHtml as esc, escapeAttr as attr, truncate } from '../../../../ass
 import { sectionHead, songList, songGrid, collectionGrid, emptyState, demoBadge } from '../components.mjs';
 import { icon } from '../../../../assets/js/core/icons.js';
 
+/** 空曲库时统一的温和文案，不含任何面向开发者的说明 */
+const EMPTY_SONG = { title: '第一首歌，正在路上。', text: '小屋慢慢布置，音乐也会陆续到来。' };
+
 export function renderHome(model, { rel }) {
   const { site, songs, albums, playlists, notes } = model;
   const latest = songs.slice(0, 6);
   const featured = playlists.slice(0, 3);
   const latestNotes = notes.slice(0, 3);
-  const hero = songs[0];
+  const pick = songs[0];
+  const intro = Array.isArray(site.intro) ? site.intro : [];
+  const hasCollections = featured.length > 0 || albums.length > 0;
 
-  const body = `<section class="hero">
-  <div class="wrap hero__in">
-    <div class="hero__copy">
-      <p class="eyebrow"><span class="dot" aria-hidden="true"></span>${esc(site.author?.name || '')}</p>
-      <h1 class="hero__title">${esc(site.title)}</h1>
-      <p class="hero__lede">${esc(site.tagline || '')}<br>${esc(site.description || '')}</p>
-      <div class="hero__cta">
-        ${hero
-    ? `<button class="btn btn--pri" type="button" data-act="play-song" data-slug="${attr(hero.slug)}">${icon('play', { size: 20 })} 播放最新一首</button>`
-    : `<a class="btn btn--pri" href="${attr(rel)}songs/">${icon('note', { size: 18 })} 去曲库看看</a>`}
-        <a class="btn" href="${attr(rel)}songs/">${icon('search', { size: 18 })} 浏览曲库</a>
-        <a class="btn btn--quiet" href="${attr(rel)}about/">${icon('user', { size: 18 })} 关于站长</a>
+  /* 右侧：有歌就放一张真实的推荐卡片；没有歌就整块去掉，改单栏 */
+  const pickCard = pick ? `<aside class="hero__pick" aria-label="推荐歌曲">
+      <a class="hero__pick__cover" href="${attr(rel)}songs/${attr(pick.slug)}/">
+        <img src="${attr(rel + pick.coverPath)}" alt="${attr(pick.title)} 封面" width="420" height="420" decoding="async" fetchpriority="high">
+      </a>
+      <div class="hero__pick__row">
+        <div class="hero__pick__meta">
+          <p class="hero__pick__label">最近在听</p>
+          <p class="hero__pick__title"><a href="${attr(rel)}songs/${attr(pick.slug)}/">${esc(pick.title)}</a>${demoBadge(pick)}</p>
+          <p class="hero__pick__artist">${esc(pick.artist)}</p>
+        </div>
+        <button class="hero__pick__play" type="button" data-act="play-song" data-slug="${attr(pick.slug)}" aria-label="播放 ${attr(pick.title)}">${icon('play', { size: 22 })}</button>
       </div>
-      <p class="hero__hint">免登录试听 · 首次播放需要你点一下 · 长时间收听建议用系统浏览器</p>
+    </aside>` : '';
+
+  const body = `<section class="hero hero--home">
+  <div class="wrap hero__in${pick ? '' : ' hero__in--single'}">
+    <div class="hero__copy">
+      <p class="eyebrow eyebrow--plain">${esc(site.eyebrow || '音乐爱好者')}</p>
+      <h1 class="hero__title">${esc(site.title)}</h1>
+      <p class="hero__tagline">${esc(site.tagline || '')}</p>
+      ${intro.length ? `<div class="hero__intro">${intro.map((line) => `<p>${esc(line)}</p>`).join('\n')}</div>` : ''}
+      <div class="hero__cta">
+        <a class="btn btn--pri" href="${attr(rel)}songs/">${icon('play', { size: 18 })} 听听音乐</a>
+        <a class="btn" href="${attr(rel)}about/">${icon('user', { size: 18 })} 关于我</a>
+      </div>
+      <p class="hero__hint">${esc(site.listenHint || '无需登录，点开就能听。')}</p>
     </div>
-    <div class="hero__art">
-      ${hero
-    ? `<img src="${attr(rel + hero.coverPath)}" alt="${attr(hero.title)} 封面" width="420" height="420" decoding="async" fetchpriority="high">`
-    : `<div class="hero__placeholder">${icon('note', { size: 64 })}</div>`}
-      ${hero ? `<p class="hero__cap">最新 · ${esc(hero.title)}${demoBadge(hero)}</p>` : ''}
-    </div>
+    ${pickCard}
   </div>
 </section>
 
-<section class="sec" id="latest">
+<section class="sec sec--near" id="latest">
   <div class="wrap">
-    ${sectionHead({ no: '§ 01', kicker: 'Latest', title: '最新音乐', lede: '按发布日期倒序。点播放按钮直接播放，点标题进入单曲页。' })}
-    <div class="viewswitch" role="group" aria-label="展示模式">
+    ${sectionHead({ no: '§ 01', kicker: 'Recent', title: '最近分享', lede: '最近喜欢的，也放在这里与你分享。' })}
+    ${latest.length ? `<div class="viewswitch" role="group" aria-label="展示模式">
       <button class="chip is-on" type="button" data-act="set-view" data-view="list" aria-pressed="true">列表</button>
       <button class="chip" type="button" data-act="set-view" data-view="grid" aria-pressed="false">封面墙</button>
       <button class="chip" type="button" data-act="set-view" data-view="vinyl" aria-pressed="false">唱片</button>
     </div>
     <div class="viewbox" data-viewbox="home" data-view="list">
-      <div data-viewpane="list">${songList(latest, rel, { emptyText: '曲库还是空的。用 <code>npm run new:song -- "歌名"</code> 添加第一首，或用 <code>npm run build:demo</code> 先看合成测试音的效果。' })}</div>
+      <div data-viewpane="list">${songList(latest, rel, { emptyText: EMPTY_SONG.text })}</div>
       <div data-viewpane="grid" hidden>${songGrid(latest, rel)}</div>
       <div data-viewpane="vinyl" hidden>${songGrid(latest, rel)}</div>
-    </div>
+    </div>` : emptyState({ icon: 'note', ...EMPTY_SONG })}
     ${songs.length > 6 ? `<p class="sec__more"><a class="link" href="${attr(rel)}songs/">查看全部 ${songs.length} 首 →</a></p>` : ''}
   </div>
 </section>
 
-<section class="sec sec--tint" id="featured">
+${hasCollections ? `<section class="sec sec--tint" id="featured">
   <div class="wrap">
-    ${sectionHead({ no: '§ 02', kicker: 'Playlists', title: '精选歌单', lede: '歌单可以一键播放整张，也可以整张加入队列。' })}
-    ${collectionGrid(featured, rel, 'playlists', '还没有歌单。在 <code>content/playlists/</code> 新建一个 JSON 即可。')}
+    ${sectionHead({ no: '§ 02', kicker: 'Playlists', title: '常听的歌单', lede: '把合适的歌放在一起，想听的时候整张放。' })}
+    ${collectionGrid(featured, rel, 'playlists', '歌单还在慢慢整理。')}
     ${albums.length ? `<h3 class="sub">专辑</h3>${collectionGrid(albums.slice(0, 3), rel, 'albums', '')}` : ''}
   </div>
-</section>
+</section>` : ''}
 
-<section class="sec" id="notes">
+<section class="sec${hasCollections ? '' : ' sec--tint'}" id="notes">
   <div class="wrap">
-    ${sectionHead({ no: '§ 03', kicker: 'Notes', title: '最新手记', lede: '写歌、录音、以及这个站点本身的记录。' })}
+    ${sectionHead({ no: hasCollections ? '§ 03' : '§ 02', kicker: 'Notes', title: '最近手记', lede: '旋律带来的故事与心情，写下来放在这里。' })}
     ${latestNotes.length
     ? `<div class="notes">${latestNotes.map((n) => `<article class="note">
         <a class="note__link" href="${attr(rel)}notes/${attr(n.slug)}/">
@@ -72,31 +85,18 @@ export function renderHome(model, { rel }) {
           </span>
         </a>
       </article>`).join('\n')}</div>`
-    : emptyState({ icon: 'pen', title: '还没有手记', text: '在 <code>content/notes/</code> 新建一个 Markdown 文件即可发布。' })}
+    : emptyState({ icon: 'pen', title: '手记还在写。', text: '想到什么就记下来，慢慢会有。' })}
     ${notes.length > 3 ? `<p class="sec__more"><a class="link" href="${attr(rel)}notes/">全部手记 →</a></p>` : ''}
   </div>
 </section>
 
 <section class="sec sec--tint" id="about">
-  <div class="wrap">
-    ${sectionHead({ no: '§ 04', kicker: 'About', title: '关于站长', lede: esc(site.author?.bio || '') })}
-    <div class="aboutgrid">
-      <div class="panel">
-        <p class="panel__head">署名</p>
-        <dl class="kv">
-          <div><dt>站长</dt><dd>${esc(site.author?.name || '')}</dd></div>
-          ${site.author?.github ? `<div><dt>GitHub</dt><dd><a class="link" href="${attr(site.author.github)}" target="_blank" rel="noopener">${esc(site.author.github)} ↗</a></dd></div>` : ''}
-        </dl>
-      </div>
-      <div class="panel">
-        <p class="panel__head">怎么听</p>
-        <p class="c-dim">免登录，打开就能听。站内翻页面、读手记、换外观都<strong>不会断歌</strong>。收藏与进度只存在当前浏览器里。</p>
-        <p class="hero__cta">
-          <a class="btn" href="${attr(rel)}about/">关于这里</a>
-          <button class="btn btn--quiet" type="button" data-act="open-appearance">${icon('palette', { size: 18 })} 换个外观</button>
-        </p>
-      </div>
-    </div>
+  <div class="wrap wrap--prose">
+    ${sectionHead({ no: hasCollections ? '§ 04' : '§ 03', kicker: 'About', title: '关于我', lede: esc(site.author?.bio || '') })}
+    <p class="hero__cta">
+      <a class="btn" href="${attr(rel)}about/">${icon('user', { size: 18 })} 关于我</a>
+      <button class="btn btn--quiet" type="button" data-act="open-appearance">${icon('palette', { size: 18 })} 换个外观</button>
+    </p>
   </div>
 </section>`;
 
@@ -106,14 +106,14 @@ export function renderHome(model, { rel }) {
     meta: {
       title: `${site.title} — ${site.tagline || ''}`,
       description: site.description,
-      image: songs[0]?.ogPath || 'assets/img/og/default.png',
+      image: pick?.ogPath || 'assets/img/og/default.png',
       jsonLd: {
         '@context': 'https://schema.org',
         '@type': 'WebSite',
         name: site.title,
         url: site.url,
         description: site.description,
-        author: { '@type': 'Person', name: site.author?.nameEn || site.author?.name }
+        author: { '@type': 'Person', name: site.author?.name }
       }
     },
     body,

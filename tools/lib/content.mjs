@@ -257,6 +257,9 @@ export function publicCatalog(model) {
       url: site.url,
       mediaBase: site.mediaBase || '',
       author: site.author,
+      eyebrow: site.eyebrow || '',
+      intro: Array.isArray(site.intro) ? site.intro : [],
+      listenHint: site.listenHint || '',
       backends: site.backends,
       share: site.share,
       experimental: site.experimental || {}

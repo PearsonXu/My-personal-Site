@@ -8,7 +8,7 @@ import { escapeHtml as esc, escapeAttr as attr, formatTime } from '../../../asse
 import { icon } from '../../../assets/js/core/icons.js';
 
 export function demoBadge(item) {
-  return item.demo ? '<span class="badge badge--demo" title="工程验证用合成音源，不是站长作品">DEMO</span>' : '';
+  return item.demo ? '<span class="badge badge--demo" title="工程验证用合成音，非本人作品">DEMO</span>' : '';
 }
 
 export function tags(list, rel) {
@@ -62,7 +62,9 @@ export function songRow(song, rel, { index = null } = {}) {
 }
 
 export function songList(songs, rel, { ordered = false, emptyText = '' } = {}) {
-  if (!songs.length) return emptyState({ title: '这里还没有歌', text: emptyText || '上传真实歌曲后，它们会自动出现在这里。' });
+  if (!songs.length) {
+    return emptyState({ icon: 'note', title: '第一首歌，正在路上。', text: emptyText || '小屋慢慢布置，音乐也会陆续到来。' });
+  }
   return `<ol class="rows${ordered ? ' rows--ordered' : ''}">${songs.map((s, i) => songRow(s, rel, { index: ordered ? i + 1 : null })).join('\n')}</ol>`;
 }
 
@@ -80,7 +82,7 @@ export function songCard(song, rel) {
 }
 
 export function songGrid(songs, rel) {
-  if (!songs.length) return emptyState({ title: '曲库是空的', text: '用 <code>npm run new:song</code> 添加第一首歌。' });
+  if (!songs.length) return emptyState({ icon: 'note', title: '第一首歌，正在路上。', text: '小屋慢慢布置，音乐也会陆续到来。' });
   return `<div class="grid grid--cards">${songs.map((s) => songCard(s, rel)).join('\n')}</div>`;
 }
 export function collectionCard(item, rel, kind) {
@@ -102,8 +104,8 @@ export function collectionGrid(items, rel, kind, emptyText) {
   if (!items.length) {
     return emptyState({
       icon: kind === 'notes' ? 'pen' : 'disc',
-      title: kind === 'notes' ? '还没有手记' : kind === 'albums' ? '还没有专辑' : '还没有歌单',
-      text: emptyText
+      title: kind === 'notes' ? '手记还在写。' : kind === 'albums' ? '专辑还在整理。' : '歌单还在整理。',
+      text: emptyText || '慢慢会有。'
     });
   }
   return `<div class="grid grid--cards">${items.map((it) => collectionCard(it, rel, kind)).join('\n')}</div>`;
@@ -116,26 +118,6 @@ export function collectionActions(kind, slug, { disabled = false } = {}) {
   <button class="btn btn--pri" type="button" data-act="play-collection" data-kind="${attr(kind)}" data-slug="${attr(slug)}"${d}>${icon('play', { size: 20 })} 一键播放</button>
   <button class="btn" type="button" data-act="queue-collection" data-kind="${attr(kind)}" data-slug="${attr(slug)}" data-pos="last"${d}>${icon('plus', { size: 18 })} 加入队列</button>
   <button class="btn btn--quiet" type="button" data-act="queue-collection" data-kind="${attr(kind)}" data-slug="${attr(slug)}" data-pos="next"${d}>${icon('queue-next', { size: 18 })} 下一首播放</button>
-  <button class="btn btn--quiet" type="button" data-act="open-share" data-kind="${attr(kind)}" data-slug="${attr(slug)}"><span aria-hidden="true">↗</span> 分享</button>
+  <button class="btn btn--quiet" type="button" data-act="open-share" data-kind="${attr(kind)}" data-slug="${attr(slug)}">${icon('share', { size: 18 })} 分享</button>
 </div>`;
-}
-
-/** 后端适配层状态徽章：未配置就说未配置，绝不含糊 */
-export function backendStatus(cfg) {
-  const configured = !!(cfg && (cfg.endpoint || cfg.signEndpoint));
-  return `<span class="status ${configured ? 'status--on' : 'status--off'}">${configured ? '已配置' : '未配置'}</span>`;
-}
-
-export function backendTable(site, rel) {
-  const rows = Object.entries(site.backends || {}).map(([key, cfg]) => `<tr>
-  <th scope="row">${esc(cfg.label || key)}</th>
-  <td>${backendStatus(cfg)}</td>
-  <td class="c-dim">${esc(cfg.note || '')}</td>
-</tr>`).join('\n');
-  return `<table class="table">
-  <thead><tr><th>能力</th><th>状态</th><th>说明</th></tr></thead>
-  <tbody>${rows}</tbody>
-</table>
-<p class="note">未配置的能力不会假装可用：页面只保留本地功能，并显示上表的状态。
-配置方法见 <a href="${attr(rel)}status/">服务状态与自检</a>。</p>`;
 }

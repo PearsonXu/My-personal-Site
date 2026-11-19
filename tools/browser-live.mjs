@@ -203,8 +203,16 @@ async function main() {
         await goto(page, '/songs/');
         const songs = await page.evaluate(() => window.__music.catalog.songs.length);
         if (songs === 0) {
-          const empty = await page.evaluate(() => !document.getElementById('libEmpty').hidden || /曲库还是空的|这里还没有歌/.test(document.getElementById('libList').textContent));
-          assert(empty, '空曲库没有空状态');
+          // 空曲库：只应有温和空状态，搜索/视图切换/播放入口都隐藏
+          const m = await page.evaluate(() => ({
+            empty: /第一首歌，正在路上/.test(document.querySelector('.page').textContent),
+            search: !!document.getElementById('libSearch'),
+            views: document.querySelectorAll('[data-act="set-view"]').length,
+            playAll: document.querySelectorAll('[data-act="play-all"]').length
+          }));
+          assert(m.empty, '空曲库没有空状态文案');
+          assert(!m.search && m.views === 0 && m.playAll === 0, `空曲库仍显示无意义入口：${JSON.stringify(m)}`);
+          return '空状态正确，搜索 / 视图切换 / 播放入口均已隐藏';
         }
         assert(await page.$('#libSearch'), '缺少搜索框');
         await page.evaluate(() => {
