@@ -77,7 +77,11 @@ AbortController **abort 上一次 fetch**。旧代码的 catch 把 `AbortError` 
   → **132 通过 · 6 失败**，6 失败全部集中在「导航竞态」段：
   desktop「连点未触发整页跳转 — load 事件 2 次」「途中后退生效 — 落在 /notes/」「途中后退未整页拽回 — load 3 次」，
   mobile 同构（load 1 / 2 次）。其余段（交叉矩阵 5×7×2、11 页直达刷新、坏数据等）全绿。
-  **即用户线上症状的真实复现**；部署后该 6 项应转绿（见下）
+  **即用户线上症状的真实复现**
+- **线上复验（部署后，commit `6f18b53`）**：线上 `assets/js/router.js` 与提交内容
+  SHA-256 逐字节一致（`477c008a…`）；`probe-regression --base https://www.xuzhaoqing.com`
+  → **138 通过 · 0 失败**，原 6 项全部转绿（desktop / mobile 连点与途中后退 `load` 事件均 0 次、
+  后退落 `/about/`、前进落 `/notes/`、样式 4 张生效、资源零失败、Console 零错误）
 - 播放保持：播放中跨页导航 + 后退，当前歌 / 队列 / 进度连续（`t` 单调递增、state=playing）；
   整页刷新后按节流保存点恢复（不自动出声），符合既有设计
 - `npm run build`（生产，0 DEMO）+ `node tools/check-assets.mjs --dist dist` → 通过
@@ -91,6 +95,6 @@ AbortController **abort 上一次 fetch**。旧代码的 catch 把 `AbortError` 
 
 ## 六、NOT_RUN / 待办
 
-- 线上复验：部署后跑 `node tools/probe-regression.mjs --base https://www.xuzhaoqing.com`，
-  「导航竞态」段那 6 项应由红转绿（138 / 138）。**当前线上仍为旧构建，6 项红是预期**。
-- 真 iOS Safari / 微信浏览器：NOT_RUN（无设备 / 账号）。bfcache 跨文档恢复路径未单测。
+- 真 iOS Safari / 微信浏览器：**NOT_RUN**（无设备 / 账号），不视为已通过。
+  bfcache 跨文档恢复路径未单测。
+- 线上复验已完成（见五）：138 / 138，原 6 项红转绿。
