@@ -1,0 +1,10 @@
+{
+  "slug": "walk-home",
+  "title": "走回家的那段路",
+  "about": "从外面走回住处的二十分钟。顺序播放，不循环——路走完了，歌也该停了。当前同样是工程验证音源。",
+  "cover": "auto",
+  "tags": ["demo", "walk"],
+  "date": "2026-11-16",
+  "demo": true,
+  "songs": ["demo-paper-boat", "demo-night-ferry"]
+}

@@ -1,0 +1,11 @@
+/* layout-tablet.css — 平板 / 中等宽度（≤1000px）
+   构建期会产出两份：auto 时包在 @media 里，手动手机布局时无条件生效。
+   源文件只写普通规则，不要写 @media。 */
+
+.nav__a { padding:7px 8px; font-size:.82rem; }
+.hero__in { grid-template-columns:1fr; }
+.hero__art { max-width:340px; }
+.song__head { grid-template-columns:1fr; }
+.song__art { max-width:320px; }
+.pl__extra .pl__vol { display:none; }
+.foot__in { grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); }

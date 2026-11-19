@@ -1,0 +1,7 @@
+/* layout-narrow.css — 极窄屏（≤400px）；手动手机布局时也生效 */
+
+.grid--cards { grid-template-columns:repeat(2,1fr); }
+.hero__cta .btn { flex:1 1 100%; justify-content:center; }
+.brand__txt strong { font-size:.86rem; }
+.pl__title { font-size:.84rem; }
+.pl__sub { font-size:.7rem; }

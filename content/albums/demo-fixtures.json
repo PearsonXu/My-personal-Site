@@ -1,0 +1,11 @@
+{
+  "slug": "demo-fixtures",
+  "title": "工程验证音源集",
+  "artist": "合成测试音（非站长作品）",
+  "date": "2026-11-18",
+  "cover": "auto",
+  "tags": ["demo"],
+  "demo": true,
+  "about": "这不是真实专辑，只是把两条合成测试音放在一起，用来验证专辑页的排序、一键播放与加入队列。生产构建（`npm run build`）会自动排除。",
+  "tracks": ["demo-night-ferry", "demo-paper-boat"]
+}

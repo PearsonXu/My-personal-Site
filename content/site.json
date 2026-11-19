@@ -1,0 +1,48 @@
+{
+  "title": "金石竹青的音乐小屋",
+  "shortTitle": "音乐小屋",
+  "tagline": "把夜里的声音，留在这里。",
+  "description": "金石竹青的个人音乐小屋：原创歌曲、专辑、歌单与创作手记。免登录试听，支持歌词、队列与后台播放。",
+  "url": "https://www.xuzhaoqing.com",
+  "lang": "zh-CN",
+  "locale": "zh_CN",
+  "author": {
+    "name": "金石竹青",
+    "bio": "写歌、录音、也写点关于它们的字。这里放我自己的歌，以及做这些歌时留下的手记。",
+    "github": "https://github.com/PearsonXu"
+  },
+  "mediaBase": "",
+  "mediaBaseNote": "留空 = 音频与封面使用仓库内相对路径。填 https://your-cdn.example.com/music/ 即可把整个曲库迁到对象存储，无需改动任何歌曲文件。",
+  "theme": { "default": "cloud", "options": ["cloud", "forest", "midnight"] },
+  "layout": { "default": "auto", "options": ["auto", "desktop", "mobile"] },
+  "backends": {
+    "admin": {
+      "label": "在线管理后台",
+      "endpoint": "",
+      "note": "未配置时，内容只能通过本地编辑 content/ + git push 发布。"
+    },
+    "guestPosts": {
+      "label": "访客发帖",
+      "endpoint": "",
+      "note": "默认关闭：只有站长发布内容，访客免登录听歌。"
+    },
+    "comments": {
+      "label": "评论",
+      "endpoint": "",
+      "note": "未配置时不显示评论输入框，只显示状态说明。"
+    },
+    "accountSync": {
+      "label": "跨设备同步",
+      "endpoint": "",
+      "note": "未配置时收藏 / 最近播放 / 队列 / 进度只存在当前浏览器，不代表跨设备同步。"
+    },
+    "wechat": {
+      "label": "微信 JS-SDK 签名",
+      "signEndpoint": "",
+      "appId": "",
+      "note": "签名必须由独立服务在运行时签发。AppSecret / access_token / jsapi_ticket 绝不进入前端、仓库或构建产物。"
+    }
+  },
+  "share": { "qr": true, "poster": true },
+  "experimental": { "audioSession": false }
+}

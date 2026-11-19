@@ -1,0 +1,59 @@
+name: Deploy music house to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# GitHub Pages 官方部署方式：构建产物作为 artifact 上传，不需要把 dist 提交进仓库
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dev dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npm run typecheck
+
+      # 测试内部会反复重建 dist（含 DEMO），所以必须放在生产构建之前
+      - name: Test
+        run: npm test
+
+      - name: Build (production, excludes DEMO fixtures)
+        run: npm run build
+
+      - name: Verify deep links & assets in the built output
+        run: node tools/check-assets.mjs --dist dist
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

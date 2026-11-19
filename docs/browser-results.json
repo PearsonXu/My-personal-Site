@@ -1,0 +1,1179 @@
+{
+  "ranAt": "2026-11-19T06:24:33.903Z",
+  "browser": "Chrome/157.0.8103.79",
+  "total": 195,
+  "passed": 195,
+  "failed": 0,
+  "results": [
+    {
+      "group": "默认与回退",
+      "name": "首次访问默认 cloud（系统深色偏好不覆盖）",
+      "ok": true,
+      "detail": "theme=cloud layout=auto bg=rgb(245, 246, 248)（系统偏好 dark）"
+    },
+    {
+      "group": "默认与回退",
+      "name": "localStorage 不可用时回退 cloud + auto 且页面可用",
+      "ok": true,
+      "detail": "存储不可用仍能播放，外观回退 cloud"
+    },
+    {
+      "group": "cloud × desktop · 首页布局",
+      "name": "无横向溢出",
+      "ok": true,
+      "detail": "1440 ≤ 1440"
+    },
+    {
+      "group": "cloud × desktop · 首页布局",
+      "name": "常驻播放器在视口内且不被遮挡",
+      "ok": true,
+      "detail": "高度 80px，底边 900 / 视口 900"
+    },
+    {
+      "group": "cloud × desktop · 首页布局",
+      "name": "关键按钮可点击（命中测试）",
+      "ok": true,
+      "detail": "播放器与头部按钮全部可命中"
+    },
+    {
+      "group": "cloud × desktop · 首页布局",
+      "name": "触控目标尺寸 ≥ 34px",
+      "ok": true,
+      "detail": "全部达标"
+    },
+    {
+      "group": "cloud × desktop · 单曲页布局",
+      "name": "无横向溢出",
+      "ok": true,
+      "detail": "1440 ≤ 1440"
+    },
+    {
+      "group": "cloud × desktop · 单曲页布局",
+      "name": "常驻播放器在视口内且不被遮挡",
+      "ok": true,
+      "detail": "高度 80px，底边 900 / 视口 900"
+    },
+    {
+      "group": "cloud × desktop · 单曲页布局",
+      "name": "关键按钮可点击（命中测试）",
+      "ok": true,
+      "detail": "播放器与头部按钮全部可命中"
+    },
+    {
+      "group": "cloud × desktop · 单曲页布局",
+      "name": "触控目标尺寸 ≥ 34px",
+      "ok": true,
+      "detail": "全部达标"
+    },
+    {
+      "group": "cloud × desktop",
+      "name": "全屏播放页：控件在视口内且可点击",
+      "ok": true,
+      "detail": "全屏播放页所有按钮可见可点"
+    },
+    {
+      "group": "cloud × desktop",
+      "name": "播放：真实 MP3 解码并推进时间",
+      "ok": true,
+      "detail": "14.38s → 15.66s，duration=36.05s，buffered=32.8s"
+    },
+    {
+      "group": "cloud × desktop",
+      "name": "暂停 / 继续",
+      "ok": true,
+      "detail": "暂停于 15.67s 后恢复"
+    },
+    {
+      "group": "cloud × desktop",
+      "name": "拖动进度条",
+      "ok": true,
+      "detail": "seek → 18.47s"
+    },
+    {
+      "group": "cloud × desktop",
+      "name": "下一首 / 上一首",
+      "ok": true,
+      "detail": "next → demo-paper-boat（真实播放），prev → demo-night-ferry"
+    },
+    {
+      "group": "cloud × desktop",
+      "name": "音量控制",
+      "ok": true,
+      "detail": "volume=0.4，静音可切换"
+    },
+    {
+      "group": "cloud × desktop",
+      "name": "四种播放模式",
+      "ok": true,
+      "detail": "order → repeat-all → repeat-one → shuffle"
+    },
+    {
+      "group": "cloud × desktop",
+      "name": "队列：添加 / 重复 / 删除 / 排序 / 清空",
+      "ok": true,
+      "detail": "4 项（含重复）→ 排序 → 删除 → 面板 → 清空"
+    },
+    {
+      "group": "cloud × desktop",
+      "name": "搜索：歌名 / 歌词 / 无结果",
+      "ok": true,
+      "detail": "歌名 1 · 歌词 1 · 无结果 0"
+    },
+    {
+      "group": "cloud × desktop",
+      "name": "标签筛选与展示模式",
+      "ok": true,
+      "detail": "标签筛选 + 列表/封面墙/唱片"
+    },
+    {
+      "group": "cloud × desktop",
+      "name": "专辑与歌单一键播放",
+      "ok": true,
+      "detail": "专辑 2 首播放 · 歌单加入队列"
+    },
+    {
+      "group": "cloud × desktop",
+      "name": "收藏与最近播放",
+      "ok": true,
+      "detail": "收藏 1 · 最近 2"
+    },
+    {
+      "group": "cloud × desktop",
+      "name": "LRC 同步高亮与点击跳转",
+      "ok": true,
+      "detail": "13s → 第 4 行；点击第 7 行 → 19.6s"
+    },
+    {
+      "group": "cloud × desktop",
+      "name": "纯音乐 / 无歌词空状态",
+      "ok": true,
+      "detail": "纯音乐：无歌词、不高亮"
+    },
+    {
+      "group": "cloud × desktop",
+      "name": "快速切歌 A→B→A，歌词不串台",
+      "ok": true,
+      "detail": "最终 demo-night-ferry，歌词「夜渡 · 测试音源 A」"
+    },
+    {
+      "group": "cloud × desktop",
+      "name": "失效资源 → error 状态与可读提示",
+      "ok": true,
+      "detail": "无法开始播放：Failed to load because no supported source was found."
+    },
+    {
+      "group": "cloud × desktop",
+      "name": "网络中断 → 不假装在播",
+      "ok": true,
+      "detail": "断网状态 error，恢复后可继续播放"
+    },
+    {
+      "group": "cloud × desktop",
+      "name": "刷新后恢复队列与进度，且不自动出声",
+      "ok": true,
+      "detail": "恢复 2 首，进度 11.27s，保持暂停"
+    },
+    {
+      "group": "cloud × desktop",
+      "name": "分享：规范链接 / 复制 / 二维码",
+      "ok": true,
+      "detail": "canonical 正确 · 二维码可见 · 已复制"
+    },
+    {
+      "group": "cloud × desktop",
+      "name": "深链接直达与刷新",
+      "ok": true,
+      "detail": "7 条深层路径直达 + 刷新均正常"
+    },
+    {
+      "group": "cloud × desktop",
+      "name": "站内导航不断歌（真实浏览器）",
+      "ok": true,
+      "detail": "11.29s → 12.16s，同一 audio 实例"
+    },
+    {
+      "group": "cloud × desktop",
+      "name": "主题 / 布局切换保留全部播放状态",
+      "ok": true,
+      "detail": "3 主题 × 3 布局 × 播放/暂停两态全部保持"
+    },
+    {
+      "group": "cloud × desktop",
+      "name": "设置记忆：刷新后恢复外观与布局",
+      "ok": true,
+      "detail": "forest + mobile 已恢复"
+    },
+    {
+      "group": "cloud × mobile · 首页布局",
+      "name": "无横向溢出",
+      "ok": true,
+      "detail": "390 ≤ 390"
+    },
+    {
+      "group": "cloud × mobile · 首页布局",
+      "name": "常驻播放器在视口内且不被遮挡",
+      "ok": true,
+      "detail": "高度 68px，底边 844 / 视口 844"
+    },
+    {
+      "group": "cloud × mobile · 首页布局",
+      "name": "关键按钮可点击（命中测试）",
+      "ok": true,
+      "detail": "播放器与头部按钮全部可命中"
+    },
+    {
+      "group": "cloud × mobile · 首页布局",
+      "name": "触控目标尺寸 ≥ 34px",
+      "ok": true,
+      "detail": "全部达标"
+    },
+    {
+      "group": "cloud × mobile · 单曲页布局",
+      "name": "无横向溢出",
+      "ok": true,
+      "detail": "390 ≤ 390"
+    },
+    {
+      "group": "cloud × mobile · 单曲页布局",
+      "name": "常驻播放器在视口内且不被遮挡",
+      "ok": true,
+      "detail": "高度 68px，底边 844 / 视口 844"
+    },
+    {
+      "group": "cloud × mobile · 单曲页布局",
+      "name": "关键按钮可点击（命中测试）",
+      "ok": true,
+      "detail": "播放器与头部按钮全部可命中"
+    },
+    {
+      "group": "cloud × mobile · 单曲页布局",
+      "name": "触控目标尺寸 ≥ 34px",
+      "ok": true,
+      "detail": "全部达标"
+    },
+    {
+      "group": "cloud × mobile",
+      "name": "全屏播放页：控件在视口内且可点击",
+      "ok": true,
+      "detail": "全屏播放页所有按钮可见可点"
+    },
+    {
+      "group": "cloud × mobile",
+      "name": "播放：真实 MP3 解码并推进时间",
+      "ok": true,
+      "detail": "14.48s → 15.75s，duration=36.05s，buffered=32.8s"
+    },
+    {
+      "group": "cloud × mobile",
+      "name": "暂停 / 继续",
+      "ok": true,
+      "detail": "暂停于 15.76s 后恢复"
+    },
+    {
+      "group": "cloud × mobile",
+      "name": "拖动进度条",
+      "ok": true,
+      "detail": "seek → 18.47s"
+    },
+    {
+      "group": "cloud × mobile",
+      "name": "下一首 / 上一首",
+      "ok": true,
+      "detail": "next → demo-paper-boat（真实播放），prev → demo-night-ferry"
+    },
+    {
+      "group": "cloud × mobile",
+      "name": "四种播放模式",
+      "ok": true,
+      "detail": "order → repeat-all → repeat-one → shuffle"
+    },
+    {
+      "group": "cloud × mobile",
+      "name": "队列：添加 / 重复 / 删除 / 排序 / 清空",
+      "ok": true,
+      "detail": "4 项（含重复）→ 排序 → 删除 → 面板 → 清空"
+    },
+    {
+      "group": "cloud × mobile",
+      "name": "搜索：歌名 / 歌词 / 无结果",
+      "ok": true,
+      "detail": "歌名 1 · 歌词 1 · 无结果 0"
+    },
+    {
+      "group": "cloud × mobile",
+      "name": "标签筛选与展示模式",
+      "ok": true,
+      "detail": "标签筛选 + 列表/封面墙/唱片"
+    },
+    {
+      "group": "cloud × mobile",
+      "name": "专辑与歌单一键播放",
+      "ok": true,
+      "detail": "专辑 2 首播放 · 歌单加入队列"
+    },
+    {
+      "group": "cloud × mobile",
+      "name": "收藏与最近播放",
+      "ok": true,
+      "detail": "收藏 1 · 最近 2"
+    },
+    {
+      "group": "cloud × mobile",
+      "name": "LRC 同步高亮与点击跳转",
+      "ok": true,
+      "detail": "13s → 第 4 行；点击第 7 行 → 19.6s"
+    },
+    {
+      "group": "cloud × mobile",
+      "name": "纯音乐 / 无歌词空状态",
+      "ok": true,
+      "detail": "纯音乐：无歌词、不高亮"
+    },
+    {
+      "group": "cloud × mobile",
+      "name": "快速切歌 A→B→A，歌词不串台",
+      "ok": true,
+      "detail": "最终 demo-night-ferry，歌词「夜渡 · 测试音源 A」"
+    },
+    {
+      "group": "cloud × mobile",
+      "name": "失效资源 → error 状态与可读提示",
+      "ok": true,
+      "detail": "无法开始播放：Failed to load because no supported source was found."
+    },
+    {
+      "group": "cloud × mobile",
+      "name": "网络中断 → 不假装在播",
+      "ok": true,
+      "detail": "断网状态 error，恢复后可继续播放"
+    },
+    {
+      "group": "cloud × mobile",
+      "name": "刷新后恢复队列与进度，且不自动出声",
+      "ok": true,
+      "detail": "恢复 2 首，进度 11.26s，保持暂停"
+    },
+    {
+      "group": "cloud × mobile",
+      "name": "分享：规范链接 / 复制 / 二维码",
+      "ok": true,
+      "detail": "canonical 正确 · 二维码可见 · 已复制"
+    },
+    {
+      "group": "cloud × mobile",
+      "name": "深链接直达与刷新",
+      "ok": true,
+      "detail": "7 条深层路径直达 + 刷新均正常"
+    },
+    {
+      "group": "cloud × mobile",
+      "name": "站内导航不断歌（真实浏览器）",
+      "ok": true,
+      "detail": "11.27s → 12.17s，同一 audio 实例"
+    },
+    {
+      "group": "cloud × mobile",
+      "name": "主题 / 布局切换保留全部播放状态",
+      "ok": true,
+      "detail": "3 主题 × 3 布局 × 播放/暂停两态全部保持"
+    },
+    {
+      "group": "cloud × mobile",
+      "name": "设置记忆：刷新后恢复外观与布局",
+      "ok": true,
+      "detail": "forest + mobile 已恢复"
+    },
+    {
+      "group": "forest × desktop · 首页布局",
+      "name": "无横向溢出",
+      "ok": true,
+      "detail": "1440 ≤ 1440"
+    },
+    {
+      "group": "forest × desktop · 首页布局",
+      "name": "常驻播放器在视口内且不被遮挡",
+      "ok": true,
+      "detail": "高度 80px，底边 900 / 视口 900"
+    },
+    {
+      "group": "forest × desktop · 首页布局",
+      "name": "关键按钮可点击（命中测试）",
+      "ok": true,
+      "detail": "播放器与头部按钮全部可命中"
+    },
+    {
+      "group": "forest × desktop · 首页布局",
+      "name": "触控目标尺寸 ≥ 34px",
+      "ok": true,
+      "detail": "全部达标"
+    },
+    {
+      "group": "forest × desktop · 单曲页布局",
+      "name": "无横向溢出",
+      "ok": true,
+      "detail": "1440 ≤ 1440"
+    },
+    {
+      "group": "forest × desktop · 单曲页布局",
+      "name": "常驻播放器在视口内且不被遮挡",
+      "ok": true,
+      "detail": "高度 80px，底边 900 / 视口 900"
+    },
+    {
+      "group": "forest × desktop · 单曲页布局",
+      "name": "关键按钮可点击（命中测试）",
+      "ok": true,
+      "detail": "播放器与头部按钮全部可命中"
+    },
+    {
+      "group": "forest × desktop · 单曲页布局",
+      "name": "触控目标尺寸 ≥ 34px",
+      "ok": true,
+      "detail": "全部达标"
+    },
+    {
+      "group": "forest × desktop",
+      "name": "全屏播放页：控件在视口内且可点击",
+      "ok": true,
+      "detail": "全屏播放页所有按钮可见可点"
+    },
+    {
+      "group": "forest × desktop",
+      "name": "播放：真实 MP3 解码并推进时间",
+      "ok": true,
+      "detail": "14.40s → 15.69s，duration=36.05s，buffered=28.7s"
+    },
+    {
+      "group": "forest × desktop",
+      "name": "暂停 / 继续",
+      "ok": true,
+      "detail": "暂停于 15.69s 后恢复"
+    },
+    {
+      "group": "forest × desktop",
+      "name": "拖动进度条",
+      "ok": true,
+      "detail": "seek → 18.45s"
+    },
+    {
+      "group": "forest × desktop",
+      "name": "下一首 / 上一首",
+      "ok": true,
+      "detail": "next → demo-paper-boat（真实播放），prev → demo-night-ferry"
+    },
+    {
+      "group": "forest × desktop",
+      "name": "音量控制",
+      "ok": true,
+      "detail": "volume=0.4，静音可切换"
+    },
+    {
+      "group": "forest × desktop",
+      "name": "四种播放模式",
+      "ok": true,
+      "detail": "order → repeat-all → repeat-one → shuffle"
+    },
+    {
+      "group": "forest × desktop",
+      "name": "队列：添加 / 重复 / 删除 / 排序 / 清空",
+      "ok": true,
+      "detail": "4 项（含重复）→ 排序 → 删除 → 面板 → 清空"
+    },
+    {
+      "group": "forest × desktop",
+      "name": "搜索：歌名 / 歌词 / 无结果",
+      "ok": true,
+      "detail": "歌名 1 · 歌词 1 · 无结果 0"
+    },
+    {
+      "group": "forest × desktop",
+      "name": "标签筛选与展示模式",
+      "ok": true,
+      "detail": "标签筛选 + 列表/封面墙/唱片"
+    },
+    {
+      "group": "forest × desktop",
+      "name": "专辑与歌单一键播放",
+      "ok": true,
+      "detail": "专辑 2 首播放 · 歌单加入队列"
+    },
+    {
+      "group": "forest × desktop",
+      "name": "收藏与最近播放",
+      "ok": true,
+      "detail": "收藏 1 · 最近 2"
+    },
+    {
+      "group": "forest × desktop",
+      "name": "LRC 同步高亮与点击跳转",
+      "ok": true,
+      "detail": "13s → 第 4 行；点击第 7 行 → 19.6s"
+    },
+    {
+      "group": "forest × desktop",
+      "name": "纯音乐 / 无歌词空状态",
+      "ok": true,
+      "detail": "纯音乐：无歌词、不高亮"
+    },
+    {
+      "group": "forest × desktop",
+      "name": "快速切歌 A→B→A，歌词不串台",
+      "ok": true,
+      "detail": "最终 demo-night-ferry，歌词「夜渡 · 测试音源 A」"
+    },
+    {
+      "group": "forest × desktop",
+      "name": "失效资源 → error 状态与可读提示",
+      "ok": true,
+      "detail": "无法开始播放：Failed to load because no supported source was found."
+    },
+    {
+      "group": "forest × desktop",
+      "name": "网络中断 → 不假装在播",
+      "ok": true,
+      "detail": "断网状态 error，恢复后可继续播放"
+    },
+    {
+      "group": "forest × desktop",
+      "name": "刷新后恢复队列与进度，且不自动出声",
+      "ok": true,
+      "detail": "恢复 2 首，进度 11.25s，保持暂停"
+    },
+    {
+      "group": "forest × desktop",
+      "name": "分享：规范链接 / 复制 / 二维码",
+      "ok": true,
+      "detail": "canonical 正确 · 二维码可见 · 已复制"
+    },
+    {
+      "group": "forest × desktop",
+      "name": "深链接直达与刷新",
+      "ok": true,
+      "detail": "7 条深层路径直达 + 刷新均正常"
+    },
+    {
+      "group": "forest × desktop",
+      "name": "站内导航不断歌（真实浏览器）",
+      "ok": true,
+      "detail": "11.27s → 12.14s，同一 audio 实例"
+    },
+    {
+      "group": "forest × desktop",
+      "name": "主题 / 布局切换保留全部播放状态",
+      "ok": true,
+      "detail": "3 主题 × 3 布局 × 播放/暂停两态全部保持"
+    },
+    {
+      "group": "forest × desktop",
+      "name": "设置记忆：刷新后恢复外观与布局",
+      "ok": true,
+      "detail": "forest + mobile 已恢复"
+    },
+    {
+      "group": "forest × mobile · 首页布局",
+      "name": "无横向溢出",
+      "ok": true,
+      "detail": "390 ≤ 390"
+    },
+    {
+      "group": "forest × mobile · 首页布局",
+      "name": "常驻播放器在视口内且不被遮挡",
+      "ok": true,
+      "detail": "高度 68px，底边 844 / 视口 844"
+    },
+    {
+      "group": "forest × mobile · 首页布局",
+      "name": "关键按钮可点击（命中测试）",
+      "ok": true,
+      "detail": "播放器与头部按钮全部可命中"
+    },
+    {
+      "group": "forest × mobile · 首页布局",
+      "name": "触控目标尺寸 ≥ 34px",
+      "ok": true,
+      "detail": "全部达标"
+    },
+    {
+      "group": "forest × mobile · 单曲页布局",
+      "name": "无横向溢出",
+      "ok": true,
+      "detail": "390 ≤ 390"
+    },
+    {
+      "group": "forest × mobile · 单曲页布局",
+      "name": "常驻播放器在视口内且不被遮挡",
+      "ok": true,
+      "detail": "高度 68px，底边 844 / 视口 844"
+    },
+    {
+      "group": "forest × mobile · 单曲页布局",
+      "name": "关键按钮可点击（命中测试）",
+      "ok": true,
+      "detail": "播放器与头部按钮全部可命中"
+    },
+    {
+      "group": "forest × mobile · 单曲页布局",
+      "name": "触控目标尺寸 ≥ 34px",
+      "ok": true,
+      "detail": "全部达标"
+    },
+    {
+      "group": "forest × mobile",
+      "name": "全屏播放页：控件在视口内且可点击",
+      "ok": true,
+      "detail": "全屏播放页所有按钮可见可点"
+    },
+    {
+      "group": "forest × mobile",
+      "name": "播放：真实 MP3 解码并推进时间",
+      "ok": true,
+      "detail": "14.50s → 15.79s，duration=36.05s，buffered=28.7s"
+    },
+    {
+      "group": "forest × mobile",
+      "name": "暂停 / 继续",
+      "ok": true,
+      "detail": "暂停于 15.79s 后恢复"
+    },
+    {
+      "group": "forest × mobile",
+      "name": "拖动进度条",
+      "ok": true,
+      "detail": "seek → 18.47s"
+    },
+    {
+      "group": "forest × mobile",
+      "name": "下一首 / 上一首",
+      "ok": true,
+      "detail": "next → demo-paper-boat（真实播放），prev → demo-night-ferry"
+    },
+    {
+      "group": "forest × mobile",
+      "name": "四种播放模式",
+      "ok": true,
+      "detail": "order → repeat-all → repeat-one → shuffle"
+    },
+    {
+      "group": "forest × mobile",
+      "name": "队列：添加 / 重复 / 删除 / 排序 / 清空",
+      "ok": true,
+      "detail": "4 项（含重复）→ 排序 → 删除 → 面板 → 清空"
+    },
+    {
+      "group": "forest × mobile",
+      "name": "搜索：歌名 / 歌词 / 无结果",
+      "ok": true,
+      "detail": "歌名 1 · 歌词 1 · 无结果 0"
+    },
+    {
+      "group": "forest × mobile",
+      "name": "标签筛选与展示模式",
+      "ok": true,
+      "detail": "标签筛选 + 列表/封面墙/唱片"
+    },
+    {
+      "group": "forest × mobile",
+      "name": "专辑与歌单一键播放",
+      "ok": true,
+      "detail": "专辑 2 首播放 · 歌单加入队列"
+    },
+    {
+      "group": "forest × mobile",
+      "name": "收藏与最近播放",
+      "ok": true,
+      "detail": "收藏 1 · 最近 2"
+    },
+    {
+      "group": "forest × mobile",
+      "name": "LRC 同步高亮与点击跳转",
+      "ok": true,
+      "detail": "13s → 第 4 行；点击第 7 行 → 19.6s"
+    },
+    {
+      "group": "forest × mobile",
+      "name": "纯音乐 / 无歌词空状态",
+      "ok": true,
+      "detail": "纯音乐：无歌词、不高亮"
+    },
+    {
+      "group": "forest × mobile",
+      "name": "快速切歌 A→B→A，歌词不串台",
+      "ok": true,
+      "detail": "最终 demo-night-ferry，歌词「夜渡 · 测试音源 A」"
+    },
+    {
+      "group": "forest × mobile",
+      "name": "失效资源 → error 状态与可读提示",
+      "ok": true,
+      "detail": "无法开始播放：Failed to load because no supported source was found."
+    },
+    {
+      "group": "forest × mobile",
+      "name": "网络中断 → 不假装在播",
+      "ok": true,
+      "detail": "断网状态 error，恢复后可继续播放"
+    },
+    {
+      "group": "forest × mobile",
+      "name": "刷新后恢复队列与进度，且不自动出声",
+      "ok": true,
+      "detail": "恢复 2 首，进度 11.26s，保持暂停"
+    },
+    {
+      "group": "forest × mobile",
+      "name": "分享：规范链接 / 复制 / 二维码",
+      "ok": true,
+      "detail": "canonical 正确 · 二维码可见 · 已复制"
+    },
+    {
+      "group": "forest × mobile",
+      "name": "深链接直达与刷新",
+      "ok": true,
+      "detail": "7 条深层路径直达 + 刷新均正常"
+    },
+    {
+      "group": "forest × mobile",
+      "name": "站内导航不断歌（真实浏览器）",
+      "ok": true,
+      "detail": "11.27s → 12.14s，同一 audio 实例"
+    },
+    {
+      "group": "forest × mobile",
+      "name": "主题 / 布局切换保留全部播放状态",
+      "ok": true,
+      "detail": "3 主题 × 3 布局 × 播放/暂停两态全部保持"
+    },
+    {
+      "group": "forest × mobile",
+      "name": "设置记忆：刷新后恢复外观与布局",
+      "ok": true,
+      "detail": "forest + mobile 已恢复"
+    },
+    {
+      "group": "midnight × desktop · 首页布局",
+      "name": "无横向溢出",
+      "ok": true,
+      "detail": "1440 ≤ 1440"
+    },
+    {
+      "group": "midnight × desktop · 首页布局",
+      "name": "常驻播放器在视口内且不被遮挡",
+      "ok": true,
+      "detail": "高度 80px，底边 900 / 视口 900"
+    },
+    {
+      "group": "midnight × desktop · 首页布局",
+      "name": "关键按钮可点击（命中测试）",
+      "ok": true,
+      "detail": "播放器与头部按钮全部可命中"
+    },
+    {
+      "group": "midnight × desktop · 首页布局",
+      "name": "触控目标尺寸 ≥ 34px",
+      "ok": true,
+      "detail": "全部达标"
+    },
+    {
+      "group": "midnight × desktop · 单曲页布局",
+      "name": "无横向溢出",
+      "ok": true,
+      "detail": "1440 ≤ 1440"
+    },
+    {
+      "group": "midnight × desktop · 单曲页布局",
+      "name": "常驻播放器在视口内且不被遮挡",
+      "ok": true,
+      "detail": "高度 80px，底边 900 / 视口 900"
+    },
+    {
+      "group": "midnight × desktop · 单曲页布局",
+      "name": "关键按钮可点击（命中测试）",
+      "ok": true,
+      "detail": "播放器与头部按钮全部可命中"
+    },
+    {
+      "group": "midnight × desktop · 单曲页布局",
+      "name": "触控目标尺寸 ≥ 34px",
+      "ok": true,
+      "detail": "全部达标"
+    },
+    {
+      "group": "midnight × desktop",
+      "name": "全屏播放页：控件在视口内且可点击",
+      "ok": true,
+      "detail": "全屏播放页所有按钮可见可点"
+    },
+    {
+      "group": "midnight × desktop",
+      "name": "播放：真实 MP3 解码并推进时间",
+      "ok": true,
+      "detail": "14.41s → 15.68s，duration=36.05s，buffered=20.7s"
+    },
+    {
+      "group": "midnight × desktop",
+      "name": "暂停 / 继续",
+      "ok": true,
+      "detail": "暂停于 15.69s 后恢复"
+    },
+    {
+      "group": "midnight × desktop",
+      "name": "拖动进度条",
+      "ok": true,
+      "detail": "seek → 18.47s"
+    },
+    {
+      "group": "midnight × desktop",
+      "name": "下一首 / 上一首",
+      "ok": true,
+      "detail": "next → demo-paper-boat（真实播放），prev → demo-night-ferry"
+    },
+    {
+      "group": "midnight × desktop",
+      "name": "音量控制",
+      "ok": true,
+      "detail": "volume=0.4，静音可切换"
+    },
+    {
+      "group": "midnight × desktop",
+      "name": "四种播放模式",
+      "ok": true,
+      "detail": "order → repeat-all → repeat-one → shuffle"
+    },
+    {
+      "group": "midnight × desktop",
+      "name": "队列：添加 / 重复 / 删除 / 排序 / 清空",
+      "ok": true,
+      "detail": "4 项（含重复）→ 排序 → 删除 → 面板 → 清空"
+    },
+    {
+      "group": "midnight × desktop",
+      "name": "搜索：歌名 / 歌词 / 无结果",
+      "ok": true,
+      "detail": "歌名 1 · 歌词 1 · 无结果 0"
+    },
+    {
+      "group": "midnight × desktop",
+      "name": "标签筛选与展示模式",
+      "ok": true,
+      "detail": "标签筛选 + 列表/封面墙/唱片"
+    },
+    {
+      "group": "midnight × desktop",
+      "name": "专辑与歌单一键播放",
+      "ok": true,
+      "detail": "专辑 2 首播放 · 歌单加入队列"
+    },
+    {
+      "group": "midnight × desktop",
+      "name": "收藏与最近播放",
+      "ok": true,
+      "detail": "收藏 1 · 最近 2"
+    },
+    {
+      "group": "midnight × desktop",
+      "name": "LRC 同步高亮与点击跳转",
+      "ok": true,
+      "detail": "13s → 第 4 行；点击第 7 行 → 19.6s"
+    },
+    {
+      "group": "midnight × desktop",
+      "name": "纯音乐 / 无歌词空状态",
+      "ok": true,
+      "detail": "纯音乐：无歌词、不高亮"
+    },
+    {
+      "group": "midnight × desktop",
+      "name": "快速切歌 A→B→A，歌词不串台",
+      "ok": true,
+      "detail": "最终 demo-night-ferry，歌词「夜渡 · 测试音源 A」"
+    },
+    {
+      "group": "midnight × desktop",
+      "name": "失效资源 → error 状态与可读提示",
+      "ok": true,
+      "detail": "无法开始播放：Failed to load because no supported source was found."
+    },
+    {
+      "group": "midnight × desktop",
+      "name": "网络中断 → 不假装在播",
+      "ok": true,
+      "detail": "断网状态 error，恢复后可继续播放"
+    },
+    {
+      "group": "midnight × desktop",
+      "name": "刷新后恢复队列与进度，且不自动出声",
+      "ok": true,
+      "detail": "恢复 2 首，进度 11.25s，保持暂停"
+    },
+    {
+      "group": "midnight × desktop",
+      "name": "分享：规范链接 / 复制 / 二维码",
+      "ok": true,
+      "detail": "canonical 正确 · 二维码可见 · 已复制"
+    },
+    {
+      "group": "midnight × desktop",
+      "name": "深链接直达与刷新",
+      "ok": true,
+      "detail": "7 条深层路径直达 + 刷新均正常"
+    },
+    {
+      "group": "midnight × desktop",
+      "name": "站内导航不断歌（真实浏览器）",
+      "ok": true,
+      "detail": "11.26s → 12.15s，同一 audio 实例"
+    },
+    {
+      "group": "midnight × desktop",
+      "name": "主题 / 布局切换保留全部播放状态",
+      "ok": true,
+      "detail": "3 主题 × 3 布局 × 播放/暂停两态全部保持"
+    },
+    {
+      "group": "midnight × desktop",
+      "name": "设置记忆：刷新后恢复外观与布局",
+      "ok": true,
+      "detail": "forest + mobile 已恢复"
+    },
+    {
+      "group": "midnight × mobile · 首页布局",
+      "name": "无横向溢出",
+      "ok": true,
+      "detail": "390 ≤ 390"
+    },
+    {
+      "group": "midnight × mobile · 首页布局",
+      "name": "常驻播放器在视口内且不被遮挡",
+      "ok": true,
+      "detail": "高度 68px，底边 844 / 视口 844"
+    },
+    {
+      "group": "midnight × mobile · 首页布局",
+      "name": "关键按钮可点击（命中测试）",
+      "ok": true,
+      "detail": "播放器与头部按钮全部可命中"
+    },
+    {
+      "group": "midnight × mobile · 首页布局",
+      "name": "触控目标尺寸 ≥ 34px",
+      "ok": true,
+      "detail": "全部达标"
+    },
+    {
+      "group": "midnight × mobile · 单曲页布局",
+      "name": "无横向溢出",
+      "ok": true,
+      "detail": "390 ≤ 390"
+    },
+    {
+      "group": "midnight × mobile · 单曲页布局",
+      "name": "常驻播放器在视口内且不被遮挡",
+      "ok": true,
+      "detail": "高度 68px，底边 844 / 视口 844"
+    },
+    {
+      "group": "midnight × mobile · 单曲页布局",
+      "name": "关键按钮可点击（命中测试）",
+      "ok": true,
+      "detail": "播放器与头部按钮全部可命中"
+    },
+    {
+      "group": "midnight × mobile · 单曲页布局",
+      "name": "触控目标尺寸 ≥ 34px",
+      "ok": true,
+      "detail": "全部达标"
+    },
+    {
+      "group": "midnight × mobile",
+      "name": "全屏播放页：控件在视口内且可点击",
+      "ok": true,
+      "detail": "全屏播放页所有按钮可见可点"
+    },
+    {
+      "group": "midnight × mobile",
+      "name": "播放：真实 MP3 解码并推进时间",
+      "ok": true,
+      "detail": "14.47s → 15.74s，duration=36.05s，buffered=36.0s"
+    },
+    {
+      "group": "midnight × mobile",
+      "name": "暂停 / 继续",
+      "ok": true,
+      "detail": "暂停于 15.75s 后恢复"
+    },
+    {
+      "group": "midnight × mobile",
+      "name": "拖动进度条",
+      "ok": true,
+      "detail": "seek → 18.45s"
+    },
+    {
+      "group": "midnight × mobile",
+      "name": "下一首 / 上一首",
+      "ok": true,
+      "detail": "next → demo-paper-boat（真实播放），prev → demo-night-ferry"
+    },
+    {
+      "group": "midnight × mobile",
+      "name": "四种播放模式",
+      "ok": true,
+      "detail": "order → repeat-all → repeat-one → shuffle"
+    },
+    {
+      "group": "midnight × mobile",
+      "name": "队列：添加 / 重复 / 删除 / 排序 / 清空",
+      "ok": true,
+      "detail": "4 项（含重复）→ 排序 → 删除 → 面板 → 清空"
+    },
+    {
+      "group": "midnight × mobile",
+      "name": "搜索：歌名 / 歌词 / 无结果",
+      "ok": true,
+      "detail": "歌名 1 · 歌词 1 · 无结果 0"
+    },
+    {
+      "group": "midnight × mobile",
+      "name": "标签筛选与展示模式",
+      "ok": true,
+      "detail": "标签筛选 + 列表/封面墙/唱片"
+    },
+    {
+      "group": "midnight × mobile",
+      "name": "专辑与歌单一键播放",
+      "ok": true,
+      "detail": "专辑 2 首播放 · 歌单加入队列"
+    },
+    {
+      "group": "midnight × mobile",
+      "name": "收藏与最近播放",
+      "ok": true,
+      "detail": "收藏 1 · 最近 2"
+    },
+    {
+      "group": "midnight × mobile",
+      "name": "LRC 同步高亮与点击跳转",
+      "ok": true,
+      "detail": "13s → 第 4 行；点击第 7 行 → 19.5s"
+    },
+    {
+      "group": "midnight × mobile",
+      "name": "纯音乐 / 无歌词空状态",
+      "ok": true,
+      "detail": "纯音乐：无歌词、不高亮"
+    },
+    {
+      "group": "midnight × mobile",
+      "name": "快速切歌 A→B→A，歌词不串台",
+      "ok": true,
+      "detail": "最终 demo-night-ferry，歌词「夜渡 · 测试音源 A」"
+    },
+    {
+      "group": "midnight × mobile",
+      "name": "失效资源 → error 状态与可读提示",
+      "ok": true,
+      "detail": "无法开始播放：Failed to load because no supported source was found."
+    },
+    {
+      "group": "midnight × mobile",
+      "name": "网络中断 → 不假装在播",
+      "ok": true,
+      "detail": "断网状态 error，恢复后可继续播放"
+    },
+    {
+      "group": "midnight × mobile",
+      "name": "刷新后恢复队列与进度，且不自动出声",
+      "ok": true,
+      "detail": "恢复 2 首，进度 11.26s，保持暂停"
+    },
+    {
+      "group": "midnight × mobile",
+      "name": "分享：规范链接 / 复制 / 二维码",
+      "ok": true,
+      "detail": "canonical 正确 · 二维码可见 · 已复制"
+    },
+    {
+      "group": "midnight × mobile",
+      "name": "深链接直达与刷新",
+      "ok": true,
+      "detail": "7 条深层路径直达 + 刷新均正常"
+    },
+    {
+      "group": "midnight × mobile",
+      "name": "站内导航不断歌（真实浏览器）",
+      "ok": true,
+      "detail": "11.27s → 12.16s，同一 audio 实例"
+    },
+    {
+      "group": "midnight × mobile",
+      "name": "主题 / 布局切换保留全部播放状态",
+      "ok": true,
+      "detail": "3 主题 × 3 布局 × 播放/暂停两态全部保持"
+    },
+    {
+      "group": "midnight × mobile",
+      "name": "设置记忆：刷新后恢复外观与布局",
+      "ok": true,
+      "detail": "forest + mobile 已恢复"
+    },
+    {
+      "group": "自动适配",
+      "name": "窄屏 360×740：形态正确且无溢出",
+      "ok": true,
+      "detail": "汉堡=true 完整控件=false 溢出=0px"
+    },
+    {
+      "group": "自动适配",
+      "name": "平板 768×1024：形态正确且无溢出",
+      "ok": true,
+      "detail": "汉堡=false 完整控件=true 溢出=0px"
+    },
+    {
+      "group": "自动适配",
+      "name": "宽屏 1920×1080：形态正确且无溢出",
+      "ok": true,
+      "detail": "汉堡=false 完整控件=true 溢出=0px"
+    },
+    {
+      "group": "手动布局",
+      "name": "宽屏 1440 选「手机」：确实变成手机形态",
+      "ok": true,
+      "detail": "汉堡=true 完整控件=false blur=0px"
+    },
+    {
+      "group": "手动布局",
+      "name": "窄屏 390 选「桌面」：保持桌面结构且不溢出",
+      "ok": true,
+      "detail": "汉堡=false 完整控件=true 溢出=0px"
+    },
+    {
+      "group": "手动布局 · 窄屏桌面",
+      "name": "无横向溢出",
+      "ok": true,
+      "detail": "390 ≤ 390"
+    },
+    {
+      "group": "手动布局 · 窄屏桌面",
+      "name": "常驻播放器在视口内且不被遮挡",
+      "ok": true,
+      "detail": "高度 158.953125px，底边 844 / 视口 844"
+    },
+    {
+      "group": "手动布局 · 窄屏桌面",
+      "name": "关键按钮可点击（命中测试）",
+      "ok": true,
+      "detail": "播放器与头部按钮全部可命中"
+    },
+    {
+      "group": "手动布局 · 窄屏桌面",
+      "name": "触控目标尺寸 ≥ 34px",
+      "ok": true,
+      "detail": "全部达标"
+    },
+    {
+      "group": "横竖屏",
+      "name": "竖屏 → 横屏 → 竖屏：不溢出、不断歌",
+      "ok": true,
+      "detail": "0.02s → 1.00s，两种朝向均无溢出"
+    }
+  ]
+}

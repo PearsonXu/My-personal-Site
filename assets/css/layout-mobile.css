@@ -1,0 +1,62 @@
+/* layout-mobile.css — 手机布局（auto 时 ≤760px 生效；手动选「手机」时无条件生效）
+   源文件只写普通规则，不要写 @media。 */
+
+:root { --pl-h:68px; --sp7:32px; --sp8:44px; }
+.wrap { padding-inline:var(--sp4); }
+
+.head__in { gap:var(--sp2); }
+.brand__txt em { display:none; }
+/* 用 absolute 而非 fixed：.head 有 backdrop-filter，会成为 fixed 子元素的包含块 */
+.nav { position:absolute; left:0; right:0; top:100%; margin:0; padding:var(--sp3) var(--sp4); background:var(--panel); border-bottom:1px solid var(--line-2); display:none; max-height:calc(100vh - var(--head-h) - var(--pl-h)); overflow-y:auto; z-index:99; box-shadow:var(--shadow); }
+.nav.is-open { display:block; }
+.nav__ul { flex-direction:column; gap:2px; }
+.nav__a { padding:12px; font-size:.95rem; min-height:44px; }
+.nav__burger { display:grid; }
+.nav__appearance { display:block; }
+.appearance-btn { width:34px; padding:0; }
+.appearance-btn__label { display:none; }
+.head__act { margin-left:auto; }
+
+.row { grid-template-columns:auto minmax(0,1fr) auto; gap:var(--sp2); }
+.row__no,.row__al,.row__d { display:none; }
+.rows--ordered .row { grid-template-columns:auto auto minmax(0,1fr) auto; }
+.rows--ordered .row__no { display:block; }
+.row .acts { display:none; }
+.grid--cards { grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:var(--sp3); }
+.card__play { opacity:1; transform:none; width:38px; height:38px; bottom:58px; }
+.card .acts { display:none; }
+.share__qr { flex-direction:column; }
+.share__row .btn { flex:1 1 auto; justify-content:center; }
+.note__art { width:72px; height:72px; }
+.btn { padding:10px 16px; }
+.libbar { flex-direction:column; align-items:stretch; }
+.viewswitch { justify-content:flex-start; overflow-x:auto; }
+.table { font-size:.82rem; }
+.table th,.table td { padding:8px 6px; }
+.sec__title { font-size:1.5rem; }
+.hero__cta { gap:var(--sp2); }
+.aboutgrid { grid-template-columns:1fr; }
+
+/* 迷你播放器 */
+.pl__bar { grid-template-columns:auto minmax(0,1fr) auto; gap:var(--sp3); padding:8px var(--sp4); }
+.pl__art img { width:44px; height:44px; }
+.pl__seekwrap { position:absolute; left:0; right:0; bottom:0; padding:0; }
+.pl__seekwrap .pl__times { display:none; }
+.pl__seekwrap .range { height:12px; }
+.pl__seekwrap .range::-webkit-slider-runnable-track { height:2px; }
+.pl__seekwrap .range::-webkit-slider-thumb { width:9px; height:9px; margin-top:-3.5px; }
+.pl__extra { display:none; }
+.pl__btns .pbtn[data-act="prev"] { display:none; }
+.pl__state { position:absolute; left:var(--sp4); right:var(--sp4); bottom:-1.2em; font-size:.6rem; }
+.pl__fullbtns { gap:var(--sp3); }
+.pl__stage { margin:var(--sp4) auto; }
+.pl__bigart { width:min(78vw,300px); }
+.pl__full { padding-left:var(--sp4); padding-right:var(--sp4); }
+
+/* 弹层：手机上贴底、可滚动、按钮够大 */
+.sheet { width:100%; max-width:100%; max-height:88vh; margin:auto 0 0; border-radius:var(--r-lg) var(--r-lg) 0 0; }
+.sheet__body { padding:var(--sp4); }
+.sheet__foot { padding:var(--sp3) var(--sp4) calc(var(--sp3) + var(--safe-b)); }
+.qitem { padding:10px 8px; }
+.qitem__act .iact { width:36px; height:36px; }
+.toasts { width:calc(100vw - 24px); }

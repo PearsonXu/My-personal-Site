@@ -1,0 +1,33 @@
+{
+  "name": "jinshizhuqing-music-house",
+  "version": "1.0.0",
+  "private": true,
+  "description": "金石竹青的音乐小屋 · 零运行时依赖的静态站点（GitHub Pages）",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node tools/build-site.mjs",
+    "build:demo": "node tools/build-site.mjs --demo",
+    "dev": "node tools/build-site.mjs --demo --serve",
+    "serve": "node tools/serve.mjs",
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test --test-concurrency=1 tests/*.test.mjs",
+    "check:assets": "node tools/check-assets.mjs",
+    "new:song": "node tools/new-song.mjs",
+    "new:note": "node tools/new-note.mjs",
+    "demo:audio": "node tools/make-demo-audio.mjs",
+    "verify": "npm run typecheck && npm run build:demo && npm test",
+    "browser:check": "node tools/browser-check.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "jsdom": "^25.0.1",
+    "lamejs": "^1.2.1",
+    "puppeteer-core": "^25.18.1",
+    "qrcode": "^1.5.4",
+    "typescript": "^7.0.2"
+  }
+}

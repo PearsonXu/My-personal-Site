@@ -1,0 +1,31 @@
+/* layout-desktop.css — 手动选「桌面」但屏幕很窄时的兜底。
+   目标：保持桌面结构（完整导航 + 全部播放器控件），但不横向溢出、按钮都点得到。
+   构建期会包在 @media (max-width:900px) 里，作用域 html[data-layout="desktop"]。 */
+
+:root { --pl-h:132px; }
+.head__in { gap:var(--sp2); }
+.brand__txt em { display:none; }
+.nav { margin-left:auto; min-width:0; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+.nav::-webkit-scrollbar { display:none; }
+.nav__ul { flex-wrap:nowrap; }
+.nav__a { padding:7px 9px; font-size:.8rem; white-space:nowrap; }
+.nav__burger { display:none; }
+.head__act { flex:0 0 auto; }
+.appearance-btn__label { display:none; }
+
+.hero__in { grid-template-columns:minmax(0,1fr); }
+.hero__art { max-width:280px; }
+.song__head { grid-template-columns:minmax(0,1fr); }
+.song__art { max-width:260px; }
+
+/* 播放器：桌面控件全在，但分行摆放，避免挤成一行溢出 */
+.pl__bar { grid-template-columns:auto minmax(0,1fr) auto; row-gap:6px; padding:8px var(--sp4); }
+.pl__art { grid-area:1/1/2/2; }
+.pl__meta { grid-area:1/2/2/3; }
+.pl__btns { grid-area:1/3/2/4; }
+.pl__seekwrap { grid-area:2/1/3/4; }
+.pl__extra { grid-area:3/1/4/4; overflow-x:auto; scrollbar-width:none; }
+.pl__extra::-webkit-scrollbar { display:none; }
+.pl__state { grid-area:4/1/5/4; }
+.pl__extra .pl__vol { display:flex; }
+.range--vol { width:60px; }

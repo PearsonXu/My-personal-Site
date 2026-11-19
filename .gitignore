@@ -1,3 +1,23 @@
 tools/i18n-keys.json
 tools/i18n-keys.txt
 .DS_Store
+
+# 构建产物（由 GitHub Actions 生成并上传为 Pages artifact）
+dist/
+
+# 依赖
+node_modules/
+
+# 母带 / 未发布音频：绝不进公开仓库（公开试听只用 assets/audio 下的 MP3）
+masters/
+*.wav
+*.aiff
+*.flac
+
+# 可再生的合成测试音：由 npm run demo:audio 生成，不进仓库
+assets/audio/_demo/
+
+# 本地凭据：微信 AppSecret / token / ticket 只能存在于独立后端服务
+.env
+.env.*
+*.secret.json

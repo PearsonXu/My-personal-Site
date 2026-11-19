@@ -1,0 +1,88 @@
+/* ═══════════════════════════════════════════════════════════════
+   player.css — 持久播放器（迷你条 + 全屏播放页）
+   这一层的 DOM 在 #page-root 之外，路由换页不会重建它。
+   ═══════════════════════════════════════════════════════════════ */
+
+#zx-audio { display:none; }
+
+/* ★ .pl 本身绝不能有 backdrop-filter / filter / transform：
+   那会让它成为 position:fixed 子元素（全屏播放页）的包含块，
+   把 inset:0 的全屏页压进这条 68~80px 的横条里，按钮会跑到视口外。
+   毛玻璃只加在 .pl__bar 上。 */
+.pl { position:fixed; left:0; right:0; bottom:0; z-index:150; padding-bottom:var(--safe-b); }
+.pl__bar { background:var(--pl-bg); border-top:1px solid var(--line-2); -webkit-backdrop-filter:blur(var(--blur)) saturate(150%); backdrop-filter:blur(var(--blur)) saturate(150%); }
+.pl__bar { display:grid; grid-template-columns:auto minmax(0,1.1fr) minmax(0,1.4fr) auto auto; align-items:center; gap:var(--sp4); max-width:var(--maxw); margin-inline:auto; padding:10px var(--sp5); min-height:var(--pl-h); }
+.pl__art { position:relative; padding:0; border:none; background:none; cursor:pointer; border-radius:10px; overflow:hidden; flex:0 0 auto; }
+.pl__art img { width:52px; height:52px; border-radius:var(--art-radius); border:1px solid var(--line); object-fit:cover; }
+.pl__meta { min-width:0; }
+.pl__title { font-size:.9rem; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.pl__sub { font-size:.75rem; color:var(--mute); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.pl__seekwrap { display:flex; flex-direction:column; gap:2px; min-width:0; }
+.pl__times { display:flex; justify-content:space-between; font-family:var(--font-m); font-size:.66rem; color:var(--mute); }
+.pl__btns { display:flex; align-items:center; gap:4px; }
+.pl__extra { display:flex; align-items:center; gap:2px; }
+.pl__vol { display:flex; align-items:center; gap:4px; }
+.pl__state { grid-column:1/-1; margin:0; font-family:var(--font-m); font-size:.68rem; color:var(--mute); min-height:1em; }
+.pl__state:empty { display:none; }
+
+.pbtn { display:grid; place-items:center; width:38px; height:38px; border-radius:10px; border:1px solid transparent; background:transparent; color:var(--dim); cursor:pointer; font-size:.95rem; transition:all var(--dur) var(--ease); }
+.pbtn:hover { color:var(--acc); background:rgba(var(--acc-rgb),.1); }
+.pbtn:disabled { opacity:.35; cursor:not-allowed; }
+.pbtn--play { width:44px; height:44px; border-radius:50%; background:var(--acc); color:var(--on-acc); font-size:1rem; }
+.pbtn--play:hover { background:var(--acc); color:var(--on-acc); transform:scale(1.06); }
+.pbtn--lg { width:64px; height:64px; font-size:1.5rem; }
+.pbtn.is-on { color:var(--acc-2); }
+.pbtn.is-active { color:var(--acc); background:rgba(var(--acc-rgb),.14); }
+
+.range { -webkit-appearance:none; appearance:none; width:100%; height:20px; background:transparent; cursor:pointer; }
+.range:disabled { cursor:not-allowed; opacity:.5; }
+.range::-webkit-slider-runnable-track { height:4px; border-radius:3px; background:linear-gradient(90deg,var(--acc) var(--pct,0%),rgba(var(--acc-rgb),.16) var(--pct,0%)); }
+.range::-moz-range-track { height:4px; border-radius:3px; background:rgba(var(--acc-rgb),.16); }
+.range::-moz-range-progress { height:4px; border-radius:3px; background:var(--acc); }
+.range::-webkit-slider-thumb { -webkit-appearance:none; appearance:none; width:13px; height:13px; margin-top:-4.5px; border-radius:50%; background:var(--acc); border:2px solid var(--bg); box-shadow:0 0 8px rgba(var(--acc-rgb),.6); }
+.range::-moz-range-thumb { width:13px; height:13px; border-radius:50%; background:var(--acc); border:2px solid var(--bg); }
+.range--vol { width:76px; }
+
+/* 状态可视化 */
+.pl[data-state="loading"] .pl__art::after,
+.pl[data-state="buffering"] .pl__art::after {
+  content:''; position:absolute; inset:0; border-radius:10px;
+  border:2px solid transparent; border-top-color:var(--acc); animation:spin .8s linear infinite;
+}
+.pl[data-state="blocked"] .pbtn--play { animation:beat 1.4s var(--ease) infinite; }
+@keyframes beat { 0%,100% { box-shadow:0 0 0 0 rgba(var(--acc-rgb),.5); } 50% { box-shadow:0 0 0 10px rgba(var(--acc-rgb),0); } }
+.pl[data-state="error"] .pl__state { color:var(--bad); }
+.pl[data-state="blocked"] .pl__state { color:var(--warn); }
+.pl[data-state="playing"] .pl__title { color:var(--text); }
+/* ── 全屏播放页 ─────────────────────────────────────── */
+.pl__full { position:fixed; inset:0; z-index:180; display:flex; flex-direction:column; padding:calc(var(--safe-t) + 12px) var(--sp5) calc(var(--safe-b) + 20px); background:linear-gradient(180deg,var(--bg-1),var(--bg)); overflow-y:auto; }
+.pl__full[hidden] { display:none; }
+.pl__fullhead { display:flex; align-items:center; gap:var(--sp3); max-width:760px; width:100%; margin-inline:auto; }
+.pl__fulltitle { flex:1; text-align:center; font-family:var(--font-m); font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; color:var(--mute); }
+.pl__stage { flex:1; display:flex; align-items:center; justify-content:center; max-width:760px; width:100%; margin:var(--sp5) auto; min-height:0; }
+.pl__bigart { position:relative; width:min(72vw,340px); aspect-ratio:1; }
+.pl__bigart img { width:100%; height:100%; object-fit:cover; border-radius:var(--r-lg); border:1px solid var(--line-2); box-shadow:var(--shadow); }
+.pl__hole { display:none; }
+.pl__stage[data-stage="vinyl"] .pl__bigart img { border-radius:50%; animation:spin 12s linear infinite; }
+.pl__stage[data-stage="vinyl"] .pl__hole { display:block; position:absolute; left:50%; top:50%; width:16%; height:16%; transform:translate(-50%,-50%); border-radius:50%; background:var(--bg); border:1px solid var(--line-2); }
+.pl[data-state="paused"] .pl__stage[data-stage="vinyl"] .pl__bigart img,
+.pl[data-state="idle"] .pl__stage[data-stage="vinyl"] .pl__bigart img { animation-play-state:paused; }
+.pl__stage[data-stage="lyrics"] .pl__bigart { display:none; }
+.pl__lyrics { display:none; width:100%; max-height:min(52vh,460px); overflow-y:auto; -webkit-overflow-scrolling:touch; padding:var(--sp5) var(--sp3); text-align:center; scroll-behavior:smooth; -webkit-mask-image:linear-gradient(180deg,transparent,#000 12%,#000 88%,transparent); mask-image:linear-gradient(180deg,transparent,#000 12%,#000 88%,transparent); }
+.pl__stage[data-stage="lyrics"] .pl__lyrics { display:block; }
+.pl__lyrics .lrc__line { padding:10px 12px; font-size:1.02rem; color:var(--mute); }
+.pl__lyrics .lrc__line.is-active { color:var(--lyric-active); font-size:1.14rem; font-weight:600; background:none; transform:none; }
+.pl__lyrics .lyrics-empty { color:var(--mute); font-size:.9rem; padding:var(--sp6) 0; }
+.pl__fullmeta { max-width:760px; width:100%; margin-inline:auto; text-align:center; }
+.pl__fullsong { font-family:var(--font-d); font-size:1.3rem; }
+.pl__fullartist { color:var(--dim); font-size:.9rem; }
+.pl__fullseek { max-width:760px; width:100%; margin:var(--sp4) auto 0; }
+.pl__fullbtns { display:flex; align-items:center; justify-content:center; gap:var(--sp4); max-width:760px; width:100%; margin:var(--sp4) auto 0; }
+.pl__full .pl__state { text-align:center; margin-top:var(--sp3); }
+
+/* 迷你条 / 全屏播放页的窄屏规则同样搬到 layout-*.css，由构建期合成，
+   这样「手动选手机布局」在宽屏上也能得到完全相同的播放器形态。 */
+@media (prefers-reduced-motion:reduce) {
+  .pl__stage[data-stage="vinyl"] .pl__bigart img { animation:none; }
+  .pl[data-state="blocked"] .pbtn--play { animation:none; }
+}
