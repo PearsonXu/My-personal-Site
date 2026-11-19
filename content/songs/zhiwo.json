@@ -1,0 +1,32 @@
+{
+  "slug": "zhiwo",
+  "title": "知我",
+  "artist": "金石竹青",
+  "composer": "王朝",
+  "lyricist": "沈栀",
+  "album": null,
+  "tags": [
+    "翻唱",
+    "国风"
+  ],
+  "date": "2026-11-19",
+  "duration": 227.64,
+  "cover": "auto",
+  "audio": {
+    "src": "audio/zhiwo.mp3",
+    "mime": "audio/mpeg",
+    "master": null
+  },
+  "lyrics": null,
+  "instrumental": false,
+  "demo": false,
+  "about": "《知我》翻唱版：沈栀作词，王朝作曲、编曲并制作，国风堂与哦漏原唱，金石竹青演唱。一次国风翻唱的尝试，分享给大家。",
+  "credits": [
+    "作词：沈栀",
+    "作曲：王朝",
+    "编曲：王朝",
+    "制作：王朝",
+    "原唱：国风堂、哦漏",
+    "演唱：金石竹青"
+  ]
+}
