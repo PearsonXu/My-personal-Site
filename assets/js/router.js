@@ -40,7 +40,13 @@ export class Router {
   start() {
     document.addEventListener('click', (e) => this._onClick(e));
     window.addEventListener('popstate', () => {
-      this._load(location.href, { push: false }).catch(() => {});
+      this._load(location.href, { push: false }).catch((err) => {
+        // 被更新导航取代就算了；真失败（如该地址已无真实文件）则整页加载当前地址，
+        // 绝不能留下「URL 变了、内容还是旧页」的半截状态
+        if (err?.name === 'AbortError') return;
+        this.onError(err);
+        location.assign(location.href);
+      });
     });
     // 首次进入：不 fetch，直接用已经预渲染好的 DOM
     this.onNavigate(this.current, { initial: true });
@@ -66,9 +72,14 @@ export class Router {
     const url = new URL(href, location.href);
     if (replace) history.replaceState({ zx: true }, '', url.href);
     else history.pushState({ zx: true }, '', url.href);
+    const promise = this._load(url.href, { push: true });
+    const token = this._token; // _load 入口同步自增，这里拿到的就是本次导航的令牌
     try {
-      await this._load(url.href, { push: true });
+      await promise;
     } catch (err) {
+      // ★ 被更新的导航 / 后退 abort 掉 ≠ 失败：这个 URL 已经作废。
+      //   若在此回退整页跳转，会把地址拽回旧 URL（后退失效、连点落错页、音乐白断）。
+      if (err?.name === 'AbortError' || token !== this._token) return;
       // 回退：真正的整页跳转（音乐会停，但用户不会看到空白页）
       this.onError(err);
       location.assign(url.href);
@@ -132,7 +143,9 @@ export class Router {
   _syncNav() {
     const here = location.pathname;
     for (const a of qsa('.nav__a')) {
-      const target = new URL(a.getAttribute('href'), location.href).pathname;
+      const raw = a.getAttribute('href');
+      if (!raw) continue; // 「外观与布局」是 button.nav__a--btn，没有 href
+      const target = new URL(raw, location.href).pathname;
       const active = target === here
         || (target !== joinUrl(this.base, '') && here.startsWith(target));
       a.classList.toggle('is-active', active);

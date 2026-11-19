@@ -9,7 +9,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { JSDOM } from 'jsdom';
+import { JSDOM, VirtualConsole } from 'jsdom';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
@@ -26,14 +26,31 @@ function fileForUrl(url) {
   return fs.existsSync(candidate) ? candidate : null;
 }
 
-async function makeDom(startPath = '/') {
+async function makeDom(startPath = '/', { delay = 0 } = {}) {
   ensureBuild();
   const html = fs.readFileSync(path.join(DIST, startPath, 'index.html'), 'utf8');
-  const dom = new JSDOM(html, { url: `https://www.xuzhaoqing.com${startPath}`, pretendToBeVisual: true });
+  // jsdom 不真正整页跳转，且「assign 到当前地址」会被它静默忽略（pushState 已改地址），
+  // 所以用 onError 作为「进入整页回退分支」的观察点：它只在回退前被调用
+  const virtualConsole = new VirtualConsole();
+  virtualConsole.on('jsdomError', () => {}); // 吞掉 not-implemented 噪音
+  const dom = new JSDOM(html, { url: `https://www.xuzhaoqing.com${startPath}`, pretendToBeVisual: true, virtualConsole });
   const { window } = dom;
   window.scrollTo = () => {};
   window.HTMLElement.prototype.scrollIntoView = () => {};
-  window.fetch = async (url) => {
+  window.fetch = async (url, opts = {}) => {
+    // 尊重 AbortSignal：真实浏览器里被取代的导航会抛 AbortError，
+    // 旧 stub 忽略 signal，导致「abort 被当失败→整页拽回旧 URL」这类缺陷测不出来
+    if (delay) {
+      await new Promise((resolve, reject) => {
+        const t = setTimeout(resolve, delay);
+        opts.signal?.addEventListener('abort', () => {
+          clearTimeout(t);
+          const e = new Error('The operation was aborted.');
+          e.name = 'AbortError';
+          reject(e);
+        });
+      });
+    }
     const file = fileForUrl(String(url));
     if (!file) return { ok: false, status: 404, text: async () => '' };
     const body = fs.readFileSync(file, 'utf8');
@@ -141,4 +158,61 @@ test('router · 子路径部署下路由解析仍然正确', async () => {
   ensureBuild();
   const { parseRoute } = await import('../assets/js/core/paths.js');
   assert.deepEqual(parseRoute('/My-personal-Site/songs/demo-night-ferry/', '/My-personal-Site/'), { kind: 'song', slug: 'demo-night-ferry' });
+});
+
+/* ── 导航竞态回归：abort ≠ 失败，禁止整页拽回旧 URL ─────────────── */
+
+test('router · 连点三个导航：最后一次生效，且不做整页回退', async () => {
+  const { window, Router } = await makeDom('/', { delay: 40 });
+  const doc = window.document;
+  const errors = [];
+  const router = new Router({ base: '/', origin: 'https://www.xuzhaoqing.com', onNavigate: () => {}, onError: (e) => errors.push(e) });
+  router.start();
+  const p1 = router.navigate('https://www.xuzhaoqing.com/songs/');
+  const p2 = router.navigate('https://www.xuzhaoqing.com/notes/');
+  const p3 = router.navigate('https://www.xuzhaoqing.com/about/');
+  await Promise.all([p1, p2, p3]);
+  await new Promise((r) => setTimeout(r, 80));
+  assert.equal(window.location.pathname, '/about/', `连点应落在最后一次导航，实际 ${window.location.pathname}`);
+  assert.equal(doc.body.dataset.kind, 'about');
+  assert.deepEqual(errors.map((e) => e.message), [], 'abort 不应进入整页回退分支');
+});
+
+test('router · fetch 途中按后退：地址留在后退目标，不被旧导航拽回', async () => {
+  const { window, Router } = await makeDom('/', { delay: 60 });
+  const doc = window.document;
+  const errors = [];
+  const router = new Router({ base: '/', origin: 'https://www.xuzhaoqing.com', onNavigate: () => {}, onError: (e) => errors.push(e) });
+  router.start();
+  const p = router.navigate('https://www.xuzhaoqing.com/songs/');
+  await new Promise((r) => setTimeout(r, 10));
+  window.history.back(); // popstate → _load(首页) abort 掉进行中的 /songs/ fetch
+  await p;
+  await new Promise((r) => setTimeout(r, 120));
+  assert.equal(window.location.pathname, '/', `后退应生效，实际 ${window.location.pathname}`);
+  assert.equal(doc.body.dataset.kind, 'home');
+  assert.deepEqual(errors.map((e) => e.message), [], '后退途中不得进入整页回退分支');
+});
+
+test('router · 真失败（404）仍回退整页跳转，不留空白', async () => {
+  const { window, Router } = await makeDom('/');
+  const errors = [];
+  const router = new Router({ base: '/', origin: 'https://www.xuzhaoqing.com', onNavigate: () => {}, onError: (e) => errors.push(e) });
+  router.start();
+  await router.navigate('https://www.xuzhaoqing.com/songs/no-such-song/');
+  assert.deepEqual(errors.map((e) => e.message), ['HTTP 404'], '404 应进入整页回退分支一次');
+});
+
+test('router · popstate 落到已无真实文件的地址：整页加载当前地址而非半截旧页', async () => {
+  const { window, Router } = await makeDom('/');
+  const doc = window.document;
+  const errors = [];
+  const router = new Router({ base: '/', origin: 'https://www.xuzhaoqing.com', onNavigate: () => {}, onError: (e) => errors.push(e) });
+  router.start();
+  await router.navigate('https://www.xuzhaoqing.com/songs/');
+  window.history.pushState({ zx: true }, '', 'https://www.xuzhaoqing.com/songs/gone/');
+  window.dispatchEvent(new window.PopStateEvent('popstate'));
+  await new Promise((r) => setTimeout(r, 60));
+  assert.deepEqual(errors.map((e) => e.message), ['HTTP 404'], 'popstate 真失败应进入整页回退分支');
+  assert.equal(doc.body.dataset.kind, 'library', '失败回退前内容不应被半截替换');
 });

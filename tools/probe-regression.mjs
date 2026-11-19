@@ -323,6 +323,78 @@ await chain('旧数据用户（dark + grid + lyrics）', {
   await page.close();
 }
 
+/* ── 导航竞态：连点 / fetch 途中后退前进（abort ≠ 失败，不得整页拽回）── */
+{
+  console.log('\n── 导航竞态（慢网连点 / 途中后退前进）──');
+  // 旧构建的整页拽回会销毁执行上下文：重试而不是让探针崩溃（失败由检查项记录）
+  const withRetry = async (fn) => {
+    for (let i = 0; i < 4; i++) {
+      try { return await fn(); } catch (e) {
+        if (i < 3 && /Execution context|detached|Session closed|Target closed/.test(String(e?.message || e))) { await sleep(900); continue; }
+        throw e;
+      }
+    }
+  };
+  for (const viewport of ['desktop', 'mobile']) {
+    const { page, errors, failed } = await newPage({ viewport });
+    let loads = 0;
+    page.on('load', () => loads++);
+    // 只慢化 SPA 路由 fetch（带 X-ZX-Router 头），放大竞态窗口；其余请求照常
+    await page.setRequestInterception(true);
+    page.on('request', (r) => {
+      if (r.headers()['x-zx-router']) setTimeout(() => r.continue().catch(() => {}), 350);
+      else r.continue().catch(() => {});
+    });
+    await page.goto(`${B}/`, { waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(() => !!window.__music, { timeout: 15000 });
+    loads = 0;
+    const tapNav = async (label) => {
+      if (viewport === 'mobile') {
+        const open = await withRetry(() => page.evaluate(() => document.querySelector('.nav')?.classList.contains('is-open')));
+        if (!open) {
+          await withRetry(() => page.tap('[data-act="toggle-nav"]'));
+          await page.waitForFunction(() => document.querySelector('.nav')?.classList.contains('is-open'), { timeout: 3000 }).catch(() => {});
+          await sleep(280); // 等开合过渡停稳，否则 tap 落在不可点击的中间态
+        }
+      }
+      await withRetry(() => page.evaluate((l) => {
+        document.querySelectorAll('[data-probe]').forEach((x) => x.removeAttribute('data-probe'));
+        [...document.querySelectorAll('.nav__a')].find((a) => a.textContent.includes(l))?.setAttribute('data-probe', '1');
+      }, label));
+      // 旧构建的整页拽回会销毁标记元素：容错吞掉，让检查项记录失败而不是探针崩溃
+      if (viewport === 'mobile') await page.tap('[data-probe="1"]').catch(() => {});
+      else await page.click('[data-probe="1"]').catch(() => {});
+    };
+    // 连点三个导航：最后一次必须生效
+    await tapNav('曲库'); await tapNav('手记'); await tapNav('关于');
+    await sleep(1800);
+    let s = await withRetry(() => snap(page));
+    check(`${viewport} 慢网连点落在最后一次（/about/）`, new URL(s.url).pathname === '/about/', s.url);
+    check(`${viewport} 连点后样式生效`, styled(s), `sheets=${s.sheets}`);
+    check(`${viewport} 连点未触发整页跳转`, loads === 0, `load 事件 ${loads} 次`);
+    // fetch 途中按后退：地址留在后退目标（用 history API，避免旧构建整页拽回后无前进条目导致超时）
+    await tapNav('手记');
+    await sleep(60);
+    await withRetry(() => page.evaluate(() => history.back()));
+    await sleep(1800);
+    s = await withRetry(() => snap(page));
+    check(`${viewport} 途中后退生效（/about/）`, new URL(s.url).pathname === '/about/', s.url);
+    check(`${viewport} 途中后退未整页拽回`, loads === 0, `load 事件 ${loads} 次`);
+    check(`${viewport} 后退后样式生效`, styled(s), `sheets=${s.sheets}`);
+    // 再前进：回到 /notes/
+    await withRetry(() => page.evaluate(() => history.forward()));
+    await sleep(1800);
+    s = await withRetry(() => snap(page));
+    check(`${viewport} 前进生效（/notes/）`, new URL(s.url).pathname === '/notes/', s.url);
+    check(`${viewport} 前进后样式生效`, styled(s), `sheets=${s.sheets}`);
+    // 竞态只允许「被取代的路由 fetch」 abort，资源请求一个都不能失败
+    const assetFails = failed.filter((f) => /\/assets\//.test(f));
+    check(`${viewport} 竞态中资源零失败`, assetFails.length === 0, assetFails.slice(0, 3).join(' | '));
+    check(`${viewport} 竞态无 Console 错误`, errors.length === 0, errors.slice(0, 3).join(' | '));
+    await page.close();
+  }
+}
+
 console.log(`\n══ 回归取证：${pass} 通过 · ${fail} 失败 ══`);
 await browser.close();
 if (server) server.close();

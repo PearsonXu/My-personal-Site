@@ -61,6 +61,11 @@
     任何相对路径的 CSS/JS 都会 404，退化成没样式没脚本的白屏。
 16. **持久化状态必须逐字段校验**（`sanitizeState`）。坏字段单独回退，
     有效收藏 / 最近播放 / 队列一律保留；禁止用「清空全部数据」当作修复手段。
+18. **导航被 abort ≠ 失败**：`Router.navigate` / popstate 的 catch 里，`AbortError` 或
+    令牌已过期一律静默返回，**禁止**走 `location.assign` 整页回退 —— 那会把地址拽回
+    已作废的旧 URL（连点落错页、后退失效、音乐白断）。只有真失败（HTTP 错误 / 空内容）
+    才回退整页。测试的 fetch stub 必须尊重 AbortSignal，否则测不出这类竞态。
+    详见 `docs/NAV-RACE.md`。
 
 ## 常用命令
 
