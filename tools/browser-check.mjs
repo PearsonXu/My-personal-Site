@@ -820,6 +820,20 @@ async function main() {
       assert(bad.length === 0, bad.join('; '));
       return '5 次跨深度导航路径与样式全部正确';
     });
+    await check(group, '导航后外壳无相对引用（链接 + 图片）', async () => {
+      const left = await page.evaluate(() => {
+        const out = [];
+        for (const el of document.querySelectorAll('a[href], img[src], source[src], use[href]')) {
+          if (el.closest('#page-root')) continue;
+          const raw = el.getAttribute(el.hasAttribute('href') ? 'href' : 'src');
+          if (!raw || raw.startsWith('#') || /^(mailto:|tel:|data:)/.test(raw)) continue;
+          if (!/^(https?:)?\/\//i.test(raw)) out.push(`${el.tagName}:${raw}`);
+        }
+        return out;
+      });
+      assert(left.length === 0, left.join(', '));
+      return '外壳链接与图片全部绝对地址';
+    });
     await check(group, '导航后刷新仍正常', async () => {
       await reload(page);
       const m = await page.evaluate(() => ({

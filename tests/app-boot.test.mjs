@@ -83,6 +83,28 @@ test('app · 导航到更深路径后，外壳导航链接仍是正确的绝对�
   assert.equal(doc.body.dataset.kind, 'library');
 });
 
+test('app · 导航后外壳里不残留任何相对引用（链接 + 图片）', async () => {
+  const { window, app } = await makeApp('/');
+  const doc = window.document;
+  const shellRefs = () => {
+    const out = [];
+    for (const el of doc.querySelectorAll('a[href], img[src], source[src], use[href]')) {
+      if (el.closest('#page-root')) continue;
+      const raw = el.getAttribute(el.hasAttribute('href') ? 'href' : 'src');
+      if (!raw || raw.startsWith('#') || /^(mailto:|tel:|data:)/.test(raw)) continue;
+      if (!/^(https?:)?\/\//i.test(raw)) out.push(`${el.tagName}:${raw}`);
+    }
+    return out;
+  };
+  assert.deepEqual(shellRefs(), [], '启动后外壳仍有相对引用');
+  await app.router.navigate('https://www.xuzhaoqing.com/notes/hello-music-house/');
+  await wait(60);
+  assert.deepEqual(shellRefs(), [], '导航后外壳出现相对引用');
+  // 播放器占位图必须指向站点根下的 assets
+  const cover = doc.getElementById('plCover');
+  assert.equal(cover.getAttribute('src'), 'https://www.xuzhaoqing.com/assets/img/placeholder.svg');
+});
+
 test('app · 从深层页面启动时外壳链接同样正确', async () => {
   const { window } = await makeApp('/songs/demo-night-ferry/');
   const links = [...window.document.querySelectorAll('.nav__a[href]')].map((a) => a.href);

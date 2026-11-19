@@ -33,6 +33,22 @@ test('回归 · header 导航确实在 #page-root 之外（所以必须绝对化
   assert.ok(navAt > 0 && navAt < end, '导航应在 page-root 之外');
 });
 
+test('回归 · 外壳的图片资源也必须绝对化（播放器占位封面）', () => {
+  const app = src('assets/js/app.js');
+  assert.match(app, /qsa\('img\[src\], source\[src\], use\[href\]'\)/);
+  // 循环里同样要跳过 #page-root 内部
+  const fn = app.slice(app.indexOf('function absolutizeChromeLinks'), app.indexOf('async function boot'));
+  assert.equal((fn.match(/closest\('#page-root'\)/g) || []).length, 2, '链接与资源两个循环都要跳过 page-root');
+});
+
+test('回归 · 静态外壳确实存在相对图片引用（所以必须绝对化）', () => {
+  build();
+  const html = read('songs/index.html');
+  const end = html.indexOf('<!-- ▲ 路由只替换这一块 ▲ -->');
+  const shell = html.slice(end);
+  assert.match(shell, /<img[^>]+src="\.\.\/assets\/img\/placeholder\.svg"/, '播放器占位图应是相对路径（由 boot 绝对化）');
+});
+
 test('回归 · 路由失败也会摘掉 navigating 标记（try/finally）', () => {
   assert.match(src('assets/js/router.js'), /} finally \{[\s\S]*?delete document\.documentElement\.dataset\.navigating/);
 });

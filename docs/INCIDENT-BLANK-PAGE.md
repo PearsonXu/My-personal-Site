@@ -69,6 +69,61 @@ GitHub Pages 会把 `404.html` 挂在**任意深度**的未匹配 URL 上。
   未知值也会回退到 `:root` 的 cloud 令牌，内容始终可见。
 - **不是部署版本错配**：同一次构建内即可复现，失败请求全部指向**同一个坏目录前缀**。
 
+## 补充证据核对（用户提供的截图）
+
+截图特征：**「404 Not Found / 这一页不在小屋里」＋导航是默认蓝色链接和列表圆点**。
+「圆点 + 蓝链接」意味着 `ul[class]{list-style:none}` 这类重置完全没生效 → **CSS 一张都没加载**。
+这与「内容存在但样式丢失」的判定完全一致，而不是整页未渲染。
+
+### 用实际请求确认（正式域名）
+
+同一个样式表，正确深度 vs 错误深度：
+
+```
+GET https://www.xuzhaoqing.com/assets/css/site.css
+  HTTP 200 · Content-Type: text/css; charset=utf-8            ← 正常
+
+GET https://www.xuzhaoqing.com/notes/songs/assets/css/site.css
+  HTTP 404 · Content-Type: text/html; charset=utf-8
+  返回体前 3 行：<!DOCTYPE html> / <html lang="zh-CN"> / <head>   ← 把 404 的 HTML 返回给了 CSS 请求
+```
+
+浏览器拒绝把 `text/html` 当样式表应用，于是**全站样式丢失**；
+`app.js` 同样拿到 HTML → 脚本不执行 → 播放器与路由都不工作。
+这就是截图里「有 404 文案、但导航退化成默认样式」的确切原因。
+
+### 托管与部署核实
+
+```
+server: GitHub.com
+x-github-request-id: 382A:3E880C:190AFDB:1AC307F:6AFEC983
+```
+
+- 托管：**GitHub Pages**（不是自建服务器）
+- 发布：`.github/workflows/deploy.yml` → `upload-pages-artifact(path: dist)` → `deploy-pages`
+- 域名：`CNAME = www.xuzhaoqing.com` → **base path `/`**，不存在子路径拼接问题
+- 线上产物确已生成并部署：`build-manifest.json` 显示 `mode=production · pages=11 · songs=1`
+- 客户端路由**有**对应机制：每个子路径都是构建期预渲染的真实 `目录/index.html`，
+  直接访问与刷新都由 Pages 命中真实文件；SPA 只是「顺便」不整页刷新。
+  唯一没有真实文件的就是**不存在的路径**，那由 `404.html` 兜底。
+
+### 全站链接与资源审计
+
+`node tools/audit-links.mjs --base https://www.xuzhaoqing.com`：
+逐页取出**每一个** `href` / `src`，按该页面 URL 解析后逐个实测 →
+**11 个页面、全部引用 200，CSS/JS 的 Content-Type 全部正确，0 问题**。
+不存在大小写、尾斜杠或 base 拼接错误（所有站内路由都以 `/` 结尾，且由 `routeFor()` 统一生成）。
+
+### 审计中发现并已补掉的残留隐患
+
+审计列出「`#page-root` 之外的相对引用」时暴露出：
+播放器占位封面 `#plCover` / `#plBigCover` 的 `src` 仍是 `../assets/img/placeholder.svg` 这类相对路径。
+上一轮只绝对化了 `a[href]` 与 `<head>` 资源，**漏了外壳里的 `<img>`**。
+
+已修：`absolutizeChromeLinks()` 增加第二个循环，处理外壳里的
+`img[src]` / `source[src]` / `use[href]`，同样跳过 `#page-root` 内部。
+新增断言：**boot 后与导航后，外壳里不允许残留任何相对引用**（jsdom + 真实浏览器各一条）。
+
 ## 四、修复
 
 | 文件 | 改动 |

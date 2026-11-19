@@ -47,8 +47,8 @@ function absolutizeHeadAssets() {
 /**
  * 把「持久外壳」里的链接绝对化。
  *
- * ★ 这是白屏故障的根因之一：header 导航在 #page-root **之外**，
- *   它的 href 是按「首次进入页面的深度」生成的相对路径（./songs/ 或 ../../songs/）。
+ * ★ 这是白屏故障的根因之一：header 导航与播放器占位图都在 #page-root **之外**，
+ *   它们的 href / src 是按「首次进入页面的深度」生成的相对路径（./songs/ 或 ../../songs/）。
  *   SPA 用 pushState 改了文档 URL 之后，这些相对 href 会被按**新深度**重新解析：
  *   从首页进入 /notes/ 后，./songs/ 变成 /notes/songs/ —— 一个不存在的路径。
  *   再点一次导航就会真的跳到 404，且刷新也回不来。
@@ -57,12 +57,23 @@ function absolutizeHeadAssets() {
  *   #page-root 内部的链接不动：它们随页面一起替换，深度本来就是对的。
  */
 function absolutizeChromeLinks() {
+  // 1) 外壳里的链接
   for (const a of qsa('a[href]')) {
     if (a.closest('#page-root')) continue;
     const raw = a.getAttribute('href');
     if (!raw || raw.startsWith('#')) continue;
     if (/^(https?:)?\/\//i.test(raw) || /^(mailto:|tel:|data:|javascript:)/i.test(raw)) continue;
     try { a.setAttribute('href', new URL(raw, location.href).href); } catch { /* ignore */ }
+  }
+  // 2) 外壳里的资源（播放器占位封面等）。
+  //    它们同样不随路由替换：src 保持相对时，pushState 到更深目录后
+  //    一旦重新取图就会按新深度解析 → 404。
+  for (const el of qsa('img[src], source[src], use[href]')) {
+    if (el.closest('#page-root')) continue;
+    const attr = el.hasAttribute('src') ? 'src' : 'href';
+    const raw = el.getAttribute(attr);
+    if (!raw || /^(https?:)?\/\//i.test(raw) || raw.startsWith('data:')) continue;
+    try { el.setAttribute(attr, new URL(raw, location.href).href); } catch { /* ignore */ }
   }
 }
 
