@@ -95,7 +95,16 @@ GitHub Pages 会把 `404.html` 挂在**任意深度**的未匹配 URL 上。
   - 整块 JSON 损坏：原文已备份、应用仍启动
   - 主题 ×3 / 视图 ×3 / 播放 交叉操作后再导航
   - 直接打开 `/notes/songs/`：404 页样式生效、零外部请求、点「回首页」能恢复
-- `npm run browser:check` → 六组合全量 + 新增「白屏回归」段
+- `npm run browser:check` → **213 / 213**，六组合全量 + 新增「白屏回归」段
+- **正式域名实测**（部署后，含真实歌曲《青春大概》）：
+  - `node tools/verify-live.mjs` → **18 PASS · 1 N/A · 0 FAIL**
+    （单曲深链接 `/songs/qingchun-dagai/` 直达 200 + canonical + 播放按钮 + 音源 **206 audio/mpeg**）
+  - `node tools/browser-live.mjs` → **45 / 45**
+  - `node tools/probe-regression.mjs --base https://www.xuzhaoqing.com` → **73 / 73**
+    其中「首页 → 手记 → 曲库 → 专辑 → 我的 → 首页」在桌面与手机上
+    **每一步路径正确、样式生效（4 张样式表 + head sticky）、零失败请求、零 Console 错误**，
+    刷新后仍正常；`/notes/songs/` 的 404 页正常显示并能一键回首页。
+    恢复页截图：`docs/screenshots-live/recovery-404.png`
 
 ## 六、受影响用户怎么恢复
 

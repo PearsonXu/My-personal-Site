@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-11-19T08:50:27.546Z",
+  "ranAt": "2026-11-19T09:49:45.364Z",
   "base": "https://www.xuzhaoqing.com",
   "browser": "Chrome/157.0.8103.79",
   "total": 45,
@@ -16,13 +16,13 @@
       "group": "线上启动",
       "name": "应用无 JS 报错，目录加载成功",
       "ok": true,
-      "detail": "catalog.songs=0，0 条控制台错误"
+      "detail": "catalog.songs=1，0 条控制台错误"
     },
     {
       "group": "线上启动",
       "name": "空曲库时点播放给出诚实提示，不假装在播",
       "ok": true,
-      "detail": "state=idle，提示「曲库是空的」"
+      "detail": "已有 1 首，真实播放成功"
     },
     {
       "group": "线上 cloud × desktop",
@@ -58,7 +58,7 @@
       "group": "线上 cloud × desktop",
       "name": "空曲库下搜索与空状态正确",
       "ok": true,
-      "detail": "空状态正确，搜索 / 视图切换 / 播放入口均已隐藏"
+      "detail": "1 首，搜索可用"
     },
     {
       "group": "线上 cloud × desktop",
@@ -100,7 +100,7 @@
       "group": "线上 cloud × mobile",
       "name": "空曲库下搜索与空状态正确",
       "ok": true,
-      "detail": "空状态正确，搜索 / 视图切换 / 播放入口均已隐藏"
+      "detail": "1 首，搜索可用"
     },
     {
       "group": "线上 cloud × mobile",
@@ -142,7 +142,7 @@
       "group": "线上 forest × desktop",
       "name": "空曲库下搜索与空状态正确",
       "ok": true,
-      "detail": "空状态正确，搜索 / 视图切换 / 播放入口均已隐藏"
+      "detail": "1 首，搜索可用"
     },
     {
       "group": "线上 forest × desktop",
@@ -184,7 +184,7 @@
       "group": "线上 forest × mobile",
       "name": "空曲库下搜索与空状态正确",
       "ok": true,
-      "detail": "空状态正确，搜索 / 视图切换 / 播放入口均已隐藏"
+      "detail": "1 首，搜索可用"
     },
     {
       "group": "线上 forest × mobile",
@@ -226,7 +226,7 @@
       "group": "线上 midnight × desktop",
       "name": "空曲库下搜索与空状态正确",
       "ok": true,
-      "detail": "空状态正确，搜索 / 视图切换 / 播放入口均已隐藏"
+      "detail": "1 首，搜索可用"
     },
     {
       "group": "线上 midnight × desktop",
@@ -268,7 +268,7 @@
       "group": "线上 midnight × mobile",
       "name": "空曲库下搜索与空状态正确",
       "ok": true,
-      "detail": "空状态正确，搜索 / 视图切换 / 播放入口均已隐藏"
+      "detail": "1 首，搜索可用"
     },
     {
       "group": "线上 midnight × mobile",

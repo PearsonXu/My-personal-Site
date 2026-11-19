@@ -5,14 +5,19 @@
  * 「整页未渲染」与「内容在但样式丢失」。
  */
 import puppeteer from 'puppeteer-core';
+import fs from 'node:fs';
 import { startServer } from './serve.mjs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const PORT = Number((process.argv.find((a) => a.startsWith('--port=')) || '--port=8410').split('=')[1]);
-const B = `http://127.0.0.1:${PORT}`;
-const server = startServer(path.join(ROOT, 'dist'), PORT);
+const argv = process.argv.slice(2);
+const flag = (n, d) => { const i = argv.indexOf(`--${n}`); return i >= 0 && argv[i + 1] ? argv[i + 1] : d; };
+const REMOTE = flag('base', '');
+const PORT = Number(flag('port', '8410'));
+const B = (REMOTE || `http://127.0.0.1:${PORT}`).replace(/\/+$/, '');
+// 给了 --base 就直接跑线上站点，不再起本地服务器
+const server = REMOTE ? null : startServer(path.join(ROOT, 'dist'), PORT);
 await new Promise((r) => setTimeout(r, 300));
 const browser = await puppeteer.launch({
   executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
@@ -85,12 +90,17 @@ async function chain(label, { start, seed, viewport }) {
   check('刷新后仍正常', after.mainTextLen > 50 && styled(after), `kind=${after.kind}`);
   await page.close();
 }
+// 线上与本地的曲库不同：深层起点用目录里真实存在的第一首歌，不写死 demo slug
+const liveCatalog = await (await fetch(`${B}/assets/data/catalog.json`)).json();
+const deepSlug = liveCatalog.songs?.[0]?.slug || null;
+const favSlug = deepSlug || 'demo-night-ferry';
+
 await chain('桌面·从首页出发', { start: '/' });
-await chain('桌面·从深层单曲页出发', { start: '/songs/demo-night-ferry/' });
+if (deepSlug) await chain('桌面·从深层单曲页出发', { start: `/songs/${deepSlug}/` });
 await chain('手机·从首页出发', { start: '/', viewport: 'mobile' });
 await chain('旧数据用户（dark + grid + lyrics）', {
   start: '/',
-  seed: { 'zx.music.theme': 'dark', 'zx.music.v1': { view: 'grid', stage: 'lyrics', viewLocked: true, stageLocked: true, favorites: ['demo-night-ferry'] } }
+  seed: { 'zx.music.theme': 'dark', 'zx.music.v1': { view: 'grid', stage: 'lyrics', viewLocked: true, stageLocked: true, favorites: [favSlug] } }
 });
 
 /* ── 坏字段用户：只修坏字段，收藏必须保住 ─────────── */
@@ -100,8 +110,8 @@ await chain('旧数据用户（dark + grid + lyrics）', {
     'zx.music.v1': {
       view: '不存在的视图', stage: 42, mode: '乱写', volume: 'loud', position: -5,
       muted: 'yes', queue: { items: 'oops' },
-      favorites: ['demo-night-ferry', 123, null, 'demo-paper-boat'],
-      recent: [null, { slug: 'demo-night-ferry', at: 1 }, 'bad']
+      favorites: [favSlug, 123, null, 'paper-boat'],
+      recent: [null, { slug: favSlug, at: 1 }, 'bad']
     }
   };
   const { page, errors } = await newPage({ seed });
@@ -117,9 +127,9 @@ await chain('旧数据用户（dark + grid + lyrics）', {
       volume: window.__music.store.data.volume,
       repaired: window.__music.store.repaired
     }));
-    check('有效收藏被保留', d.favs.includes('demo-night-ferry') && d.favs.includes('demo-paper-boat'), JSON.stringify(d.favs));
+    check('有效收藏被保留', d.favs.includes(favSlug) && d.favs.includes('paper-boat'), JSON.stringify(d.favs));
     check('坏收藏条目被剔除', d.favs.length === 2);
-    check('有效最近播放被保留', d.recent.length === 1 && d.recent[0].slug === 'demo-night-ferry');
+    check('有效最近播放被保留', d.recent.length === 1 && d.recent[0].slug === favSlug);
     check('坏字段回退默认', d.view === 'list' && d.mode === 'order' && d.volume === 1, JSON.stringify(d));
     check('记录了被修字段', Array.isArray(d.repaired) && d.repaired.length > 0, d.repaired.join(','));
     // 播一首歌：pushRecent 会遍历 recent，坏条目曾在这里抛异常
@@ -197,6 +207,8 @@ await chain('旧数据用户（dark + grid + lyrics）', {
   check('404 页回首页链接指向站点根', info.homeHref === '/', String(info.homeHref));
   const assetFails = failed.filter((u) => /\/assets\//.test(u));
   check('404 页不再请求任何 assets（零外部依赖）', assetFails.length === 0, assetFails.slice(0, 3).join(' | '));
+  fs.mkdirSync(path.join(ROOT, 'docs/screenshots-live'), { recursive: true });
+  await page.screenshot({ path: path.join(ROOT, 'docs/screenshots-live/recovery-404.png') });
   await page.click('#goHome');
   await new Promise((r) => setTimeout(r, 900));
   const back = await snap(page);
@@ -206,5 +218,5 @@ await chain('旧数据用户（dark + grid + lyrics）', {
 
 console.log(`\n══ 回归取证：${pass} 通过 · ${fail} 失败 ══`);
 await browser.close();
-server.close();
+if (server) server.close();
 process.exit(fail ? 1 : 0);
