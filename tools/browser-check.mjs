@@ -74,6 +74,26 @@ async function newPage(browser, { viewport, theme, layout, storage }) {
 
 const shot = (page, name) => page.screenshot({ path: path.join(SHOTS, `${name}.png`), fullPage: false });
 
+/**
+ * 元素特写。必须先「瞬时」滚到位再拍：
+ * 站点开了 scroll-behavior:smooth，直接 elementHandle.screenshot() 会在滚动动画中途取框，
+ * 拍到的是滚动前的区域（例如把歌词拍成控制区）。
+ */
+async function shotElement(page, selector, name) {
+  // 这些控件都在 position:fixed 容器里。若先 scrollIntoView，文档也会被滚动，
+  // 而 boundingBox 会把 documentScrollY 计进裁剪坐标 → 拍到别的区域。
+  // 正确做法：文档滚回顶部，只滚控件所在的固定面板，再直接对元素截图。
+  await page.evaluate((s) => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    const el = document.querySelector(s);
+    const panel = el?.closest('.pl__full');
+    if (panel) panel.scrollTop = panel.scrollHeight;
+  }, selector);
+  await sleep(320);
+  const el = await page.$(selector);
+  await el.screenshot({ path: path.join(SHOTS, `${name}.png`) });
+}
+
 /** 真实点击：先把元素滚到视口中部，避开顶部 header 与底部常驻播放器 */
 async function clickSel(page, selector) {
   await page.waitForSelector(selector, { visible: true });
@@ -114,15 +134,25 @@ async function state(page) {
   });
 }
 async function openQueue(page, viewport) {
+  // 先让控制条布局稳定下来（状态行占位固定），再取坐标点击
+  await page.mouse.move(2, 2);
+  await sleep(220);
+  const sel = viewport === 'mobile' ? '.pl__fullbtns [data-act="open-queue"]' : '.pl__extra [data-act="open-queue"]';
   if (viewport === 'mobile') {
     await page.evaluate(() => window.__music.ui.expand());
-    await sleep(200);
-    await page.click('.pl__fullbtns [data-act="open-queue"]');
-  } else {
-    await page.click('.pl__extra [data-act="open-queue"]');
+    await sleep(250);
   }
-  await page.waitForSelector('.sheet__title', { timeout: 8000 });
-  await sleep(150);
+  for (let attempt = 0; attempt < 2; attempt++) {
+    await page.click(sel);
+    try {
+      await page.waitForSelector('.sheet__title', { timeout: 4000 });
+      await sleep(150);
+      return;
+    } catch (err) {
+      if (attempt === 1) throw err;
+      await sleep(300);
+    }
+  }
 }
 
 /** 媒体页面上 networkidle0 可能永远不触发（音频连接常驻），统一用 DOMContentLoaded + 应用就绪 */
@@ -171,6 +201,53 @@ async function functionalSuite(page, group, { viewport }) {
     await page.click('#plToggle');
     await page.waitForFunction(() => window.__music.player.state === 'playing');
     return `暂停于 ${p.time.toFixed(2)}s 后恢复`;
+  });
+
+  await check(group, '主控尺寸与点击区域达标', async () => {
+    const m = await page.evaluate(() => {
+      const r = (el) => { const b = el.getBoundingClientRect(); return { w: Math.round(b.width), h: Math.round(b.height) }; };
+      const glyph = (el) => { const s = el.querySelector('svg.icon'); const b = s.getBoundingClientRect(); return { w: Math.round(b.width), h: Math.round(b.height) }; };
+      const play = document.getElementById('plToggle');
+      const prev = document.querySelector('.pl__bar [data-act="prev"]');
+      const next = document.querySelector('.pl__bar [data-act="next"]');
+      return { play: r(play), prev: r(prev), next: r(next), prevGlyph: glyph(prev), nextGlyph: glyph(next) };
+    });
+    const want = viewport === 'mobile' ? 56 : 48;
+    assert(m.play.w === want && m.play.h === want, `主按钮 ${m.play.w}×${m.play.h}，期望 ${want}`);
+    for (const k of ['prev', 'next']) {
+      assert(m[k].w >= 44 && m[k].h >= 44, `${k} 点击区 ${m[k].w}×${m[k].h} < 44`);
+      assert(m[`${k}Glyph`].w >= 22 && m[`${k}Glyph`].w <= 24, `${k} 图形 ${m[`${k}Glyph`].w}px 不在 22–24`);
+    }
+    return `主按钮 ${m.play.w}px · 上下首点击区 ${m.prev.w}px · 图形 ${m.prevGlyph.w}px`;
+  });
+
+  await check(group, '播放/暂停图标原位切换：不跳位、不断音', async () => {
+    const boxOf = () => page.evaluate(() => {
+      const b = document.getElementById('plToggle').getBoundingClientRect();
+      const vis = [...document.querySelectorAll('#plToggle .pbtn__glyph')].find((g) => getComputedStyle(g).display !== 'none');
+      const vb = vis.getBoundingClientRect();
+      return { btn: [b.x, b.y, b.width, b.height], glyph: [vb.x, vb.y, vb.width, vb.height], kind: vis.className.includes('pause') ? 'pause' : 'play' };
+    });
+    const playing = await boxOf();
+    assert(playing.kind === 'pause', `播放中应显示暂停图标，实际 ${playing.kind}`);
+    const t0 = await state(page);
+    await page.click('#plToggle');
+    await page.waitForFunction(() => window.__music.player.state === 'paused', { timeout: 10000 });
+    const paused = await boxOf();
+    assert(paused.kind === 'play', `暂停后应显示播放图标，实际 ${paused.kind}`);
+    for (let i = 0; i < 4; i++) {
+      assert(Math.abs(paused.btn[i] - playing.btn[i]) < 0.6, `主按钮跳位：${playing.btn} → ${paused.btn}`);
+      assert(Math.abs(paused.glyph[i] - playing.glyph[i]) < 0.6, `图形跳位：${playing.glyph} → ${paused.glyph}`);
+    }
+    await page.click('#plToggle');
+    await waitPlaying(page);
+    const again = await boxOf();
+    assert(again.kind === 'pause', '恢复播放后图标没切回暂停');
+    for (let i = 0; i < 4; i++) assert(Math.abs(again.btn[i] - playing.btn[i]) < 0.6, '二次切换后跳位');
+    const t1 = await state(page);
+    assert(t1.src === t0.src, '切换图标换了音源');
+    assert(t1.time >= t0.time, '切换图标导致进度倒退');
+    return `按钮与图形位置零位移，音源不变，${t0.time.toFixed(2)}s → ${t1.time.toFixed(2)}s`;
   });
 
   await check(group, '拖动进度条', async () => {
@@ -600,6 +677,17 @@ async function layoutSuite(page, group) {
     return '全部达标';
   });
 }
+const SHOTS_ONLY = argv.includes('--shots-only');
+
+/** --shots-only：只出六组合截图（含控制区特写），跳过耗时的功能清单 */
+async function functionalSuiteUnlessShotsOnly(page, group, opts) {
+  if (SHOTS_ONLY) {
+    console.log('  · --shots-only：跳过功能清单');
+    return;
+  }
+  return functionalSuite(page, group, opts);
+}
+
 async function main() {
   execFileSync(process.execPath, [path.join(ROOT, 'tools/build-site.mjs'), '--demo'], { cwd: ROOT, stdio: 'inherit' });
   fs.mkdirSync(SHOTS, { recursive: true });
@@ -665,10 +753,14 @@ async function main() {
       await sleep(700);
       await shot(page, `${theme}-${viewport}-song`);
       await layoutSuite(page, `${group} · 单曲页布局`);
+      // 控制区特写：底部常驻条
+      await shotElement(page, '.pl__bar', `controls-${theme}-${viewport}-bar`);
 
       await page.evaluate(() => window.__music.ui.expand('lyrics'));
       await sleep(600);
       await shot(page, `${theme}-${viewport}-lyrics`);
+      // 控制区特写：展开页 / 全屏歌词底部主控
+      await shotElement(page, '.pl__fullbtns', `controls-${theme}-${viewport}-full`);
       await check(group, '全屏播放页：控件在视口内且可点击', async () => {
         const bad = await page.evaluate(() => {
           const out = [];
@@ -701,7 +793,7 @@ async function main() {
       await shot(page, `${theme}-${viewport}-appearance`);
       await closeAll(page, viewport);
 
-      await functionalSuite(page, group, { viewport });
+      await functionalSuiteUnlessShotsOnly(page, group, { viewport });
       await page.close();
     }
   }

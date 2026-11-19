@@ -1,6 +1,7 @@
 import { escapeHtml as esc, escapeAttr as attr } from '../../../../assets/js/core/util.js';
 import { canonicalUrl } from '../../../../assets/js/core/paths.js';
 import { sectionHead, collectionGrid, songList, backendStatus } from '../components.mjs';
+import { icon } from '../../../../assets/js/core/icons.js';
 
 export function renderNotes(model, { rel }) {
   const { site, notes } = model;
@@ -46,7 +47,7 @@ export function renderNote(model, { rel, note, qrSvg }) {
   <div class="prose">${note.html}</div>
 
   ${relSongs.length ? `<section class="sec--inner"><h2 class="sub">这篇提到的歌</h2>${songList(relSongs, rel)}
-    <p class="hero__cta"><button class="btn" type="button" data-act="play-slugs" data-slugs="${attr(relSongs.map((s) => s.slug).join(','))}"><span aria-hidden="true">▶</span> 播放这些歌</button></p></section>` : ''}
+    <p class="hero__cta"><button class="btn" type="button" data-act="play-slugs" data-slugs="${attr(relSongs.map((s) => s.slug).join(','))}">${icon('play', { size: 20 })} 播放这些歌</button></p></section>` : ''}
   ${relAlbums.length ? `<section class="sec--inner"><h2 class="sub">相关专辑</h2>${collectionGrid(relAlbums, rel, 'albums', '')}</section>` : ''}
   ${relPlaylists.length ? `<section class="sec--inner"><h2 class="sub">相关歌单</h2>${collectionGrid(relPlaylists, rel, 'playlists', '')}</section>` : ''}
 
@@ -54,7 +55,7 @@ export function renderNote(model, { rel, note, qrSvg }) {
     <h3 class="sub">分享这篇手记</h3>
     <div class="share__row">
       <input class="share__url" type="text" readonly value="${attr(url)}" aria-label="手记分享链接">
-      <button class="btn" type="button" data-act="copy-link" data-url="${attr(url)}"><span aria-hidden="true">⧉</span> 复制链接</button>
+      <button class="btn" type="button" data-act="copy-link" data-url="${attr(url)}">${icon('copy', { size: 18 })} 复制链接</button>
     </div>
     <div class="share__qr"><div class="qr" aria-label="链接二维码">${qrSvg || ''}</div>
       <p class="note">阅读时音乐不会中断——站内切换页面复用同一个音频元素。</p></div>

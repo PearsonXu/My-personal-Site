@@ -1,13 +1,14 @@
 import { escapeHtml as esc, escapeAttr as attr, formatTime } from '../../../../assets/js/core/util.js';
 import { canonicalUrl } from '../../../../assets/js/core/paths.js';
 import { songList, tags, demoBadge, emptyState, backendStatus } from '../components.mjs';
+import { icon } from '../../../../assets/js/core/icons.js';
 
 function lyricsBlock(song) {
   if (song.instrumental) {
-    return emptyState({ icon: '◉', title: '纯音乐', text: '这首没有歌词。播放器会显示进度与封面，不做歌词高亮。' });
+    return emptyState({ icon: 'disc', title: '纯音乐', text: '这首没有歌词。播放器会显示进度与封面，不做歌词高亮。' });
   }
   if (!song.lyricsLines?.length) {
-    return emptyState({ icon: '詞', title: '暂无歌词', text: '如果你写了歌词，把 LRC 放进 <code>content/lyrics/</code> 并在歌曲 JSON 里填 <code>lyrics</code> 字段即可。' });
+    return emptyState({ icon: 'lyrics', title: '暂无歌词', text: '如果你写了歌词，把 LRC 放进 <code>content/lyrics/</code> 并在歌曲 JSON 里填 <code>lyrics</code> 字段即可。' });
   }
   const timed = song.lyricsFormat === 'lrc';
   const items = song.lyricsLines.map((line) => timed
@@ -25,7 +26,7 @@ function shareBlock(song, site, rel, qrSvg) {
   <p class="c-dim">这是一条<strong>真实独立链接</strong>，任何人点开都直接进入这首歌的页面，无需登录。</p>
   <div class="share__row">
     <input class="share__url" id="shareUrl" type="text" readonly value="${attr(url)}" aria-label="歌曲分享链接">
-    <button class="btn" type="button" data-act="copy-link" data-url="${attr(url)}"><span aria-hidden="true">⧉</span> 复制链接</button>
+    <button class="btn" type="button" data-act="copy-link" data-url="${attr(url)}">${icon('copy', { size: 18 })} 复制链接</button>
     <button class="btn btn--quiet" type="button" data-act="make-poster" data-slug="${attr(song.slug)}"><span aria-hidden="true">▣</span> 歌词海报</button>
   </div>
   <div class="share__qr">
@@ -80,10 +81,10 @@ export function renderSong(model, { rel, song, qrSvg }) {
         ${tags(song.tags, rel)}
         <div class="hero__cta">
           <button class="btn btn--pri btn--big" type="button" data-act="play-song" data-slug="${attr(song.slug)}" data-context="song-page">
-            <span aria-hidden="true">▶</span> 播放这首歌
+            ${icon('play', { size: 20 })} 播放这首歌
           </button>
-          <button class="btn" type="button" data-act="queue-next" data-slug="${attr(song.slug)}"><span aria-hidden="true">⤒</span> 下一首播放</button>
-          <button class="btn btn--quiet" type="button" data-act="fav" data-slug="${attr(song.slug)}" aria-pressed="false"><span aria-hidden="true">♡</span> 收藏</button>
+          <button class="btn" type="button" data-act="queue-next" data-slug="${attr(song.slug)}">${icon('queue-next', { size: 18 })} 下一首播放</button>
+          <button class="btn btn--quiet" type="button" data-act="fav" data-slug="${attr(song.slug)}" aria-pressed="false">${icon('heart', { size: 18 })} 收藏</button>
         </div>
         <p class="note" data-play-hint>免登录试听。浏览器要求首次播放由你点击触发；打开页面不会自动出声。</p>
       </div>

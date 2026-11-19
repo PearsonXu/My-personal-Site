@@ -1,5 +1,6 @@
 import { escapeHtml as esc, escapeAttr as attr, truncate } from '../../../../assets/js/core/util.js';
 import { sectionHead, songList, songGrid, collectionGrid, emptyState, demoBadge } from '../components.mjs';
+import { icon } from '../../../../assets/js/core/icons.js';
 
 export function renderHome(model, { rel }) {
   const { site, songs, albums, playlists, notes } = model;
@@ -16,17 +17,17 @@ export function renderHome(model, { rel }) {
       <p class="hero__lede">${esc(site.tagline || '')}<br>${esc(site.description || '')}</p>
       <div class="hero__cta">
         ${hero
-    ? `<button class="btn btn--pri" type="button" data-act="play-song" data-slug="${attr(hero.slug)}"><span aria-hidden="true">▶</span> 播放最新一首</button>`
-    : `<a class="btn btn--pri" href="${attr(rel)}songs/"><span aria-hidden="true">♫</span> 去曲库看看</a>`}
-        <a class="btn" href="${attr(rel)}songs/"><span aria-hidden="true">⌕</span> 浏览曲库</a>
-        <a class="btn btn--quiet" href="${attr(rel)}about/"><span aria-hidden="true">☺</span> 关于站长</a>
+    ? `<button class="btn btn--pri" type="button" data-act="play-song" data-slug="${attr(hero.slug)}">${icon('play', { size: 20 })} 播放最新一首</button>`
+    : `<a class="btn btn--pri" href="${attr(rel)}songs/">${icon('note', { size: 18 })} 去曲库看看</a>`}
+        <a class="btn" href="${attr(rel)}songs/">${icon('search', { size: 18 })} 浏览曲库</a>
+        <a class="btn btn--quiet" href="${attr(rel)}about/">${icon('user', { size: 18 })} 关于站长</a>
       </div>
       <p class="hero__hint">免登录试听 · 首次播放需要你点一下 · 长时间收听建议用系统浏览器</p>
     </div>
     <div class="hero__art">
       ${hero
     ? `<img src="${attr(rel + hero.coverPath)}" alt="${attr(hero.title)} 封面" width="420" height="420" decoding="async" fetchpriority="high">`
-    : `<div class="hero__placeholder" aria-hidden="true">♪</div>`}
+    : `<div class="hero__placeholder">${icon('note', { size: 64 })}</div>`}
       ${hero ? `<p class="hero__cap">最新 · ${esc(hero.title)}${demoBadge(hero)}</p>` : ''}
     </div>
   </div>
@@ -34,7 +35,7 @@ export function renderHome(model, { rel }) {
 
 <section class="sec" id="latest">
   <div class="wrap">
-    ${sectionHead({ no: '§ 01', kicker: 'Latest', title: '最新音乐', lede: '按发布日期倒序。点 ▶ 直接播放，点标题进入单曲页。' })}
+    ${sectionHead({ no: '§ 01', kicker: 'Latest', title: '最新音乐', lede: '按发布日期倒序。点播放按钮直接播放，点标题进入单曲页。' })}
     <div class="viewswitch" role="group" aria-label="展示模式">
       <button class="chip is-on" type="button" data-act="set-view" data-view="list" aria-pressed="true">列表</button>
       <button class="chip" type="button" data-act="set-view" data-view="grid" aria-pressed="false">封面墙</button>
@@ -71,7 +72,7 @@ export function renderHome(model, { rel }) {
           </span>
         </a>
       </article>`).join('\n')}</div>`
-    : emptyState({ icon: '✎', title: '还没有手记', text: '在 <code>content/notes/</code> 新建一个 Markdown 文件即可发布。' })}
+    : emptyState({ icon: 'pen', title: '还没有手记', text: '在 <code>content/notes/</code> 新建一个 Markdown 文件即可发布。' })}
     ${notes.length > 3 ? `<p class="sec__more"><a class="link" href="${attr(rel)}notes/">全部手记 →</a></p>` : ''}
   </div>
 </section>
@@ -92,7 +93,7 @@ export function renderHome(model, { rel }) {
         <p class="c-dim">免登录，打开就能听。站内翻页面、读手记、换外观都<strong>不会断歌</strong>。收藏与进度只存在当前浏览器里。</p>
         <p class="hero__cta">
           <a class="btn" href="${attr(rel)}about/">关于这里</a>
-          <button class="btn btn--quiet" type="button" data-act="open-appearance"><span aria-hidden="true">◐</span> 换个外观</button>
+          <button class="btn btn--quiet" type="button" data-act="open-appearance">${icon('palette', { size: 18 })} 换个外观</button>
         </p>
       </div>
     </div>

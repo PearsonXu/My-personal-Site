@@ -2,6 +2,7 @@
 
 import { escapeHtml } from '../core/util.js';
 import { byId, tgt } from './dom.js';
+import { icon } from '../core/icons.js';
 
 export function toast(message, kind = '', timeout = 2600) {
   const host = byId('toasts');
@@ -45,7 +46,7 @@ export function openSheet({ title, bodyHtml = '', footHtml = '', labelledBy = 's
     <div class="sheet">
       <div class="sheet__head">
         <h2 class="sheet__title" id="${labelledBy}">${escapeHtml(title)}</h2>
-        <button class="icon-btn sheet__close" type="button" data-sheet-close aria-label="关闭"><span aria-hidden="true">✕</span></button>
+        <button class="icon-btn sheet__close" type="button" data-sheet-close aria-label="关闭">${icon('close', { size: 18 })}</button>
       </div>
       <div class="sheet__body">${bodyHtml}</div>
       ${footHtml ? `<div class="sheet__foot">${footHtml}</div>` : ''}
@@ -79,6 +80,14 @@ export function setText(id, text) {
 export function setIcon(id, icon) {
   const node = byId(id);
   if (node && node.textContent !== icon) node.textContent = icon;
+}
+
+/** 把某个容器里的图标换成指定 SVG（只在名字变化时替换，避免无谓重排） */
+export function setSvg(id, name, size = 22) {
+  const node = byId(id);
+  if (!node || node.dataset.iconName === name) return;
+  node.dataset.iconName = name;
+  node.innerHTML = icon(name, { size });
 }
 
 /** 复制文本：优先 Clipboard API，失败回退到 execCommand，再失败就让用户手动复制 */

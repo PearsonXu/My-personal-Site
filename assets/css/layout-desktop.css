@@ -2,7 +2,7 @@
    目标：保持桌面结构（完整导航 + 全部播放器控件），但不横向溢出、按钮都点得到。
    构建期会包在 @media (max-width:900px) 里，作用域 html[data-layout="desktop"]。 */
 
-:root { --pl-h:132px; }
+:root { --pl-h:148px; }
 .head__in { gap:var(--sp2); }
 .brand__txt em { display:none; }
 .nav { margin-left:auto; min-width:0; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; }

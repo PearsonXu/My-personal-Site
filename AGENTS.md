@@ -15,7 +15,7 @@
 | 路径 | 作用 |
 | --- | --- |
 | `content/` | **唯一内容源**：`site.json`、`songs/*.json`、`albums/*.json`、`playlists/*.json`、`notes/*.md`、`lyrics/*.lrc` |
-| `assets/js/core/` | 纯逻辑（队列 / LRC / 搜索 / 路径）。**禁止碰 DOM**，构建端与测试共用 |
+| `assets/js/core/` | 纯逻辑（队列 / LRC / 搜索 / 路径 / **图标**）。**禁止碰 DOM**，构建端与测试共用 |
 | `assets/js/player.js` | 播放引擎：状态机、竞态令牌、Media Session |
 | `assets/js/router.js` | 单文档外壳路由，只换 `#page-root` 内容 |
 | `assets/js/ui/` | 各 UI 组件；DOM 访问统一走 `ui/dom.js` |
@@ -49,6 +49,9 @@
 12. **`<head>` 里的相对资源必须在启动时绝对化**（`absolutizeHeadAssets`）。
     pushState 到更深路径后，浏览器会用新 URL 重新解析 head 的相对 href，
     favicon / CSS 会 404。页面正文里的相对路径不用改（它们随 `#page-root` 一起换，深度是对的）。
+13. **控件图标一律用 `core/icons.js` 的内联 SVG**，禁止 Emoji / Unicode 字符 / 图标字体。
+    主按钮同时渲染播放与暂停两个 SVG，靠 `data-state` 切 display，**不要用 JS 换 innerHTML**。
+    hover 不做缩放（会让几何尺寸漂移）。详见 `docs/PLAYER-CONTROLS.md`。
 
 ## 常用命令
 

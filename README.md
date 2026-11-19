@@ -100,6 +100,7 @@ npm run dev          # 含 DEMO 合成音的构建 + 本地服务器（真的支
 | [`docs/WECHAT.md`](docs/WECHAT.md) | 微信分享边界与签名服务契约 |
 | [`docs/MOBILE-BACKGROUND.md`](docs/MOBILE-BACKGROUND.md) | 移动端与后台播放实现与边界 |
 | [`docs/THEMES.md`](docs/THEMES.md) | 三套外观、布局三档、默认与记忆、切换保状态 |
+| [`docs/PLAYER-CONTROLS.md`](docs/PLAYER-CONTROLS.md) | 播放器控制区：SVG 图标系统、尺寸、间距、交互态 |
 | [`docs/FEATURES.md`](docs/FEATURES.md) | 功能清单 → 对应验证位置 |
 | [`docs/BROWSER-RESULTS.md`](docs/BROWSER-RESULTS.md) | 真实 Chrome 逐项验收结果（自动生成，195 项） |
 | [`docs/LIVE-VERIFICATION.md`](docs/LIVE-VERIFICATION.md) | 正式域名 HTTP 复验（自动生成） |

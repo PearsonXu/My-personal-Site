@@ -8,6 +8,7 @@
 import { escapeHtml as esc, escapeAttr as attr, formatTime, debounce } from '../core/util.js';
 import { searchSongs, lyricSnippet } from '../core/search.js';
 import { byId, qsa, qs } from './dom.js';
+import { icon } from '../core/icons.js';
 
 export class LibraryUI {
   constructor(player, { catalog, searchIndex, resolve, link }) {
@@ -117,9 +118,9 @@ export class LibraryUI {
 
   actionsHtml(slug) {
     return `<div class="acts">
-      <button class="iact iact--sm" type="button" data-act="queue-next" data-slug="${attr(slug)}" aria-label="下一首播放" title="下一首播放"><span aria-hidden="true">⤒</span></button>
-      <button class="iact iact--sm" type="button" data-act="queue-last" data-slug="${attr(slug)}" aria-label="添加到队列末尾" title="添加到队列末尾"><span aria-hidden="true">＋</span></button>
-      <button class="iact iact--sm" type="button" data-act="fav" data-slug="${attr(slug)}" aria-label="收藏" aria-pressed="${this.player.isFavorite(slug)}"><span aria-hidden="true">${this.player.isFavorite(slug) ? '♥' : '♡'}</span></button>
+      <button class="iact iact--sm" type="button" data-act="queue-next" data-slug="${attr(slug)}" aria-label="下一首播放" title="下一首播放">${icon('queue-next', { size: 18 })}</button>
+      <button class="iact iact--sm" type="button" data-act="queue-last" data-slug="${attr(slug)}" aria-label="添加到队列末尾" title="添加到队列末尾">${icon('plus', { size: 18 })}</button>
+      <button class="iact iact--sm" type="button" data-act="fav" data-slug="${attr(slug)}" aria-label="收藏" aria-pressed="${this.player.isFavorite(slug)}">${icon(this.player.isFavorite(slug) ? 'heart-filled' : 'heart', { size: 18 })}</button>
     </div>`;
   }
 
@@ -130,7 +131,7 @@ export class LibraryUI {
       : '<span class="row__al c-mute">单曲</span>';
     const snippet = this.query.trim() ? lyricSnippet(this.index.find((e) => e.s === song.slug)?.ly, this.query) : '';
     return `<li class="row" data-song="${attr(song.slug)}">
-      <button class="row__play" type="button" data-act="play-song" data-slug="${attr(song.slug)}" aria-label="播放 ${attr(song.title)}"><span aria-hidden="true">▶</span></button>
+      <button class="row__play" type="button" data-act="play-song" data-slug="${attr(song.slug)}" aria-label="播放 ${attr(song.title)}">${icon('play', { size: 20 })}</button>
       <a class="row__main" href="${attr(href)}">
         <img class="row__art" src="${attr(this.resolve(song.cover))}" alt="" width="44" height="44" loading="lazy" decoding="async">
         <span class="row__txt">
@@ -152,7 +153,7 @@ export class LibraryUI {
         <span class="card__t">${esc(song.title)}${this.demoBadge(song)}</span>
         <span class="card__s">${esc(song.artist)}</span>
       </a>
-      <button class="card__play" type="button" data-act="play-song" data-slug="${attr(song.slug)}" aria-label="播放 ${attr(song.title)}"><span aria-hidden="true">▶</span></button>
+      <button class="card__play" type="button" data-act="play-song" data-slug="${attr(song.slug)}" aria-label="播放 ${attr(song.title)}">${icon('play', { size: 20 })}</button>
       ${this.actionsHtml(song.slug)}
     </article>`;
   }

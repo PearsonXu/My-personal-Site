@@ -4,13 +4,12 @@
  */
 
 import { formatTime } from '../core/util.js';
-import { MODE_LABELS, MODE_ICONS } from '../core/queue.js';
-import { setText, setIcon, paintRange, toast } from './common.js';
+import { MODE_LABELS } from '../core/queue.js';
+import { MODE_ICON, STAGE_ICON, icon } from '../core/icons.js';
+import { setText, setSvg, paintRange, toast } from './common.js';
 import { byId, qsa } from './dom.js';
 
-const TOGGLE_ICON = { playing: '⏸', buffering: '⏸', loading: '⏸' };
 const STAGES = ['cover', 'vinyl', 'lyrics'];
-const STAGE_ICON = { cover: '◉', vinyl: '◍', lyrics: '詞' };
 
 export class PlayerUI {
   constructor(player, { resolve }) {
@@ -87,12 +86,14 @@ export class PlayerUI {
 
   renderState(state, detail) {
     if (this.root) this.root.dataset.state = state;
-    const icon = TOGGLE_ICON[state] || '▶';
-    setIcon('plToggleIcon', icon);
-    setIcon('plToggleIconFull', icon);
+    // 播放 / 暂停图标由 CSS 按 data-state 切换（两个 SVG 都已渲染，盒子不动 → 不跳位）
     const label = state === 'playing' || state === 'buffering' ? '暂停' : '播放';
-    byId('plToggle')?.setAttribute('aria-label', label);
-    byId('plToggleFull')?.setAttribute('aria-label', label);
+    for (const id of ['plToggle', 'plToggleFull']) {
+      const btn = byId(id);
+      if (!btn) continue;
+      btn.setAttribute('aria-label', label);
+      btn.setAttribute('aria-pressed', String(label === '暂停'));
+    }
     const fallback = { loading: '加载中…', buffering: '缓冲中…', error: '播放出错', blocked: '浏览器拦截了自动播放，请点一下播放按钮' };
     const text = detail || fallback[state] || '';
     setText('plState', text);
@@ -113,15 +114,14 @@ export class PlayerUI {
 
   renderVolume({ volume, muted }) {
     if (this.el.vol) { this.el.vol.value = String(Math.round(volume * 100)); paintRange(this.el.vol); }
-    setIcon('plMute', muted || volume === 0 ? '🔇' : volume < 0.5 ? '🔉' : '🔊');
+    setSvg('plMute', muted || volume === 0 ? 'volume-mute' : volume < 0.5 ? 'volume-low' : 'volume', 22);
   }
 
   renderQueue(q) {
-    const icon = MODE_ICONS[q.mode];
     for (const id of ['plMode', 'plModeFull']) {
       const node = byId(id);
       if (!node) continue;
-      node.querySelector('span').textContent = icon;
+      setSvg(id, MODE_ICON[q.mode], 22);
       node.setAttribute('aria-label', `播放模式：${MODE_LABELS[q.mode]}（点击切换）`);
       node.setAttribute('title', `播放模式：${MODE_LABELS[q.mode]}`);
       node.classList.toggle('is-active', q.mode !== 'order');
@@ -137,8 +137,12 @@ export class PlayerUI {
       const on = this.player.isFavorite(slug);
       btn.setAttribute('aria-pressed', String(on));
       btn.classList.toggle('is-on', on);
-      const span = btn.querySelector('span[aria-hidden]');
-      if (span) span.textContent = on ? '♥' : '♡';
+      // 只替换图标本身，保留按钮里的文字（例如单曲页的「收藏」）
+      const size = btn.classList.contains('pbtn') ? 22 : 18;
+      const svg = btn.querySelector('svg.icon');
+      const html = icon(on ? 'heart-filled' : 'heart', { size });
+      if (svg) svg.outerHTML = html;
+      else btn.insertAdjacentHTML('afterbegin', html);
     }
   }
 
@@ -177,7 +181,7 @@ export class PlayerUI {
   setStage(stage, { lock = true } = {}) {
     this.stage = STAGES.includes(stage) ? stage : 'cover';
     if (this.el.stage) this.el.stage.dataset.stage = this.stage;
-    setIcon('plViewIcon', STAGE_ICON[this.stage]);
+    setSvg('plViewIcon', STAGE_ICON[this.stage], 22);
     if (lock) this.player.store?.save({ stage: this.stage, stageLocked: true }, { immediate: true });
     else this.player.store?.save({ stage: this.stage });
   }

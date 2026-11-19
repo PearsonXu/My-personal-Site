@@ -8,6 +8,7 @@
 
 import { THEMES, LAYOUTS, normalizeTheme, normalizeLayout } from '../store.js';
 import { escapeHtml as esc, escapeAttr as attr } from '../core/util.js';
+import { icon } from '../core/icons.js';
 import { openSheet, toast } from './common.js';
 import { qs, qsa, tgt } from './dom.js';
 
@@ -134,7 +135,7 @@ export class Appearance {
       return `<button class="theme-card${on ? ' is-on' : ''}" type="button" data-ap="theme" data-theme="${attr(id)}" aria-pressed="${on}">
         <span class="theme-card__swatches" aria-hidden="true">${m.swatches.map((c) => `<i style="background:${attr(c)}"></i>`).join('')}</span>
         <span class="theme-card__body">
-          <span class="theme-card__name">${esc(m.name)}${on ? '<span class="theme-card__tick" aria-hidden="true">✓</span>' : ''}</span>
+          <span class="theme-card__name">${esc(m.name)}${on ? `<span class="theme-card__tick">${icon('check', { size: 16 })}</span>` : ''}</span>
           <span class="theme-card__desc">${esc(m.desc)}</span>
         </span>
       </button>`;

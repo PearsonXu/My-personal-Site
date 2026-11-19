@@ -10,8 +10,8 @@
 | 项 | 命令 | 结果 |
 | --- | --- | --- |
 | 类型检查 | `npm run typecheck`（`tsc --noEmit`，checkJs） | **PASS · 0 error** |
-| 单元 + jsdom 集成 | `npm test` | **PASS · 116 / 116** |
-| 真实浏览器验收 | `npm run browser:check` | **PASS · 195 / 195** |
+| 单元 + jsdom 集成 | `npm test` | **PASS · 132 / 132** |
+| 真实浏览器验收 | `npm run browser:check` | **PASS · 207 / 207** |
 | 生产构建 | `npm run build` | **PASS** · 排除 DEMO，空状态正确 |
 | DEMO 构建 | `npm run build:demo` | **PASS** · 15 页面 |
 | 产物完整性 | `node tools/check-assets.mjs --dist dist` | **PASS** |
@@ -32,7 +32,7 @@ Content-Range: bytes 100000-101023/576783
 `/notes/<slug>/`、`/about/`、`/me/`、`/status/` 全部 200；不存在的路径 404。
 子路径模式 `BASE_PATH=/My-personal-Site` 下页面与深层相对资源同样全部 200。
 
-## 二、真实浏览器逐项（195 项，明细见 `docs/BROWSER-RESULTS.md`）
+## 二、真实浏览器逐项（207 项，明细见 `docs/BROWSER-RESULTS.md`）
 
 覆盖 **cloud / forest / midnight × 桌面 1440×900 / 手机 390×844** 六种组合，
 每组合跑完整功能清单 + 布局健康检查，并出 5 张截图（共 36 张，见 `docs/screenshots/`）。
@@ -42,6 +42,8 @@ Content-Range: bytes 100000-101023/576783
 | 项 | 实测样例 |
 | --- | --- |
 | 播放：真实 MP3 解码并推进时间 | `14.45s → 15.74s`，`duration=36.05s`，`readyState=4` |
+| 主控尺寸与点击区域达标 | 桌面主按钮 **48px**、手机 **56px**；上下首点击区 **44px**、图形 **24px** |
+| 播放/暂停图标原位切换 | 按钮与图形四值位移 **< 0.6px**，音源不变、进度不倒退 |
 | 暂停 / 继续 | 暂停后时间不动，继续后恢复 |
 | 拖动进度条 | `seek → 18.46s` |
 | 下一首 / 上一首 | next 真实切歌并播放，prev 走播放历史 |
@@ -169,6 +171,8 @@ Content-Range: bytes 100000-101023/576783
 - `…-lyrics.png` — 全屏歌词 / 唱片舞台
 - `…-queue.png` — 队列面板
 - `…-appearance.png` — 外观与布局面板
+- **`controls-{theme}-{viewport}-bar.png`** — 底部常驻控制条特写（12 张）
+- **`controls-{theme}-{viewport}-full.png`** — 展开页 / 全屏歌词主控特写
 - `auto-360x740.png` / `auto-768x1024.png` / `auto-1920x1080.png` — 自动适配三档
 - `manual-mobile-on-wide.png` / `manual-desktop-on-narrow.png` — 手动布局覆盖
 - `orientation-portrait.png` — 横竖屏切换后

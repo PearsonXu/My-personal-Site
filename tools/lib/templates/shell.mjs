@@ -8,15 +8,16 @@
 
 import { escapeHtml as esc, escapeAttr as attr } from '../../../assets/js/core/util.js';
 import { canonicalUrl } from '../../../assets/js/core/paths.js';
+import { icon, toggleIcons } from '../../../assets/js/core/icons.js';
 
 const NAV = [
-  { kind: 'home', href: '', label: '首页', icon: '⌂' },
-  { kind: 'library', href: 'songs/', label: '曲库', icon: '♫' },
-  { kind: 'albums', href: 'albums/', label: '专辑', icon: '◉' },
-  { kind: 'playlists', href: 'playlists/', label: '歌单', icon: '≡' },
-  { kind: 'notes', href: 'notes/', label: '手记', icon: '✎' },
-  { kind: 'about', href: 'about/', label: '关于', icon: '☺' },
-  { kind: 'me', href: 'me/', label: '我的', icon: '♥' }
+  { kind: 'home', href: '', label: '首页', icon: 'home' },
+  { kind: 'library', href: 'songs/', label: '曲库', icon: 'note' },
+  { kind: 'albums', href: 'albums/', label: '专辑', icon: 'disc' },
+  { kind: 'playlists', href: 'playlists/', label: '歌单', icon: 'queue' },
+  { kind: 'notes', href: 'notes/', label: '手记', icon: 'pen' },
+  { kind: 'about', href: 'about/', label: '关于', icon: 'user' },
+  { kind: 'me', href: 'me/', label: '我的', icon: 'heart' }
 ];
 
 function head({ site, rel, meta, kind, slug, extraHead = '' }) {
@@ -74,21 +75,21 @@ function header({ site, rel, kind }) {
       || (item.kind === 'albums' && kind === 'album')
       || (item.kind === 'playlists' && kind === 'playlist')
       || (item.kind === 'notes' && kind === 'note');
-    return `<li><a class="nav__a${active ? ' is-active' : ''}" href="${attr(rel + item.href)}"${active ? ' aria-current="page"' : ''}><span aria-hidden="true">${item.icon}</span>${esc(item.label)}</a></li>`;
+    return `<li><a class="nav__a${active ? ' is-active' : ''}" href="${attr(rel + item.href)}"${active ? ' aria-current="page"' : ''}>${icon(item.icon, { size: 18 })}${esc(item.label)}</a></li>`;
   }).join('\n');
   return `<header class="head" id="siteHead">
   <div class="wrap head__in">
     <a class="brand" href="${attr(rel)}">
-      <span class="brand__mark" aria-hidden="true">♪</span>
+      <span class="brand__mark" aria-hidden="true">${icon('note', { size: 18 })}</span>
       <span class="brand__txt"><strong>${esc(site.shortTitle || site.title)}</strong><em>${esc(site.author?.name || '')}</em></span>
     </a>
     <nav class="nav" aria-label="主导航"><ul class="nav__ul">${links}
-      <li class="nav__appearance"><button class="nav__a nav__a--btn" type="button" data-act="open-appearance"><span aria-hidden="true">◐</span>外观与布局</button></li>
+      <li class="nav__appearance"><button class="nav__a nav__a--btn" type="button" data-act="open-appearance">${icon('palette', { size: 18 })}外观与布局</button></li>
     </ul></nav>
     <div class="head__act">
-      <button class="icon-btn" type="button" data-act="open-search" aria-label="搜索曲库" title="搜索 (/)"><span aria-hidden="true">⌕</span></button>
-      <button class="icon-btn appearance-btn" type="button" data-act="open-appearance" aria-label="外观与布局" title="外观与布局"><span aria-hidden="true">◐</span><span class="appearance-btn__label" data-appearance-label>外观</span></button>
-      <button class="icon-btn nav__burger" type="button" data-act="toggle-nav" aria-label="展开导航" aria-expanded="false"><span aria-hidden="true">☰</span></button>
+      <button class="icon-btn" type="button" data-act="open-search" aria-label="搜索曲库" title="搜索 (/)">${icon('search', { size: 20 })}</button>
+      <button class="icon-btn appearance-btn" type="button" data-act="open-appearance" aria-label="外观与布局" title="外观与布局">${icon('palette', { size: 20 })}<span class="appearance-btn__label" data-appearance-label>外观</span></button>
+      <button class="icon-btn nav__burger" type="button" data-act="toggle-nav" aria-label="展开导航" aria-expanded="false">${icon('menu', { size: 20 })}</button>
     </div>
   </div>
 </header>`;
@@ -136,11 +137,13 @@ function footer({ site, rel }) {
 }
 /**
  * 持久播放器骨架。每个页面完全一致，JS 只做绑定与更新，绝不重建。
- * 移动端显示为迷你条，点封面 / ⤢ 展开为全屏播放页。
+ * 移动端显示为迷你条，点封面或展开按钮进入全屏播放页。
  */
 function player({ rel }) {
-  const btn = (act, label, icon, extra = '') =>
-    `<button class="pbtn" type="button" data-act="${act}" aria-label="${attr(label)}" title="${attr(label)}"${extra}><span aria-hidden="true">${icon}</span></button>`;
+  const btn = (act, label, iconName, extra = '', size = 24) =>
+    `<button class="pbtn" type="button" data-act="${act}" aria-label="${attr(label)}" title="${attr(label)}"${extra}>${icon(iconName, { size })}</button>`;
+  const toggle = (id, extraClass = '') =>
+    `<button class="pbtn pbtn--play${extraClass ? ` ${extraClass}` : ''}" type="button" data-act="toggle" id="${id}" aria-label="播放" title="播放 / 暂停 (空格)">${toggleIcons({ size: 24 })}</button>`;
   return `<div id="player-root" class="pl" data-state="idle" data-expanded="false">
   <div class="pl__bar" role="region" aria-label="播放器">
     <button class="pl__art" type="button" data-act="expand" aria-label="展开播放页">
@@ -154,32 +157,32 @@ function player({ rel }) {
       <input id="plSeek" class="range range--seek" type="range" min="0" max="1000" step="1" value="0" aria-label="播放进度" disabled>
       <div class="pl__times"><span id="plCur">0:00</span><span id="plDur">0:00</span></div>
     </div>
-    <div class="pl__btns">
-      ${btn('prev', '上一首', '⏮')}
-      <button class="pbtn pbtn--play" type="button" data-act="toggle" id="plToggle" aria-label="播放" title="播放 / 暂停 (空格)"><span aria-hidden="true" id="plToggleIcon">▶</span></button>
-      ${btn('next', '下一首', '⏭')}
+    <div class="pl__btns" role="group" aria-label="播放控制">
+      ${btn('prev', '上一首', 'prev')}
+      ${toggle('plToggle')}
+      ${btn('next', '下一首', 'next')}
     </div>
     <div class="pl__extra">
-      ${btn('cycle-mode', '播放模式：顺序播放', '→', ' id="plMode"')}
-      ${btn('toggle-fav', '收藏当前歌曲', '♡', ' id="plFav"')}
-      ${btn('open-lyrics', '全屏歌词', '詞')}
-      ${btn('open-queue', '播放队列', '☰', ' id="plQueueBtn"')}
-      ${btn('open-share', '分享当前歌曲', '↗')}
+      ${btn('cycle-mode', '播放模式：顺序播放', 'mode-order', ' id="plMode"', 22)}
+      ${btn('toggle-fav', '收藏当前歌曲', 'heart', ' id="plFav"', 22)}
+      ${btn('open-lyrics', '全屏歌词', 'lyrics', '', 22)}
+      ${btn('open-queue', '播放队列', 'queue', ' id="plQueueBtn"', 22)}
+      ${btn('open-share', '分享当前歌曲', 'share', '', 22)}
       <div class="pl__vol" id="plVolWrap">
-        ${btn('toggle-mute', '静音', '🔊', ' id="plMute"')}
+        ${btn('toggle-mute', '静音', 'volume', ' id="plMute"', 22)}
         <input id="plVol" class="range range--vol" type="range" min="0" max="100" step="1" value="100" aria-label="音量">
       </div>
-      ${btn('expand', '展开播放页', '⤢')}
+      ${btn('expand', '展开播放页', 'expand', '', 22)}
     </div>
     <p class="pl__state" id="plState" role="status" aria-live="polite"></p>
   </div>
 
   <section class="pl__full" id="plFull" hidden aria-label="播放页">
     <div class="pl__fullhead">
-      <button class="pbtn" type="button" data-act="collapse" aria-label="收起播放页"><span aria-hidden="true">⌄</span></button>
+      <button class="pbtn" type="button" data-act="collapse" aria-label="收起播放页">${icon('chevron-down', { size: 24 })}</button>
       <p class="pl__fulltitle" id="plFullContext">正在播放</p>
-      <button class="pbtn" type="button" data-act="open-appearance" aria-label="外观与布局" title="外观与布局"><span aria-hidden="true">◐</span></button>
-      <button class="pbtn" type="button" data-act="cycle-view" aria-label="切换展示模式" title="切换展示模式"><span aria-hidden="true" id="plViewIcon">◉</span></button>
+      <button class="pbtn" type="button" data-act="open-appearance" aria-label="外观与布局" title="外观与布局">${icon('palette', { size: 22 })}</button>
+      <button class="pbtn" type="button" data-act="cycle-view" aria-label="切换展示模式" title="切换展示模式" id="plViewIcon">${icon('cover', { size: 22 })}</button>
     </div>
     <div class="pl__stage" id="plStage" data-stage="cover">
       <div class="pl__bigart" id="plBigArt"><img id="plBigCover" alt="" decoding="async" src="${attr(rel)}assets/img/placeholder.svg"><span class="pl__hole" aria-hidden="true"></span></div>
@@ -193,12 +196,12 @@ function player({ rel }) {
       <input id="plSeekFull" class="range range--seek" type="range" min="0" max="1000" step="1" value="0" aria-label="播放进度" disabled>
       <div class="pl__times"><span id="plCurFull">0:00</span><span id="plDurFull">0:00</span></div>
     </div>
-    <div class="pl__fullbtns">
-      ${btn('cycle-mode', '播放模式', '→', ' id="plModeFull"')}
-      ${btn('prev', '上一首', '⏮')}
-      <button class="pbtn pbtn--play pbtn--lg" type="button" data-act="toggle" id="plToggleFull" aria-label="播放"><span aria-hidden="true" id="plToggleIconFull">▶</span></button>
-      ${btn('next', '下一首', '⏭')}
-      ${btn('open-queue', '播放队列', '☰')}
+    <div class="pl__fullbtns" role="group" aria-label="播放控制">
+      ${btn('cycle-mode', '播放模式', 'mode-order', ' id="plModeFull"', 22)}
+      ${btn('prev', '上一首', 'prev')}
+      ${toggle('plToggleFull')}
+      ${btn('next', '下一首', 'next')}
+      ${btn('open-queue', '播放队列', 'queue', '', 22)}
     </div>
     <p class="pl__state" id="plStateFull" role="status" aria-live="polite"></p>
   </section>

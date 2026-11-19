@@ -1,6 +1,7 @@
 import { escapeHtml as esc, escapeAttr as attr, formatTime } from '../../../../assets/js/core/util.js';
 import { canonicalUrl } from '../../../../assets/js/core/paths.js';
 import { sectionHead, songList, collectionGrid, collectionActions, tags, demoBadge } from '../components.mjs';
+import { icon } from '../../../../assets/js/core/icons.js';
 
 function indexPage(model, ctx, kind) {
   const { site } = model;
@@ -70,7 +71,7 @@ export function renderCollection(model, { rel, item, kind, qrSvg }) {
     <h3 class="sub">分享这个${label}</h3>
     <div class="share__row">
       <input class="share__url" type="text" readonly value="${attr(url)}" aria-label="${attr(label)}分享链接">
-      <button class="btn" type="button" data-act="copy-link" data-url="${attr(url)}"><span aria-hidden="true">⧉</span> 复制链接</button>
+      <button class="btn" type="button" data-act="copy-link" data-url="${attr(url)}">${icon('copy', { size: 18 })} 复制链接</button>
     </div>
     <div class="share__qr"><div class="qr" aria-label="链接二维码">${qrSvg || ''}</div>
       <p class="note">扫码或复制链接都能直达本页。微信里打开后需要点一下播放按钮才会出声。</p></div>

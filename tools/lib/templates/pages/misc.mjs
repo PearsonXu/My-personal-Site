@@ -1,5 +1,6 @@
 import { escapeHtml as esc, escapeAttr as attr } from '../../../../assets/js/core/util.js';
 import { sectionHead, backendTable, emptyState } from '../components.mjs';
+import { icon } from '../../../../assets/js/core/icons.js';
 
 export function renderAbout(model, { rel }) {
   const { site } = model;
@@ -29,7 +30,7 @@ export function renderAbout(model, { rel }) {
   <p>右上角「外观」里可以换：<strong>清爽云音乐</strong>（白 / 浅灰 / 红）、
   <strong>森林音乐小屋</strong>（森林绿 / 暖纸 / 琥珀）、<strong>午夜黑胶</strong>（深蓝紫 / 夜景 / 黑胶）。
   布局另有「自动 / 桌面 / 手机」三档，和外观互相独立。换这些都不会打断正在放的歌。</p>
-  <p class="hero__cta"><button class="btn btn--pri" type="button" data-act="open-appearance"><span aria-hidden="true">◐</span> 打开外观与布局</button></p>
+  <p class="hero__cta"><button class="btn btn--pri" type="button" data-act="open-appearance">${icon('palette', { size: 18 })} 打开外观与布局</button></p>
 
   <h2 class="sub">需要外部服务的能力</h2>
   ${backendTable(site, rel)}
@@ -54,17 +55,17 @@ export function renderMe(model, { rel }) {
   </div>
 
   <h2 class="sub">收藏 <span class="count" id="favCount">0</span></h2>
-  <div id="favList">${emptyState({ icon: '♡', title: '还没有收藏', text: '在任意歌曲上点 ♡ 即可收藏。收藏只存在这台设备的这个浏览器里。' })}</div>
+  <div id="favList">${emptyState({ icon: 'heart', title: '还没有收藏', text: '在任意歌曲上点心形图标即可收藏。收藏只存在这台设备的这个浏览器里。' })}</div>
 
   <h2 class="sub">最近播放 <span class="count" id="recentCount">0</span></h2>
-  <div id="recentList">${emptyState({ icon: '↺', title: '还没有播放记录', text: '播放过的歌会出现在这里，最多保留 50 条。' })}</div>
+  <div id="recentList">${emptyState({ icon: 'refresh', title: '还没有播放记录', text: '播放过的歌会出现在这里，最多保留 50 条。' })}</div>
 
   <h2 class="sub">当前队列 <span class="count" id="queueCount">0</span></h2>
-  <div id="queueList">${emptyState({ icon: '☰', title: '队列是空的', text: '去曲库挑几首，或者播放一张专辑 / 歌单。' })}</div>
+  <div id="queueList">${emptyState({ icon: 'queue', title: '队列是空的', text: '去曲库挑几首，或者播放一张专辑 / 歌单。' })}</div>
 
   <h2 class="sub">本地数据管理</h2>
   <div class="hero__cta">
-    <button class="btn" type="button" data-act="export-local"><span aria-hidden="true">⤓</span> 导出为 JSON</button>
+    <button class="btn" type="button" data-act="export-local">${icon('download', { size: 18 })} 导出为 JSON</button>
     <button class="btn btn--quiet" type="button" data-act="clear-favorites">清空收藏</button>
     <button class="btn btn--quiet" type="button" data-act="clear-recent">清空最近播放</button>
     <button class="btn btn--danger" type="button" data-act="clear-all">清空全部本地数据</button>
@@ -88,14 +89,14 @@ export function renderStatus(model, { rel }) {
   <h2 class="sub">浏览器能力自检</h2>
   <p class="c-dim">点下面的按钮，结果直接来自当前浏览器，不是猜测。</p>
   <div class="hero__cta">
-    <button class="btn btn--pri" type="button" data-act="run-diagnostics"><span aria-hidden="true">▶</span> 运行自检</button>
+    <button class="btn btn--pri" type="button" data-act="run-diagnostics">${icon('play', { size: 20 })} 运行自检</button>
   </div>
   <div id="diagOut" class="diag"><p class="c-mute">尚未运行。</p></div>
 
   <h2 class="sub">音频服务自检（MIME / Range / 206）</h2>
   <p class="c-dim">对当前曲库的第一首歌发起 <code>Range: bytes=0-1023</code> 请求，检查返回码、<code>Content-Type</code>、<code>Accept-Ranges</code> 与 <code>Content-Range</code>。拖动进度条能不能用，取决于这一步。</p>
   <div class="hero__cta">
-    <button class="btn" type="button" data-act="probe-audio"><span aria-hidden="true">⇄</span> 探测音频响应头</button>
+    <button class="btn" type="button" data-act="probe-audio">${icon('probe', { size: 18 })} 探测音频响应头</button>
   </div>
   <div id="probeOut" class="diag"><p class="c-mute">尚未运行。</p></div>
 

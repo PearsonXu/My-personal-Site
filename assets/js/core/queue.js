@@ -19,13 +19,6 @@ export const MODE_LABELS = {
   shuffle: '随机播放'
 };
 
-export const MODE_ICONS = {
-  order: '→',
-  'repeat-all': '↻',
-  'repeat-one': 'ↂ',
-  shuffle: '⤨'
-};
-
 const HISTORY_LIMIT = 200;
 
 export class PlayQueue {

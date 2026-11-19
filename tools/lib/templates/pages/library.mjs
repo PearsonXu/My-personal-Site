@@ -1,5 +1,6 @@
 import { escapeHtml as esc, escapeAttr as attr } from '../../../../assets/js/core/util.js';
 import { sectionHead, songList, songGrid, emptyState } from '../components.mjs';
+import { icon } from '../../../../assets/js/core/icons.js';
 
 export function renderLibrary(model, { rel }) {
   const { site, songs } = model;
@@ -16,9 +17,9 @@ export function renderLibrary(model, { rel }) {
 
     <div class="libbar" data-library>
       <div class="search">
-        <span class="search__icon" aria-hidden="true">⌕</span>
+        <span class="search__icon">${icon('search', { size: 18 })}</span>
         <input id="libSearch" class="search__input" type="search" placeholder="搜索歌名 / 专辑 / 标签 / 歌词…" aria-label="搜索曲库" autocomplete="off" spellcheck="false">
-        <button class="search__clear" type="button" data-act="clear-search" aria-label="清空搜索" hidden><span aria-hidden="true">✕</span></button>
+        <button class="search__clear" type="button" data-act="clear-search" aria-label="清空搜索" hidden>${icon('close', { size: 18 })}</button>
       </div>
       <div class="viewswitch" role="group" aria-label="展示模式">
         <button class="chip is-on" type="button" data-act="set-view" data-view="list" aria-pressed="true">列表</button>
@@ -40,11 +41,11 @@ export function renderLibrary(model, { rel }) {
       <div data-viewpane="vinyl" id="libVinyl" hidden>${songGrid(songs, rel)}</div>
     </div>
 
-    <div id="libEmpty" hidden>${emptyState({ icon: '⌕', title: '没有匹配的歌', text: '换个关键词试试，或者清空标签筛选。' })}</div>
+    <div id="libEmpty" hidden>${emptyState({ icon: 'search', title: '没有匹配的歌', text: '换个关键词试试，或者清空标签筛选。' })}</div>
 
     <div class="libbulk">
-      <button class="btn" type="button" data-act="play-all"><span aria-hidden="true">▶</span> 播放当前列表</button>
-      <button class="btn btn--quiet" type="button" data-act="queue-all"><span aria-hidden="true">＋</span> 当前列表加入队列</button>
+      <button class="btn" type="button" data-act="play-all">${icon('play', { size: 20 })} 播放当前列表</button>
+      <button class="btn btn--quiet" type="button" data-act="queue-all">${icon('plus', { size: 18 })} 当前列表加入队列</button>
     </div>
   </div>
 </section>`;
