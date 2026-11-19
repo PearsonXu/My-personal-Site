@@ -1,290 +1,290 @@
 {
-  "at": "2026-11-19T19:32:37.258Z",
+  "at": "2026-11-19T19:49:52.572Z",
   "chrome": "headless Google Chrome (puppeteer-core)",
   "bases": [
-    "http://localhost:8393 (dist --demo)"
+    "https://www.xuzhaoqing.com"
   ],
   "pass": 47,
   "fail": 0,
   "checks": [
     {
-      "group": "local",
+      "group": "live",
       "name": "桌面起播",
       "ok": true,
       "detail": "qingchun-dagai"
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "工具栏在歌词面板顶部且不遮挡",
       "ok": true,
       "detail": "toolbar.bottom=216 lyrics.top=224"
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "校准组在工具栏内",
       "ok": true,
       "detail": ""
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "字号默认中且选中态清晰",
       "ok": true,
       "detail": "s:false,m:true,l:false"
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "字号「大」立即生效且只放大歌词",
       "ok": true,
       "detail": "16.3→19.6px"
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "字号「小」立即生效",
       "ok": true,
       "detail": "14.0px"
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "字号偏好写入当前浏览器",
       "ok": true,
       "detail": ""
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "字号切换不影响播放与时间轴",
       "ok": true,
       "detail": "state=playing"
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "校准读数 +1.0s",
       "ok": true,
       "detail": "+1.0s"
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "切歌不继承上一首偏移",
       "ok": true,
       "detail": "offset=0 readout=0.0s"
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "回到原曲恢复其偏移",
       "ok": true,
       "detail": "offset=1"
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "逐曲偏移已持久化",
       "ok": true,
       "detail": ""
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "简介与词互斥",
       "ok": true,
       "detail": ""
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "简介含「青春大概」",
       "ok": true,
       "detail": ""
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "简介含「原唱」",
       "ok": true,
       "detail": ""
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "简介含「徐鸣」",
       "ok": true,
       "detail": ""
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "简介含「作词」",
       "ok": true,
       "detail": ""
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "简介含「彭錞」",
       "ok": true,
       "detail": ""
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "简介含「作曲」",
       "ok": true,
       "detail": ""
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "简介含「本站版本」",
       "ok": true,
       "detail": ""
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "简介含「翻唱版本」",
       "ok": true,
       "detail": ""
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "简介含「演唱：金石竹青」",
       "ok": true,
       "detail": ""
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "无生成工具资料时不显示空标签",
       "ok": true,
       "detail": ""
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "切歌后简介同步更新",
       "ok": true,
-      "detail": "夜渡 · 测试音源 A作词占位歌词作曲合成音源本站版本合成测试音（DEMO，非站"
+      "detail": "知我作词沈栀作曲王朝作词：沈栀作曲：王朝编曲：王朝制作：王朝原唱：国风堂、哦漏演"
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "切歌不关掉简介面板",
       "ok": true,
       "detail": ""
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "跨页后面板与播放仍在",
       "ok": true,
       "detail": "stage=about state=playing"
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "刷新恢复字号偏好",
       "ok": true,
       "detail": "s:true,m:false,l:false"
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "刷新恢复该曲校准",
       "ok": true,
       "detail": "offset=1 readout=+1.0s"
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "桌面点击区 ≥44px",
       "ok": true,
       "detail": "44/44/44/44"
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "桌面无横向溢出",
       "ok": true,
       "detail": "doc=0 toolbar=0"
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "无页面 JS 错误",
       "ok": true,
       "detail": ""
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "手机字号默认中",
       "ok": true,
       "detail": "s:false,m:true,l:false"
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "手机校准默认 0",
       "ok": true,
       "detail": "offset=0 readout=0.0s"
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "手机迷你条「词」「简介」常驻可见",
       "ok": true,
       "detail": ""
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "手机迷你条不横向溢出",
       "ok": true,
       "detail": "doc=0 bar.right=390"
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "手机起播",
       "ok": true,
       "detail": ""
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "手机工具栏换行不溢出",
       "ok": true,
       "detail": "toolbarOverflow=0 doc=0"
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "手机工具栏不遮挡歌词",
       "ok": true,
       "detail": "toolbar.bottom=263 lyrics.top=271 lyrics.h=343"
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "手机工具栏按钮全部在视口内",
       "ok": true,
       "detail": ""
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "手机字号切换立即生效",
       "ok": true,
       "detail": "16.3→19.6px"
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "手机校准可用且读数更新",
       "ok": true,
       "detail": "+0.5s"
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "手机简介与词互斥",
       "ok": true,
       "detail": ""
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "手机简介不溢出不越界",
       "ok": true,
       "detail": "doc=0 about.right=374"
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "手机简介含原作署名与版本说明",
       "ok": true,
       "detail": ""
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "手机切歌后简介更新为当前曲",
       "ok": true,
-      "detail": "纸船 · 测试音源 B（纯音乐）作曲合成音源本站版本合成测试音（DEMO，非站长"
+      "detail": "知我作词沈栀作曲王朝作词：沈栀作曲：王朝编曲：王朝制作：王朝原唱：国风堂、哦漏演"
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "手机切歌不断播放",
       "ok": true,
       "detail": ""
     },
     {
-      "group": "local",
+      "group": "live",
       "name": "手机无页面 JS 错误",
       "ok": true,
       "detail": ""
@@ -293,7 +293,32 @@
   "notRun": [
     "iOS Safari 真机（无设备）",
     "微信内浏览器真机（无设备 / 账号）",
-    "「全部资料缺失 → 歌曲资料待补充」的真机目视：现有内容均含部分资料，该分支由 tests/player-panels.test.mjs 单元覆盖",
-    "线上部署复测需在 push 部署后重跑：node tools/probe-player-panels.mjs --base=https://www.xuzhaoqing.com"
+    "「全部资料缺失 → 歌曲资料待补充」的真机目视：现有内容均含部分资料，该分支由 tests/player-panels.test.mjs 单元覆盖"
+  ],
+  "alsoRun": [
+    {
+      "at": "2026-11-19T19:49:38.753Z",
+      "bases": [
+        "http://localhost:8393 (dist --demo)"
+      ],
+      "pass": 47,
+      "fail": 0
+    },
+    {
+      "at": "2026-11-19T19:46:55.348Z",
+      "bases": [
+        "https://www.xuzhaoqing.com"
+      ],
+      "pass": 47,
+      "fail": 0
+    },
+    {
+      "at": "2026-11-19T19:32:37.258Z",
+      "bases": [
+        "http://localhost:8393 (dist --demo)"
+      ],
+      "pass": 47,
+      "fail": 0
+    }
   ]
 }

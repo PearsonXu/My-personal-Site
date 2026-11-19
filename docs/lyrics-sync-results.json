@@ -1,5 +1,5 @@
 {
-  "at": "2026-11-19T19:35:00.717Z",
+  "at": "2026-11-19T19:49:04.012Z",
   "chrome": "headless Google Chrome (puppeteer-core)",
   "bases": [
     "http://localhost:8391 (dist)",
@@ -13,7 +13,7 @@
       "group": "local",
       "name": "首句高亮按时落地",
       "ok": true,
-      "detail": "t=19.65 idx=0"
+      "detail": "t=19.66 idx=0"
     },
     {
       "group": "local",
@@ -73,7 +73,7 @@
       "group": "local",
       "name": "暂停恢复后按 currentTime 定位",
       "ok": true,
-      "detail": "t=41.65"
+      "detail": "t=41.66"
     },
     {
       "group": "local",
@@ -85,7 +85,7 @@
       "group": "local",
       "name": "慢网缓冲后按 currentTime 重新同步",
       "ok": true,
-      "detail": "缓冲期 state=playing，恢复后 t=47.28"
+      "detail": "缓冲期 state=playing，恢复后 t=47.29"
     },
     {
       "group": "local",
@@ -127,7 +127,7 @@
       "group": "local",
       "name": "手机首句高亮按时落地",
       "ok": true,
-      "detail": "t=19.78 idx=0"
+      "detail": "t=19.73 idx=0"
     },
     {
       "group": "local",
@@ -151,7 +151,7 @@
       "group": "live",
       "name": "首句高亮按时落地",
       "ok": true,
-      "detail": "t=19.89 idx=0"
+      "detail": "t=19.88 idx=0"
     },
     {
       "group": "live",
@@ -169,7 +169,7 @@
       "group": "live",
       "name": "当前行保持在容器中部附近",
       "ok": true,
-      "detail": "Δ=84px"
+      "detail": "Δ=67px"
     },
     {
       "group": "live",
@@ -211,31 +211,31 @@
       "group": "live",
       "name": "暂停恢复后按 currentTime 定位",
       "ok": true,
-      "detail": "t=41.67"
+      "detail": "t=41.65"
     },
     {
       "group": "live",
       "name": "重开歌词面板立即回到当前行",
       "ok": true,
-      "detail": "Δ=1px"
+      "detail": "Δ=0px"
     },
     {
       "group": "live",
       "name": "慢网缓冲后按 currentTime 重新同步",
       "ok": true,
-      "detail": "缓冲期 state=playing，恢复后 t=47.30"
+      "detail": "缓冲期 state=playing，恢复后 t=47.29"
     },
     {
       "group": "live",
       "name": "恢复进度+慢网落地：高亮立即在正确行",
       "ok": true,
-      "detail": "t=70.95 idx=10 active=10（旧构建在此冻住=根因复现）"
+      "detail": "t=71.25 idx=10 active=10（旧构建在此冻住=根因复现）"
     },
     {
       "group": "live",
       "name": "reduced-motion 瞬时定位（150ms 内完成滚动）",
       "ok": true,
-      "detail": "scrollTop 0→861"
+      "detail": "scrollTop 331→878"
     },
     {
       "group": "live",
@@ -247,7 +247,7 @@
       "group": "live",
       "name": "重播按 currentTime 重新定位（首句前/首句）",
       "ok": true,
-      "detail": "t=0.95 idx=-1 active=null"
+      "detail": "t=0.94 idx=-1 active=null"
     },
     {
       "group": "live",

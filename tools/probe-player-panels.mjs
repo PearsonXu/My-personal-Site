@@ -78,7 +78,7 @@ const playRow = async (page, slug) => {
   await page.click(`[data-act="play-song"][data-slug="${slug}"]`);
   return waitUntil(page, (s) => s.state === 'playing' && s.slug === slug, 12000);
 };
-async function runDesktop(browser, base, label) {
+async function runDesktop(browser, base, label, other) {
   console.log(`\n▶ ${label} desktop ${base}`);
   const page = await browser.newPage();
   await page.setViewport({ width: 1440, height: 900 });
@@ -110,7 +110,7 @@ async function runDesktop(browser, base, label) {
   await page.click('[data-act="lyric-offset"][data-delta="0.5"]');
   s = await waitUntil(page, (x) => x.offset === 1);
   check(label, '校准读数 +1.0s', s.readout === '+1.0s', s.readout);
-  s = await playRow(page, 'demo-night-ferry');
+  s = await playRow(page, other.slug);
   check(label, '切歌不继承上一首偏移', s.offset === 0 && s.readout === '0.0s', `offset=${s.offset} readout=${s.readout}`);
   await page.click('#plLyricsBtn');
   await waitUntil(page, (x) => x.expanded === 'true');
@@ -128,8 +128,8 @@ async function runDesktop(browser, base, label) {
   }
   check(label, '无生成工具资料时不显示空标签', !s.aboutText.includes('生成工具'));
   await page.screenshot({ path: shots(`panels-${label}-desktop-about.png`) });
-  s = await playRow(page, 'demo-night-ferry');
-  check(label, '切歌后简介同步更新', s.aboutText.includes('合成测试音') && !s.aboutText.includes('徐鸣'), s.aboutText.slice(0, 40));
+  s = await playRow(page, other.slug);
+  check(label, '切歌后简介同步更新', s.aboutText.includes(other.title) && !s.aboutText.includes('徐鸣'), s.aboutText.slice(0, 40));
   check(label, '切歌不关掉简介面板', s.stage === 'about');
   // 跨页
   await page.evaluate(() => document.querySelector('.nav__ul .nav__a')?.scrollIntoView({ block: 'center' }));
@@ -137,7 +137,7 @@ async function runDesktop(browser, base, label) {
   await page.click('.nav__ul .nav__a');
   await sleep(900);
   s = await snap(page);
-  check(label, '跨页后面板与播放仍在', s.stage === 'about' && s.state === 'playing' && s.aboutText.includes('合成测试音'), `stage=${s.stage} state=${s.state}`);
+  check(label, '跨页后面板与播放仍在', s.stage === 'about' && s.state === 'playing' && s.aboutText.includes(other.title), `stage=${s.stage} state=${s.state}`);
   // 刷新恢复
   await page.goto(`${base}/songs/`, { waitUntil: 'domcontentloaded' });
   await sleep(700);
@@ -154,7 +154,7 @@ async function runDesktop(browser, base, label) {
   check(label, '无页面 JS 错误', errors.length === 0, errors.slice(0, 2).join(' | '));
   await page.close();
 }
-async function runMobile(browser, base, label) {
+async function runMobile(browser, base, label, other) {
   console.log(`\n▶ ${label} mobile ${base}`);
   // 独立 context：桌面段的 localStorage 不串进来（pagehide 的 store.flush 会把清掉的存储写回，
   // 所以「同页 clear + reload」不可靠），手机默认态必须在干净存储里验
@@ -196,8 +196,8 @@ async function runMobile(browser, base, label) {
   check(label, '手机简介不溢出不越界', s.docOverflow <= 0 && s.about.r <= s.winW + 1 && s.about.b <= s.winH + 1, `doc=${s.docOverflow} about.right=${s.about?.r.toFixed(0)}`);
   check(label, '手机简介含原作署名与版本说明', s.aboutText.includes('徐鸣') && s.aboutText.includes('翻唱版本'));
   await page.screenshot({ path: shots(`panels-${label}-mobile-about.png`) });
-  ps = await playRow(page, 'demo-paper-boat');
-  check(label, '手机切歌后简介更新为当前曲', ps.aboutText.includes('纯音乐') && !ps.aboutText.includes('徐鸣'), ps.aboutText.slice(0, 40));
+  ps = await playRow(page, other.slug);
+  check(label, '手机切歌后简介更新为当前曲', ps.aboutText.includes(other.title) && !ps.aboutText.includes('徐鸣'), ps.aboutText.slice(0, 40));
   check(label, '手机切歌不断播放', ps.state === 'playing');
   check(label, '手机无页面 JS 错误', errors.length === 0, errors.slice(0, 2).join(' | '));
   await page.close();
@@ -216,8 +216,13 @@ try {
   const localBase = baseArg || 'http://localhost:8393';
   const server = baseArg ? null : startServer(path.join(ROOT, 'dist'), 8393);
   await sleep(300);
-  await runDesktop(browser, localBase, 'local');
-  await runMobile(browser, localBase, 'local');
+  // 「另一首歌」从真实 catalog 取：本地 DEMO 构建与线上生产构建曲目不同，不能写死 slug
+  const catalog = await (await fetch(`${localBase}/assets/data/catalog.json`)).json();
+  const other = catalog.songs.find((s) => s.slug !== 'qingchun-dagai');
+  if (!other) throw new Error('曲库至少需要两首歌（青春大概 + 另一首）才能验逐曲校准与切歌简介');
+  const label = baseArg ? 'live' : 'local';
+  await runDesktop(browser, localBase, label, other);
+  await runMobile(browser, localBase, label, other);
   server?.close();
 } finally {
   await browser.close();
@@ -234,9 +239,17 @@ const report = {
     'iOS Safari 真机（无设备）',
     '微信内浏览器真机（无设备 / 账号）',
     '「全部资料缺失 → 歌曲资料待补充」的真机目视：现有内容均含部分资料，该分支由 tests/player-panels.test.mjs 单元覆盖',
-    '线上部署复测需在 push 部署后重跑：node tools/probe-player-panels.mjs --base=https://www.xuzhaoqing.com'
+    ...(baseArg ? [] : ['线上部署复测需在 push 部署后重跑：node tools/probe-player-panels.mjs --base=https://www.xuzhaoqing.com'])
   ]
 };
-fs.writeFileSync(path.join(ROOT, 'docs/player-panels-results.json'), JSON.stringify(report, null, 2));
+const reportPath = path.join(ROOT, 'docs/player-panels-results.json');
+// 换目标重跑（local ↔ live）时保留上一次运行摘要，记录不互相覆盖
+try {
+  const prev = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
+  if (prev.bases?.join('|') !== report.bases.join('|')) {
+    report.alsoRun = [{ at: prev.at, bases: prev.bases, pass: prev.pass, fail: prev.fail }, ...(prev.alsoRun || [])].slice(0, 3);
+  }
+} catch { /* 首次运行没有旧报告 */ }
+fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
 console.log(`\n${report.pass}/${results.length} 通过${failed.length ? `，${failed.length} 失败` : ''} → docs/player-panels-results.json`);
 process.exit(failed.length ? 1 : 0);

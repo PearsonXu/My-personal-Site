@@ -1,7 +1,7 @@
 # 线上正式部署复验
 
 > 由 `node tools/verify-live.mjs` 自动生成。目标：https://www.xuzhaoqing.com
-> 运行时间：2026-11-19T11:31:50.158Z
+> 运行时间：2026-11-19T19:49:07.242Z
 > **18 PASS · 1 N/A · 0 FAIL**
 
 N/A 表示当前条件下不适用（例如曲库为空时没有单曲页），不是失败。
@@ -26,9 +26,9 @@ N/A 表示当前条件下不适用（例如曲库为空时没有单曲页），�
 
 | 项 | 结果 | 实测 |
 | --- | --- | --- |
-| catalog.json 可读且结构正确 | PASS | 歌曲 1 · 专辑 0 · 歌单 0 · 手记 2 |
+| catalog.json 可读且结构正确 | PASS | 歌曲 2 · 专辑 0 · 歌单 0 · 手记 2 |
 | 生产构建未混入 DEMO | PASS | 无 DEMO 曲目、无 DEMO 标记 |
-| 曲库为空时显示正确空状态 | N/A | 已有 1 首真实歌曲 |
+| 曲库为空时显示正确空状态 | N/A | 已有 2 首真实歌曲 |
 | 无旧身份 / 专业背景残留 | PASS | 5 个入口全部干净 |
 
 ## 资源路径
@@ -50,14 +50,14 @@ N/A 表示当前条件下不适用（例如曲库为空时没有单曲页），�
 
 | 项 | 结果 | 实测 |
 | --- | --- | --- |
-| 首页 canonical / OG 指向正式域名 | PASS | canonical=https://www.xuzhaoqing.com/ · og:image 200 image/png |
+| 首页 canonical / OG 指向正式域名 | PASS | canonical=https://www.xuzhaoqing.com/ · og:image 200 image/jpeg |
 | 手记深链接直达 + 刷新 + 独立元数据 | PASS | /notes/hello-music-house/ 直达与刷新均 200，canonical 与标题独立 |
 
 ## 单曲深链接
 
 | 项 | 结果 | 实测 |
 | --- | --- | --- |
-| 逐首直达 / 刷新 / 元数据 / 音源 Range | PASS | 1 首全部直达 200 + canonical + 播放按钮 + 音源 206 audio/* |
+| 逐首直达 / 刷新 / 元数据 / 音源 Range | PASS | 2 首全部直达 200 + canonical + 播放按钮 + 音源 206 audio/* |
 
 ## Pages 附属文件
 

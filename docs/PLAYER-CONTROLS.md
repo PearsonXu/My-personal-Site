@@ -167,5 +167,15 @@ hover 转 `var(--acc)`。**没有任何单独硬编码的颜色**：
   - **播放/暂停图标原位切换：不跳位、不断音**（按钮与图形四值位移 < 0.6px，
     音源不变、进度不倒退）
 - 控制区特写截图：`docs/screenshots/controls-{theme}-{viewport}-{bar,full}.png`
+- 面板轮（字号工具栏 + 逐曲校准 + 简介）：`tests/player-panels.test.mjs`（15 项）+
+  `tools/probe-player-panels.mjs` 真实 Chrome 桌面 1440×900 / 移动 390×844，
+  本地 DEMO 与线上生产各 47/47；截图 `docs/screenshots/panels-{local,live}-*.png`，
+  报告 `docs/player-panels-results.json`（`alsoRun` 保留另一目标的上一次摘要）
+- 面板轮复测：`probe-regression` 138/0、`probe-lyrics-sync` local+live 41/41、
+  `verify-live` 18 PASS · 1 N/A · 0 FAIL（2026-11-19，部署 commit 708925d 后）
+- **NOT_RUN**：iOS Safari 真机、微信内浏览器真机（无设备 / 账号）；
+  「全部资料缺失 → 歌曲资料待补充」分支仅单元覆盖，未真机目视
 
-> 本轮只改图标、尺寸、间距与交互样式。播放逻辑、快捷键、Media Session 行为均未改动。
+> 图标轮只改图标、尺寸、间距与交互样式；面板轮新增字号偏好（按浏览器持久化）、
+> 校准偏移（按歌曲持久化）与简介舞台，Media Session 封面 MIME 改为按扩展名如实声明。
+> 走带 / 快捷键 / 竞态令牌 / 媒体事件驱动状态机均未改动。
