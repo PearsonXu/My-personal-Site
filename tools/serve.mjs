@@ -42,8 +42,44 @@ const MIME = {
   '.pdf': 'application/pdf'
 };
 
+/**
+ * 启动前一致性校验。
+ *
+ * 间歇性 404 的一个真实来源：dist/ 被反复重建（生产 ↔ DEMO、或带 --base 子目录前缀），
+ * 而长驻的预览服务器照旧把不匹配的产物发出去 —— 同一个按钮有时正常有时 404。
+ * 这里在启动时就把不匹配拦下来并说清楚，而不是让用户去猜。
+ */
+function assertBuildMatches(dir, base) {
+  const indexFile = path.join(dir, 'index.html');
+  if (!fs.existsSync(indexFile)) {
+    console.error(`✗ ${dir} 里没有 index.html。先跑：npm run build:demo`);
+    process.exit(1);
+  }
+  const html = fs.readFileSync(indexFile, 'utf8');
+  const buildBase = /data-base="([^"]*)"/.exec(html)?.[1] || '/';
+  const serverBase = base ? `${base}/` : '/';
+  if (buildBase !== serverBase) {
+    console.error('✗ 产物与服务路径不匹配，拒绝启动（否则每个链接都会 404）：');
+    console.error(`    产物构建 base = ${buildBase}`);
+    console.error(`    服务器 base   = ${serverBase}`);
+    console.error(`  修法二选一：`);
+    console.error(`    node tools/build-site.mjs --demo --base ${serverBase}`);
+    console.error(`    或去掉 BASE_PATH 环境变量后重新 npm run serve`);
+    process.exit(1);
+  }
+  let mode = '未知';
+  let songs = '?';
+  try {
+    const mf = JSON.parse(fs.readFileSync(path.join(dir, 'assets/data/build-manifest.json'), 'utf8'));
+    mode = mf.mode;
+    songs = mf.counts.songs;
+  } catch { /* 清单缺失不致命 */ }
+  return { buildBase, mode, songs };
+}
+
 export function startServer(dir = path.join(ROOT, 'dist'), port = 8000) {
   const base = (process.env.BASE_PATH || '/').replace(/\/+$/, '') || '';
+  const info = assertBuildMatches(dir, base);
   const server = http.createServer((req, res) => {
     const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
     let pathname = decodeURIComponent(url.pathname);
@@ -122,6 +158,11 @@ export function startServer(dir = path.join(ROOT, 'dist'), port = 8000) {
     console.log(`\n▶ 本地预览 http://localhost:${port}${base || '/'}`);
     console.log(`  服务目录 ${dir}`);
     console.log('  支持 Range / 206（拖动进度条可真实验证）');
+    console.log(`  产物：base=${info.buildBase} · 模式=${info.mode} · 歌曲=${info.songs}`);
+    if (info.mode === 'production') {
+      console.log('  ⚠ 生产产物：DEMO 测试歌曲不存在，点它们的链接会 404。');
+      console.log('    想试听请用 npm run dev（DEMO 构建 + 预览，一条命令保证匹配）。');
+    }
     if (base) console.log(`  正在模拟项目子路径部署：BASE_PATH=${base}`);
     console.log('  Ctrl+C 停止\n');
   });

@@ -55,6 +55,8 @@ npm run dev          # 含 DEMO 合成音的构建 + 本地服务器（真的支
 | `npm run browser:check` | **真实 Chrome** 验收：六组合截图 + 完整功能清单 + 布局健康检查 + 白屏回归 |
 | `npm run probe:regression` | 白屏故障专项取证：跨深度导航、旧数据 / 坏数据用户、404 页自洽、全页面直接打开+刷新 |
 | `npm run audit:links` | 逐页实测每个 href/src 的最终 URL、状态码与 Content-Type |
+| `npm run compare:hrefs` | 同一按钮在首页/歌曲页/关于页/手记页/曲库的 href 逐项对比 |
+| `npm run dev` | DEMO 构建 + 预览一条命令（保证产物与服务 base 匹配） |
 | `npm run verify:live` | 对**正式域名**做 HTTP 复验（域名 / 路由 / 资源 / 播放器 / 空状态） |
 | `npm run browser:live` | 用**真实 Chrome** 复验正式域名上的播放器与三套外观 |
 | `npm run check:assets -- --dist dist` | 产物完整性 |

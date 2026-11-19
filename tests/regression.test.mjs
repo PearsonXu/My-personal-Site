@@ -50,6 +50,62 @@ test('回归 · 外壳图片在构建期就是绝对路径（不依赖 JS 修正
   assert.ok(!/src="\.\.\//.test(shell), '外壳不应再有 ../ 相对资源');
 });
 
+test('回归 · 同一按钮在首页/歌曲页/关于页/手记页/曲库的 href 完全一致', () => {
+  build(true);
+  const catalog = JSON.parse(read('assets/data/catalog.json'));
+  const song = catalog.songs[0]?.slug;
+  const note = catalog.notes[0]?.slug;
+  const routes = ['index.html', 'songs/index.html', 'about/index.html',
+    ...(song ? [`songs/${song}/index.html`] : []), ...(note ? [`notes/${note}/index.html`] : [])];
+
+  /** 取出与页面内容无关的「外壳 + 页脚 + 资源」链接 */
+  const shellHrefs = (html) => {
+    const out = {};
+    const nav = /<nav class="nav"[\s\S]*?<\/nav>/.exec(html)?.[0] || '';
+    for (const m of nav.matchAll(/<a class="nav__a[^"]*" href="([^"]+)"[^>]*>(?:<svg[\s\S]*?<\/svg>)?([^<]+)</g)) {
+      out[`nav:${m[2].trim()}`] = m[1];
+    }
+    out.brand = /<a class="brand" href="([^"]+)"/.exec(html)?.[1];
+    const foot = /<footer class="foot"[\s\S]*?<\/footer>/.exec(html)?.[0] || '';
+    for (const m of foot.matchAll(/<a href="([^"]+)"[^>]*>([^<]+)</g)) out[`foot:${m[2].trim()}`] = m[1];
+    out.css = /<link rel="stylesheet" href="([^"]*site\.css)"/.exec(html)?.[1];
+    out.js = /<script type="module" src="([^"]+)"/.exec(html)?.[1];
+    out.cover = /<img id="plCover"[^>]*src="([^"]+)"/.exec(html)?.[1];
+    return out;
+  };
+
+  const base = shellHrefs(read(routes[0]));
+  assert.ok(Object.keys(base).length > 10, '取到的链接太少，判据无效');
+  for (const r of routes.slice(1)) {
+    const cur = shellHrefs(read(r));
+    for (const k of Object.keys(base)) {
+      assert.equal(cur[k], base[k], `${r} 的「${k}」与首页不一致：${cur[k]} vs ${base[k]}`);
+    }
+  }
+  // 桌面与移动导航必须共用同一份 DOM（只有 CSS 差异）
+  for (const r of routes) {
+    assert.equal((read(r).match(/<nav class="nav"/g) || []).length, 1, `${r} 出现了多份导航标记`);
+  }
+  // 卡片 / 行链接形状：根绝对 + 单段 slug + 尾斜杠，任何累积都会破坏它
+  for (const r of routes) {
+    const html = read(r);
+    for (const m of html.matchAll(/<a class="(?:row__main|card__link|hero__pick__cover)" href="([^"]+)"/g)) {
+      assert.match(m[1], /^\/(songs|albums|playlists|notes)\/[a-z0-9][a-z0-9-]*\/$/, `${r} 卡片链接形状异常：${m[1]}`);
+    }
+  }
+  assert.ok(routes.length >= 4, '对比页面太少');
+});
+
+test('回归 · 预览服务器会拦下 base 不匹配的产物（间歇性 404 的一个来源）', () => {
+  const serve = src('tools/serve.mjs');
+  assert.match(serve, /function assertBuildMatches/);
+  assert.match(serve, /data-base="\(\[\^"\]\*\)"/);
+  assert.match(serve, /产物与服务路径不匹配，拒绝启动/);
+  assert.match(serve, /info\.mode === 'production'/);
+  const pkg = JSON.parse(src('package.json'));
+  assert.match(pkg.scripts.dev, /build-site\.mjs --demo && node tools\/serve\.mjs/);
+});
+
 test('回归 · 路由失败也会摘掉 navigating 标记（try/finally）', () => {
   assert.match(src('assets/js/router.js'), /} finally \{[\s\S]*?delete document\.documentElement\.dataset\.navigating/);
 });

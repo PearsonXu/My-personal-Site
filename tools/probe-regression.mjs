@@ -263,6 +263,42 @@ await chain('旧数据用户（dark + grid + lyrics）', {
   }
 }
 
+/* ── 跨子页面交叉跳转矩阵：每个起点 × 每个目标，跳转后再刷新目标 ── */
+{
+  console.log('\n── 跨子页面交叉跳转矩阵 ──');
+  const noteList = liveCatalog.notes || [];
+  const starts = [['首页', '/'], ['歌曲详情', deepSlug ? `/songs/${deepSlug}/` : null], ['关于', '/about/'], ['手记详情', noteList[0] ? `/notes/${noteList[0].slug}/` : null], ['曲库', '/songs/']].filter(([, p]) => p);
+  const targets = [['首页', '/'], ['曲库', '/songs/'], ['专辑', '/albums/'], ['歌单', '/playlists/'], ['手记', '/notes/'], ['关于', '/about/'], ['我的', '/me/']];
+  for (const viewport of ['desktop', 'mobile']) {
+    const { page, errors, failed } = await newPage({ viewport });
+    const bad = [];
+    let hops = 0;
+    for (const [startLabel, startPath] of starts) {
+      for (const [targetLabel, targetPath] of targets) {
+        // 每一跳都从「真实子页面」重新出发，而不是从首页
+        await page.goto(`${B}${startPath}`, { waitUntil: 'domcontentloaded' });
+        await page.waitForFunction(() => !!window.__music, { timeout: 15000 });
+        await page.evaluate((l) => [...document.querySelectorAll('.nav__a')].find((a) => a.textContent.includes(l))?.click(), targetLabel);
+        await sleep(550);
+        let s = await snap(page);
+        hops++;
+        if (new URL(s.url).pathname !== targetPath) bad.push(`${startLabel}→${targetLabel} 落在 ${new URL(s.url).pathname}`);
+        if (!styled(s)) bad.push(`${startLabel}→${targetLabel} 样式丢失`);
+        // 刷新目标页，确认地址不漂移、样式仍在
+        await page.reload({ waitUntil: 'domcontentloaded' });
+        await sleep(350);
+        s = await snap(page);
+        if (new URL(s.url).pathname !== targetPath) bad.push(`${startLabel}→${targetLabel} 刷新后漂移`);
+        if (!styled(s) || s.mainTextLen < 20) bad.push(`${startLabel}→${targetLabel} 刷新后异常`);
+      }
+    }
+    check(`${viewport} ${starts.length}×${targets.length}=${hops} 次交叉跳转 + 刷新全部正确`, bad.length === 0, bad.slice(0, 4).join('; '));
+    check(`${viewport} 矩阵全程无失败请求`, failed.length === 0, failed.slice(0, 3).join(' | '));
+    check(`${viewport} 矩阵全程无 Console 错误`, errors.length === 0, errors.slice(0, 3).join(' | '));
+    await page.close();
+  }
+}
+
 /* ── 直接打开每个子页面 + 原地刷新 ─────────────────── */
 {
   console.log('\n── 直接访问 + 刷新（全部页面）──');

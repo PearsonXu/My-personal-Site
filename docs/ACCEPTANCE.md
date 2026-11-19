@@ -10,9 +10,10 @@
 | 项 | 命令 | 结果 |
 | --- | --- | --- |
 | 类型检查 | `npm run typecheck`（`tsc --noEmit`，checkJs） | **PASS · 0 error** |
-| 单元 + jsdom 集成 | `npm test` | **PASS · 167 / 167** |
+| 单元 + jsdom 集成 | `npm test` | **PASS · 170 / 170** |
 | 真实浏览器验收 | `npm run browser:check` | **PASS · 215 / 215** |
-| 白屏故障专项取证 | `npm run probe:regression` | **PASS · 76 / 76**（线上同项亦 76/76） |
+| 白屏故障专项取证 | `npm run probe:regression` | **PASS · 118 / 118**（含 5×7 跨子页面交叉跳转 + 刷新，桌面与手机各一轮） |
+| 同一按钮跨页面 href 对比 | `npm run compare:hrefs` | **PASS · 0 处不一致** |
 | 全站链接与资源审计 | `npm run audit:links` | **PASS · 0 问题**（11 页全部引用 200 + MIME 正确） |
 | 生产构建 | `npm run build` | **PASS** · 排除 DEMO，空状态正确 |
 | DEMO 构建 | `npm run build:demo` | **PASS** · 15 页面 |

@@ -10,7 +10,7 @@
   "scripts": {
     "build": "node tools/build-site.mjs",
     "build:demo": "node tools/build-site.mjs --demo",
-    "dev": "node tools/build-site.mjs --demo --serve",
+    "dev": "node tools/build-site.mjs --demo && node tools/serve.mjs",
     "serve": "node tools/serve.mjs",
     "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
     "typecheck": "tsc --noEmit",
@@ -24,7 +24,8 @@
     "verify:live": "node tools/verify-live.mjs",
     "browser:live": "node tools/browser-live.mjs",
     "probe:regression": "node tools/probe-regression.mjs",
-    "audit:links": "node tools/audit-links.mjs"
+    "audit:links": "node tools/audit-links.mjs",
+    "compare:hrefs": "node tools/compare-hrefs.mjs"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",
