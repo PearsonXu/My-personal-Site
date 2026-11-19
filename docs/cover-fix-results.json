@@ -1,0 +1,61 @@
+{
+  "ranAt": "2026-11-19T13:01:29.249Z",
+  "engine": "system Chrome (headless)",
+  "results": [
+    {
+      "name": "A 移动端直接打开",
+      "ok": true,
+      "detail": "容器 320×320，图 320×320，object-fit=cover，aspect-ratio=1 / 1，::before=none/100%，横向溢出=false"
+    },
+    {
+      "name": "B 站内路由跳转进入",
+      "ok": true,
+      "detail": "容器 320×320，图 320×320，object-fit=cover，aspect-ratio=1 / 1，::before=none/100%，横向溢出=false"
+    },
+    {
+      "name": "C 横屏",
+      "ok": true,
+      "detail": "容器 320×320，图 320×320，object-fit=cover，aspect-ratio=1 / 1，::before=none/100%，横向溢出=false"
+    },
+    {
+      "name": "C 转回竖屏",
+      "ok": true,
+      "detail": "容器 320×320，图 320×320，object-fit=cover，aspect-ratio=1 / 1，::before=none/100%，横向溢出=false"
+    },
+    {
+      "name": "D 横版源图裁切",
+      "ok": true,
+      "detail": "容器 320×320，图 320×320，object-fit=cover，aspect-ratio=1 / 1，::before=none/100%，横向溢出=false"
+    },
+    {
+      "name": "D 源图确为横版",
+      "ok": true,
+      "detail": "natural=1200×630"
+    },
+    {
+      "name": "E 占位图",
+      "ok": true,
+      "detail": "容器 320×320，图 320×320，object-fit=cover，aspect-ratio=1 / 1，::before=none/100%，横向溢出=false"
+    },
+    {
+      "name": "F 旧内核兜底（无 aspect-ratio）",
+      "ok": true,
+      "detail": "容器 320×320，图 320×320，object-fit=cover，aspect-ratio=auto，::before=\"\"/320px，横向溢出=false"
+    },
+    {
+      "name": "F 兜底路径确实走 padding-top",
+      "ok": true,
+      "detail": "::before content=\"\" padding-top=320px"
+    },
+    {
+      "name": "G 加载前后布局稳定",
+      "ok": true,
+      "detail": "加载前容器高 320px（complete=false）→ 加载后 320px"
+    },
+    {
+      "name": "H 桌面端",
+      "ok": true,
+      "detail": "容器 340×340，图 340×340，object-fit=cover，aspect-ratio=1 / 1，::before=none/100%，横向溢出=false"
+    }
+  ]
+}

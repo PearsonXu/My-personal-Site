@@ -281,7 +281,22 @@ h1,h2,h3,h4 { font-family:var(--font-d); font-weight:600; line-height:1.2; lette
 .crumbs { display:flex; flex-wrap:wrap; gap:8px; font-size:.8rem; color:var(--mute); margin-bottom:var(--sp5); }
 .crumbs a:hover { color:var(--acc); }
 .song__head { display:grid; grid-template-columns:minmax(0,340px) minmax(0,1fr); gap:clamp(24px,4vw,48px); align-items:start; }
-.song__art img { border-radius:var(--r-lg); border:1px solid var(--line-2); box-shadow:var(--shadow); }
+/* 方形封面（单曲 / 专辑 / 歌单详情页共用；只作用于 .song__art，不影响横版 OG 分享图）：
+   - 容器自己撑出 1:1。基线用 ::before 的 padding-top:100%（百分比按容器宽度解析），
+     不认识 aspect-ratio 的旧微信内核（X5 / 老 XWeb）也能保持正方形；
+     支持 aspect-ratio 的内核走 @supports 增强并移除伪元素，两条路径二选一，不会叠高。
+   - 图片绝对定位填满容器 + object-fit:cover：只裁切、不变形。
+     width/height 必须显式写：HTML 的 width/height="420" 属性会映射成固定宽高，
+     全局 max-width:100% 只压宽度不压高度，窄屏会把封面拉成 420px 高的竖长方形。
+   - 图片加载前容器已有确定高度，布局不跳；缺图 / 占位图 / 非方形源图同样被约束为正方形。
+   - 宽度随屏幕缩放：受 grid 列宽与 layout-tablet/desktop.css 的 max-width 覆盖约束。 */
+.song__art { position:relative; width:100%; max-width:420px; }
+.song__art::before { content:''; display:block; padding-top:100%; }
+.song__art img { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; border-radius:var(--r-lg); border:1px solid var(--line-2); box-shadow:var(--shadow); }
+@supports (aspect-ratio: 1 / 1) {
+  .song__art { aspect-ratio:1; }
+  .song__art::before { content:none; }
+}
 .song__title { font-size:clamp(1.7rem,4vw,2.6rem); margin-bottom:var(--sp2); }
 .song__artist { color:var(--dim); font-size:1.05rem; margin-bottom:var(--sp4); }
 .kv { display:grid; gap:var(--sp3); }
