@@ -1,7 +1,7 @@
 # 线上正式部署复验
 
 > 由 `node tools/verify-live.mjs` 自动生成。目标：https://www.xuzhaoqing.com
-> 运行时间：2026-11-19T10:22:27.488Z
+> 运行时间：2026-11-19T10:56:02.900Z
 > **18 PASS · 1 N/A · 0 FAIL**
 
 N/A 表示当前条件下不适用（例如曲库为空时没有单曲页），不是失败。
@@ -36,7 +36,7 @@ N/A 表示当前条件下不适用（例如曲库为空时没有单曲页），�
 | 项 | 结果 | 实测 |
 | --- | --- | --- |
 | CSS / JS / 数据 / 图片全部 200 且 MIME 正确 | PASS | 11 个资源全部 200 且 MIME 正确 |
-| 深层页面的相对资源解析正确 | PASS | /notes/hello-music-house/ 的 8 个 ../../assets 引用全部 200 |
+| 深层页面与首页的资源路径完全一致（不随深度变化） | PASS | /notes/hello-music-house/ 的 8 个绝对资源全部 200，且与首页路径一致 |
 | 宿主支持 Range / 206（进度拖动的前提） | PASS | 206 · bytes 0-1023/231936 · Accept-Ranges: bytes |
 
 ## 播放器
