@@ -16,5 +16,5 @@
     "types": ["node"]
   },
   "include": ["assets/js/**/*.js", "tools/**/*.mjs", "tests/**/*.mjs", "types/**/*.d.ts"],
-  "exclude": ["node_modules", "dist", "tools/browser-check.mjs"]
+  "exclude": ["node_modules", "dist", "tools/browser-check.mjs", "tools/browser-live.mjs"]
 }

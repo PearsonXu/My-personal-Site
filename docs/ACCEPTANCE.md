@@ -153,8 +153,12 @@ Content-Range: bytes 100000-101023/576783
    修法：`_load` 检测到上次错误时强制 `load()`。
 6. **底部常驻播放器会遮住滚进视野的按钮**。
    修法：给可交互元素加 `scroll-margin-bottom`。
+7. **SPA 导航到更深路径后 `<head>` 的相对 favicon 变 404**（线上复验抓到）。
+   pushState 改地址后浏览器用新 URL 重新解析 head 相对 href，
+   `./assets/img/favicon.svg` → `/notes/<slug>/assets/img/favicon.svg`。
+   修法：启动时 `absolutizeHeadAssets()` 把 head 资源转绝对 URL。
 
-前 5 项都补了对应的单元测试，第 2、6 项另有 CSS / 浏览器断言守着。
+前 5 项都补了对应的单元测试，第 2、6、7 项另有 CSS / 浏览器 / 路由断言守着。
 
 ## 五、截图索引
 

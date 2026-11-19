@@ -118,6 +118,25 @@ test('router · 外链与音频文件不被 SPA 接管', async () => {
   assert.equal(doc.body.dataset.kind, before);
 });
 
+test('router · 导航到更深路径后 head 资源仍是绝对 URL（不会 404）', async () => {
+  const { window, Router } = await makeDom('/');
+  const doc = window.document;
+  // 模拟 app.js 的 absolutizeHeadAssets：启动时把相对 head 资源转绝对
+  for (const el of doc.querySelectorAll('head link[rel~="icon"], head link[rel="stylesheet"], script[src]')) {
+    const attr = el.hasAttribute('href') ? 'href' : 'src';
+    const raw = el.getAttribute(attr);
+    if (raw && !/^https?:/.test(raw)) el.setAttribute(attr, new window.URL(raw, window.location.href).href);
+  }
+  const router = new Router({ base: '/', origin: 'https://www.xuzhaoqing.com', onNavigate: () => {} });
+  router.start();
+  await router.navigate('https://www.xuzhaoqing.com/notes/hello-music-house/');
+  const icon = doc.querySelector('head link[rel~="icon"]').getAttribute('href');
+  assert.equal(icon, 'https://www.xuzhaoqing.com/assets/img/favicon.svg', `favicon 变成了 ${icon}`);
+  for (const el of doc.querySelectorAll('head link[rel="stylesheet"]')) {
+    assert.match(el.getAttribute('href'), /^https:\/\/www\.xuzhaoqing\.com\/assets\/css\//);
+  }
+});
+
 test('router · 子路径部署下路由解析仍然正确', async () => {
   ensureBuild();
   const { parseRoute } = await import('../assets/js/core/paths.js');

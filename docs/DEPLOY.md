@@ -21,8 +21,29 @@
 3. push 到 `main`，`.github/workflows/deploy.yml` 会自动跑：
    `npm ci` → `typecheck` → `test` → `build`（生产，排除 DEMO）→ `check-assets` → 上传 `dist/` → 部署。
 
+## 部署后自动复验
+
+工作流现在有三个 job：
+
+1. **build** — `npm ci` → `typecheck` → `test` → **生产 build** → `check-assets` → 上传 `dist/`
+2. **deploy** — `actions/deploy-pages`
+3. **verify** — 部署完成后跑 `node tools/verify-live.mjs --base https://www.xuzhaoqing.com`，
+   对**正式域名**复验：HTTPS 与跳转、8 条主路由、404、旧站已下线、
+   catalog 结构与署名、未混入 DEMO、空状态、无旧身份残留、
+   11 个资源的 200 与 MIME、深层页面相对资源、宿主 Range/206、
+   全站唯一 audio 且在 `#page-root` 之外、播放器控件与外观入口、
+   canonical/OG、手记深链接、单曲深链接（有歌才逐首验）、robots/sitemap/.nojekyll。
+   报告作为 artifact `live-verification` 上传。
+
 工作流里 **test 在 build 之前**是刻意的：测试内部会反复重建 `dist`（含 DEMO），
 最后一步必须是干净的生产构建，否则会把测试音发上线。
+
+手动复验：
+
+```bash
+npm run verify:live      # 纯 HTTP 复验，输出 docs/LIVE-VERIFICATION.md
+npm run browser:live     # 真实 Chrome 复验线上播放器与三套外观，输出 docs/BROWSER-LIVE-RESULTS.md
+```
 
 ## base path 是怎么做到不用改配置的
 

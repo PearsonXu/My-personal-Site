@@ -57,3 +57,24 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+
+  verify:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # 只用 Node 内置 fetch，不需要装依赖
+      - name: Verify the live site (domain / routes / assets / player / empty state)
+        run: node tools/verify-live.mjs --base https://www.xuzhaoqing.com
+
+      - name: Upload live verification report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-verification
+          path: docs/LIVE-VERIFICATION.md

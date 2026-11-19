@@ -1,7 +1,7 @@
 # 真实浏览器验收结果
 
 > 由 `node tools/browser-check.mjs` 自动生成。浏览器：Chrome/157.0.8103.79
-> 运行时间：2026-11-19T06:24:33.903Z
+> 运行时间：2026-11-19T06:47:52.541Z
 > 音频：真实 MP3（合成测试音，非站长作品），Chrome 真实解码并推进 currentTime。
 > **195 / 195 通过，0 失败。**
 
@@ -35,9 +35,9 @@
 | 项 | 结果 | 实测 |
 | --- | --- | --- |
 | 全屏播放页：控件在视口内且可点击 | PASS | 全屏播放页所有按钮可见可点 |
-| 播放：真实 MP3 解码并推进时间 | PASS | 14.38s → 15.66s，duration=36.05s，buffered=32.8s |
-| 暂停 / 继续 | PASS | 暂停于 15.67s 后恢复 |
-| 拖动进度条 | PASS | seek → 18.47s |
+| 播放：真实 MP3 解码并推进时间 | PASS | 14.40s → 15.66s，duration=36.05s，buffered=36.0s |
+| 暂停 / 继续 | PASS | 暂停于 15.68s 后恢复 |
+| 拖动进度条 | PASS | seek → 18.45s |
 | 下一首 / 上一首 | PASS | next → demo-paper-boat（真实播放），prev → demo-night-ferry |
 | 音量控制 | PASS | volume=0.4，静音可切换 |
 | 四种播放模式 | PASS | order → repeat-all → repeat-one → shuffle |
@@ -46,15 +46,15 @@
 | 标签筛选与展示模式 | PASS | 标签筛选 + 列表/封面墙/唱片 |
 | 专辑与歌单一键播放 | PASS | 专辑 2 首播放 · 歌单加入队列 |
 | 收藏与最近播放 | PASS | 收藏 1 · 最近 2 |
-| LRC 同步高亮与点击跳转 | PASS | 13s → 第 4 行；点击第 7 行 → 19.6s |
+| LRC 同步高亮与点击跳转 | PASS | 13s → 第 4 行；点击第 7 行 → 19.5s |
 | 纯音乐 / 无歌词空状态 | PASS | 纯音乐：无歌词、不高亮 |
 | 快速切歌 A→B→A，歌词不串台 | PASS | 最终 demo-night-ferry，歌词「夜渡 · 测试音源 A」 |
 | 失效资源 → error 状态与可读提示 | PASS | 无法开始播放：Failed to load because no supported source was found. |
 | 网络中断 → 不假装在播 | PASS | 断网状态 error，恢复后可继续播放 |
-| 刷新后恢复队列与进度，且不自动出声 | PASS | 恢复 2 首，进度 11.27s，保持暂停 |
+| 刷新后恢复队列与进度，且不自动出声 | PASS | 恢复 2 首，进度 11.26s，保持暂停 |
 | 分享：规范链接 / 复制 / 二维码 | PASS | canonical 正确 · 二维码可见 · 已复制 |
 | 深链接直达与刷新 | PASS | 7 条深层路径直达 + 刷新均正常 |
-| 站内导航不断歌（真实浏览器） | PASS | 11.29s → 12.16s，同一 audio 实例 |
+| 站内导航不断歌（真实浏览器） | PASS | 11.27s → 12.16s，同一 audio 实例 |
 | 主题 / 布局切换保留全部播放状态 | PASS | 3 主题 × 3 布局 × 播放/暂停两态全部保持 |
 | 设置记忆：刷新后恢复外观与布局 | PASS | forest + mobile 已恢复 |
 
@@ -81,9 +81,9 @@
 | 项 | 结果 | 实测 |
 | --- | --- | --- |
 | 全屏播放页：控件在视口内且可点击 | PASS | 全屏播放页所有按钮可见可点 |
-| 播放：真实 MP3 解码并推进时间 | PASS | 14.48s → 15.75s，duration=36.05s，buffered=32.8s |
-| 暂停 / 继续 | PASS | 暂停于 15.76s 后恢复 |
-| 拖动进度条 | PASS | seek → 18.47s |
+| 播放：真实 MP3 解码并推进时间 | PASS | 14.48s → 15.77s，duration=36.05s，buffered=36.0s |
+| 暂停 / 继续 | PASS | 暂停于 15.77s 后恢复 |
+| 拖动进度条 | PASS | seek → 18.45s |
 | 下一首 / 上一首 | PASS | next → demo-paper-boat（真实播放），prev → demo-night-ferry |
 | 四种播放模式 | PASS | order → repeat-all → repeat-one → shuffle |
 | 队列：添加 / 重复 / 删除 / 排序 / 清空 | PASS | 4 项（含重复）→ 排序 → 删除 → 面板 → 清空 |
@@ -96,10 +96,10 @@
 | 快速切歌 A→B→A，歌词不串台 | PASS | 最终 demo-night-ferry，歌词「夜渡 · 测试音源 A」 |
 | 失效资源 → error 状态与可读提示 | PASS | 无法开始播放：Failed to load because no supported source was found. |
 | 网络中断 → 不假装在播 | PASS | 断网状态 error，恢复后可继续播放 |
-| 刷新后恢复队列与进度，且不自动出声 | PASS | 恢复 2 首，进度 11.26s，保持暂停 |
+| 刷新后恢复队列与进度，且不自动出声 | PASS | 恢复 2 首，进度 11.25s，保持暂停 |
 | 分享：规范链接 / 复制 / 二维码 | PASS | canonical 正确 · 二维码可见 · 已复制 |
 | 深链接直达与刷新 | PASS | 7 条深层路径直达 + 刷新均正常 |
-| 站内导航不断歌（真实浏览器） | PASS | 11.27s → 12.17s，同一 audio 实例 |
+| 站内导航不断歌（真实浏览器） | PASS | 11.26s → 12.15s，同一 audio 实例 |
 | 主题 / 布局切换保留全部播放状态 | PASS | 3 主题 × 3 布局 × 播放/暂停两态全部保持 |
 | 设置记忆：刷新后恢复外观与布局 | PASS | forest + mobile 已恢复 |
 
@@ -126,9 +126,9 @@
 | 项 | 结果 | 实测 |
 | --- | --- | --- |
 | 全屏播放页：控件在视口内且可点击 | PASS | 全屏播放页所有按钮可见可点 |
-| 播放：真实 MP3 解码并推进时间 | PASS | 14.40s → 15.69s，duration=36.05s，buffered=28.7s |
+| 播放：真实 MP3 解码并推进时间 | PASS | 14.41s → 15.67s，duration=36.05s，buffered=36.0s |
 | 暂停 / 继续 | PASS | 暂停于 15.69s 后恢复 |
-| 拖动进度条 | PASS | seek → 18.45s |
+| 拖动进度条 | PASS | seek → 18.46s |
 | 下一首 / 上一首 | PASS | next → demo-paper-boat（真实播放），prev → demo-night-ferry |
 | 音量控制 | PASS | volume=0.4，静音可切换 |
 | 四种播放模式 | PASS | order → repeat-all → repeat-one → shuffle |
@@ -145,7 +145,7 @@
 | 刷新后恢复队列与进度，且不自动出声 | PASS | 恢复 2 首，进度 11.25s，保持暂停 |
 | 分享：规范链接 / 复制 / 二维码 | PASS | canonical 正确 · 二维码可见 · 已复制 |
 | 深链接直达与刷新 | PASS | 7 条深层路径直达 + 刷新均正常 |
-| 站内导航不断歌（真实浏览器） | PASS | 11.27s → 12.14s，同一 audio 实例 |
+| 站内导航不断歌（真实浏览器） | PASS | 11.26s → 12.15s，同一 audio 实例 |
 | 主题 / 布局切换保留全部播放状态 | PASS | 3 主题 × 3 布局 × 播放/暂停两态全部保持 |
 | 设置记忆：刷新后恢复外观与布局 | PASS | forest + mobile 已恢复 |
 
@@ -172,9 +172,9 @@
 | 项 | 结果 | 实测 |
 | --- | --- | --- |
 | 全屏播放页：控件在视口内且可点击 | PASS | 全屏播放页所有按钮可见可点 |
-| 播放：真实 MP3 解码并推进时间 | PASS | 14.50s → 15.79s，duration=36.05s，buffered=28.7s |
-| 暂停 / 继续 | PASS | 暂停于 15.79s 后恢复 |
-| 拖动进度条 | PASS | seek → 18.47s |
+| 播放：真实 MP3 解码并推进时间 | PASS | 14.54s → 15.81s，duration=36.05s，buffered=32.8s |
+| 暂停 / 继续 | PASS | 暂停于 15.82s 后恢复 |
+| 拖动进度条 | PASS | seek → 18.45s |
 | 下一首 / 上一首 | PASS | next → demo-paper-boat（真实播放），prev → demo-night-ferry |
 | 四种播放模式 | PASS | order → repeat-all → repeat-one → shuffle |
 | 队列：添加 / 重复 / 删除 / 排序 / 清空 | PASS | 4 项（含重复）→ 排序 → 删除 → 面板 → 清空 |
@@ -187,10 +187,10 @@
 | 快速切歌 A→B→A，歌词不串台 | PASS | 最终 demo-night-ferry，歌词「夜渡 · 测试音源 A」 |
 | 失效资源 → error 状态与可读提示 | PASS | 无法开始播放：Failed to load because no supported source was found. |
 | 网络中断 → 不假装在播 | PASS | 断网状态 error，恢复后可继续播放 |
-| 刷新后恢复队列与进度，且不自动出声 | PASS | 恢复 2 首，进度 11.26s，保持暂停 |
+| 刷新后恢复队列与进度，且不自动出声 | PASS | 恢复 2 首，进度 11.27s，保持暂停 |
 | 分享：规范链接 / 复制 / 二维码 | PASS | canonical 正确 · 二维码可见 · 已复制 |
 | 深链接直达与刷新 | PASS | 7 条深层路径直达 + 刷新均正常 |
-| 站内导航不断歌（真实浏览器） | PASS | 11.27s → 12.14s，同一 audio 实例 |
+| 站内导航不断歌（真实浏览器） | PASS | 11.28s → 12.16s，同一 audio 实例 |
 | 主题 / 布局切换保留全部播放状态 | PASS | 3 主题 × 3 布局 × 播放/暂停两态全部保持 |
 | 设置记忆：刷新后恢复外观与布局 | PASS | forest + mobile 已恢复 |
 
@@ -217,9 +217,9 @@
 | 项 | 结果 | 实测 |
 | --- | --- | --- |
 | 全屏播放页：控件在视口内且可点击 | PASS | 全屏播放页所有按钮可见可点 |
-| 播放：真实 MP3 解码并推进时间 | PASS | 14.41s → 15.68s，duration=36.05s，buffered=20.7s |
-| 暂停 / 继续 | PASS | 暂停于 15.69s 后恢复 |
-| 拖动进度条 | PASS | seek → 18.47s |
+| 播放：真实 MP3 解码并推进时间 | PASS | 14.39s → 15.65s，duration=36.05s，buffered=36.0s |
+| 暂停 / 继续 | PASS | 暂停于 15.67s 后恢复 |
+| 拖动进度条 | PASS | seek → 18.48s |
 | 下一首 / 上一首 | PASS | next → demo-paper-boat（真实播放），prev → demo-night-ferry |
 | 音量控制 | PASS | volume=0.4，静音可切换 |
 | 四种播放模式 | PASS | order → repeat-all → repeat-one → shuffle |
@@ -233,10 +233,10 @@
 | 快速切歌 A→B→A，歌词不串台 | PASS | 最终 demo-night-ferry，歌词「夜渡 · 测试音源 A」 |
 | 失效资源 → error 状态与可读提示 | PASS | 无法开始播放：Failed to load because no supported source was found. |
 | 网络中断 → 不假装在播 | PASS | 断网状态 error，恢复后可继续播放 |
-| 刷新后恢复队列与进度，且不自动出声 | PASS | 恢复 2 首，进度 11.25s，保持暂停 |
+| 刷新后恢复队列与进度，且不自动出声 | PASS | 恢复 2 首，进度 11.27s，保持暂停 |
 | 分享：规范链接 / 复制 / 二维码 | PASS | canonical 正确 · 二维码可见 · 已复制 |
 | 深链接直达与刷新 | PASS | 7 条深层路径直达 + 刷新均正常 |
-| 站内导航不断歌（真实浏览器） | PASS | 11.26s → 12.15s，同一 audio 实例 |
+| 站内导航不断歌（真实浏览器） | PASS | 11.28s → 12.17s，同一 audio 实例 |
 | 主题 / 布局切换保留全部播放状态 | PASS | 3 主题 × 3 布局 × 播放/暂停两态全部保持 |
 | 设置记忆：刷新后恢复外观与布局 | PASS | forest + mobile 已恢复 |
 
@@ -263,9 +263,9 @@
 | 项 | 结果 | 实测 |
 | --- | --- | --- |
 | 全屏播放页：控件在视口内且可点击 | PASS | 全屏播放页所有按钮可见可点 |
-| 播放：真实 MP3 解码并推进时间 | PASS | 14.47s → 15.74s，duration=36.05s，buffered=36.0s |
-| 暂停 / 继续 | PASS | 暂停于 15.75s 后恢复 |
-| 拖动进度条 | PASS | seek → 18.45s |
+| 播放：真实 MP3 解码并推进时间 | PASS | 14.49s → 15.75s，duration=36.05s，buffered=36.0s |
+| 暂停 / 继续 | PASS | 暂停于 15.76s 后恢复 |
+| 拖动进度条 | PASS | seek → 18.47s |
 | 下一首 / 上一首 | PASS | next → demo-paper-boat（真实播放），prev → demo-night-ferry |
 | 四种播放模式 | PASS | order → repeat-all → repeat-one → shuffle |
 | 队列：添加 / 重复 / 删除 / 排序 / 清空 | PASS | 4 项（含重复）→ 排序 → 删除 → 面板 → 清空 |
@@ -273,15 +273,15 @@
 | 标签筛选与展示模式 | PASS | 标签筛选 + 列表/封面墙/唱片 |
 | 专辑与歌单一键播放 | PASS | 专辑 2 首播放 · 歌单加入队列 |
 | 收藏与最近播放 | PASS | 收藏 1 · 最近 2 |
-| LRC 同步高亮与点击跳转 | PASS | 13s → 第 4 行；点击第 7 行 → 19.5s |
+| LRC 同步高亮与点击跳转 | PASS | 13s → 第 4 行；点击第 7 行 → 19.6s |
 | 纯音乐 / 无歌词空状态 | PASS | 纯音乐：无歌词、不高亮 |
 | 快速切歌 A→B→A，歌词不串台 | PASS | 最终 demo-night-ferry，歌词「夜渡 · 测试音源 A」 |
 | 失效资源 → error 状态与可读提示 | PASS | 无法开始播放：Failed to load because no supported source was found. |
 | 网络中断 → 不假装在播 | PASS | 断网状态 error，恢复后可继续播放 |
-| 刷新后恢复队列与进度，且不自动出声 | PASS | 恢复 2 首，进度 11.26s，保持暂停 |
+| 刷新后恢复队列与进度，且不自动出声 | PASS | 恢复 2 首，进度 11.25s，保持暂停 |
 | 分享：规范链接 / 复制 / 二维码 | PASS | canonical 正确 · 二维码可见 · 已复制 |
 | 深链接直达与刷新 | PASS | 7 条深层路径直达 + 刷新均正常 |
-| 站内导航不断歌（真实浏览器） | PASS | 11.27s → 12.16s，同一 audio 实例 |
+| 站内导航不断歌（真实浏览器） | PASS | 11.26s → 12.14s，同一 audio 实例 |
 | 主题 / 布局切换保留全部播放状态 | PASS | 3 主题 × 3 布局 × 播放/暂停两态全部保持 |
 | 设置记忆：刷新后恢复外观与布局 | PASS | forest + mobile 已恢复 |
 
@@ -313,5 +313,5 @@
 
 | 项 | 结果 | 实测 |
 | --- | --- | --- |
-| 竖屏 → 横屏 → 竖屏：不溢出、不断歌 | PASS | 0.02s → 1.00s，两种朝向均无溢出 |
+| 竖屏 → 横屏 → 竖屏：不溢出、不断歌 | PASS | 0.02s → 1.01s，两种朝向均无溢出 |
 

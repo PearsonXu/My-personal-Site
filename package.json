@@ -20,7 +20,9 @@
     "new:note": "node tools/new-note.mjs",
     "demo:audio": "node tools/make-demo-audio.mjs",
     "verify": "npm run typecheck && npm run build:demo && npm test",
-    "browser:check": "node tools/browser-check.mjs"
+    "browser:check": "node tools/browser-check.mjs",
+    "verify:live": "node tools/verify-live.mjs",
+    "browser:live": "node tools/browser-live.mjs"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",

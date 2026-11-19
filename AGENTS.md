@@ -46,6 +46,9 @@
 10. **外观 / 布局切换只改 `<html>` 的 data 属性**，不许重建 DOM 或触碰 audio。
 11. **音频与封面走两套解析**：`resolveAudio`（相对 `assets/`，可被 `mediaBase` 整体接管）
     与 `resolve`（相对站点根）。混用会导致音源 404 —— 有测试守着。
+12. **`<head>` 里的相对资源必须在启动时绝对化**（`absolutizeHeadAssets`）。
+    pushState 到更深路径后，浏览器会用新 URL 重新解析 head 的相对 href，
+    favicon / CSS 会 404。页面正文里的相对路径不用改（它们随 `#page-root` 一起换，深度是对的）。
 
 ## 常用命令
 

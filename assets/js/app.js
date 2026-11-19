@@ -21,11 +21,31 @@ import { StatusUI } from './ui/status-ui.js';
 import { MeUI } from './ui/me-ui.js';
 import { Appearance } from './ui/appearance-ui.js';
 import { toast, closeSheet, isSheetOpen, copyText } from './ui/common.js';
-import { byId, qs, tgt } from './ui/dom.js';
+import { byId, qs, qsa, tgt } from './ui/dom.js';
 
 const BASE = baseFromModuleUrl(import.meta.url, 'assets/js/app.js');
 
+/**
+ * 把 <head> 里的相对资源链接绝对化。
+ *
+ * 为什么必须做：HTML 用按页面深度算好的相对路径（这样同一份产物能跑在根域名与子路径），
+ * 但 SPA 用 pushState 改地址后，浏览器会拿**新 URL**去重新解析 head 里的相对 href。
+ * 从首页 pushState 到 /notes/<slug>/ 后，`./assets/img/favicon.svg` 就被解析成
+ * /notes/<slug>/assets/img/favicon.svg → 404。
+ * 启动时（此刻 document URL 还是真实页面地址）把它们转成绝对 URL，之后就不受路由影响。
+ */
+function absolutizeHeadAssets() {
+  const selector = 'head link[rel~="icon"], head link[rel="stylesheet"], head link[rel="preload"], head link[rel="modulepreload"], script[src]';
+  for (const el of qsa(selector)) {
+    const attr = el.hasAttribute('href') ? 'href' : 'src';
+    const raw = el.getAttribute(attr);
+    if (!raw || /^(https?:)?\/\//i.test(raw) || raw.startsWith('data:')) continue;
+    try { el.setAttribute(attr, new URL(raw, location.href).href); } catch { /* ignore */ }
+  }
+}
+
 async function boot({ base = BASE } = {}) {
+  absolutizeHeadAssets();
   const link = (p) => joinUrl(base, p);
   const loadJson = async (p) => {
     const res = await fetch(link(p), { cache: 'no-cache' });

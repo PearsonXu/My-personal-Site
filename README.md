@@ -52,6 +52,8 @@ npm run dev          # 含 DEMO 合成音的构建 + 本地服务器（真的支
 | `npm run typecheck` | `tsc --noEmit`（checkJs） |
 | `npm test` | 单元 + jsdom 集成测试（含三主题 × 桌面/手机状态保留） |
 | `npm run browser:check` | **真实 Chrome** 验收：六组合截图 + 完整功能清单 + 布局健康检查 |
+| `npm run verify:live` | 对**正式域名**做 HTTP 复验（域名 / 路由 / 资源 / 播放器 / 空状态） |
+| `npm run browser:live` | 用**真实 Chrome** 复验正式域名上的播放器与三套外观 |
 | `npm run check:assets -- --dist dist` | 产物完整性 |
 | `npm run check:assets -- --base http://localhost:8000` | 真实 MIME / Range / 206 / CORS |
 | `npm run new:song -- "歌名" --audio x.mp3` | 加歌（自动解析真实时长） |
@@ -100,6 +102,8 @@ npm run dev          # 含 DEMO 合成音的构建 + 本地服务器（真的支
 | [`docs/THEMES.md`](docs/THEMES.md) | 三套外观、布局三档、默认与记忆、切换保状态 |
 | [`docs/FEATURES.md`](docs/FEATURES.md) | 功能清单 → 对应验证位置 |
 | [`docs/BROWSER-RESULTS.md`](docs/BROWSER-RESULTS.md) | 真实 Chrome 逐项验收结果（自动生成，195 项） |
+| [`docs/LIVE-VERIFICATION.md`](docs/LIVE-VERIFICATION.md) | 正式域名 HTTP 复验（自动生成） |
+| [`docs/BROWSER-LIVE-RESULTS.md`](docs/BROWSER-LIVE-RESULTS.md) | 正式域名真实浏览器复验（自动生成） |
 | `docs/screenshots/` | 三主题 × 桌面/手机 共 36 张截图 |
 | [`docs/ACCEPTANCE.md`](docs/ACCEPTANCE.md) | 验收记录（NOT_RUN / BLOCKED 如实标注） |
 
