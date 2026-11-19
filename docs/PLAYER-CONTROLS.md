@@ -80,31 +80,56 @@ hover 转 `var(--acc)`。**没有任何单独硬编码的颜色**：
 - **键盘焦点**：`:focus-visible` 2px `var(--acc)` 描边 + 2px offset
 - **禁用**：`opacity:.35`、`cursor:not-allowed`，主按钮转为中性灰
 
-## 歌词入口：常驻文字按钮「词」
+## 歌词与简介入口：常驻文字按钮「词」「简介」
 
-歌词入口不再是图标，而是**文字按钮「词」**（`pbtn--text pbtn--lyrics`）：
+歌词与简介入口都不是图标，而是**文字按钮**（`pbtn--text pbtn--lyrics` / `pbtn--text pbtn--about`）：
 
-- **位置**：迷你条 `.pl__extra`（与播放模式 / 音量同区）+ 展开页 `.pl__fullbtns`（与模式 / 队列同区）。
-  手机迷你条的操作区只保留这一个键（`layout-mobile.css`），**不进「更多」菜单**。
+- **位置**：迷你条 `.pl__extra` + 展开页 `.pl__fullbtns`，两个按钮并排。
+  手机迷你条拆成两行：第一行 封面 / 标题 / 三主控，第二行右对齐「词」「简介」
+  （`layout-mobile.css`，`--pl-h:124px`）——两个 44×44 文字键加三主控在 320px 宽也放不下一行。
+  操作区只保留这两个键，**不进「更多」菜单**。
 - **外观**：圆角 12px、`var(--line-2)` 边框 + `var(--panel-2)` 浅底、正文色文字，三套主题都有对比度。
   展开态由 `aria-expanded="true"` 驱动：`var(--acc)` 主题红底 + `var(--on-acc)` 文字。
 - **点击区**：沿用 `--pbtn-size`，桌面 / 手机都是 **44×44**。
-- **行为**：`data-act="toggle-lyrics"` —— 收起时点击展开歌词面板；展开且正在看歌词时再点收起回封面。
-  `aria-label` 在「显示歌词 / 收起歌词」间切换，`aria-controls="plLyrics"`。
+- **行为**：`data-act="toggle-lyrics"` / `data-act="toggle-about"` —— 收起时点击展开对应面板；
+  展开且正在看该面板时再点收起回封面。**两个面板互斥**：同一时刻只有一个舞台
+  （`cover / vinyl / lyrics / about`），看歌词时点「简介」直接切换，不会叠两层。
+  `aria-label` 在「显示… / 收起…」间切换，`aria-controls` 指向 `plLyrics` / `plAbout`。
 - **无歌词**：按钮永远可点；面板显示空状态，同时 toast「暂无歌词」。
-- **文字按钮例外**：AGENTS 规则 13 要求控件用内联 SVG；「词」是**文字标签**而非图标字符，
-  是唯一的 `pbtn--text` 例外，`tests/icons.test.mjs` 对它仍要求 aria-label + 可见文字，
+- **文字按钮例外**：AGENTS 规则 13 要求控件用内联 SVG；「词」「简介」是**文字标签**而非图标字符，
+  是仅有的 `pbtn--text` 例外，`tests/icons.test.mjs` 对它们仍要求 aria-label + 可见文字，
   Emoji / Unicode 图形字符禁令不变。
 
-### 歌词校准（面板内）
+### 歌词面板顶部工具栏（字号 + 校准）
 
-时间偏移调整放在歌词面板底部的「歌词校准」组（`-0.5s / 读数 / +0.5s / 重置`），与「词」按钮职责分开：
+工具栏 `.pl__toolbar` 位于歌词滚动区**之前**（不随歌词滚动），集中两组控件，允许换行、不横向溢出：
 
-- `Player.setLyricOffset / adjustLyricOffset`：运行时平移时间轴，**正值 = 歌词提前**（与 LRC `[offset:]` 同一约定），
-  钳位 ±30s、步进 0.1s；基于原始时间轴反复平移，不累积误差。
-- 校准后重算 `lyricIndex` 并重发 `lyrics` / `lyric-line` / `lyric-offset` 事件 → 高亮、自动滚动、点击跳转照常。
-- **换歌复位、不持久化**；无时间轴歌词 / 未加载 / 读取失败时控件禁用（仍可见）。
-- LRC 文件里的 `[offset:]` 解析（`core/lrc.js`）不变，两者叠加生效。
+- **字号**：`小 / 中 / 大` 三档（`data-act="lyric-font" data-size="s|m|l"`），默认「中」，
+  选中态 `aria-pressed="true"` + 主题红底。只缩放歌词文字：`#plLyrics[data-font]` 设
+  `--lrc-scale`（.86 / 1 / 1.2），行与高亮行用 `calc(… * var(--lrc-scale))`。
+  偏好存当前浏览器（`zx.music.lrcFont`，`Store.getLrcFont/setLrcFont`），启动即恢复；
+  **不触碰音频与时间轴**。
+- **歌词校准**：`延后 0.5s / 读数 / 提前 0.5s / 重置` + 方向说明
+  「提前 = 歌词更早出现 · 延后 = 歌词更晚出现 · 读数「+」为提前」。
+  - `Player.setLyricOffset / adjustLyricOffset`：运行时平移时间轴，**正值 = 歌词提前**（与 LRC `[offset:]` 同一约定），
+    钳位 ±30s、步进 0.1s；基于原始时间轴反复平移，不累积误差。
+  - 校准后重算 `lyricIndex` 并重发 `lyrics` / `lyric-line` / `lyric-offset` 事件 → 高亮、自动滚动、点击跳转照常。
+  - **按歌曲持久化**（`store.data.lyricOffsets[slug]`，`sanitizeState` 逐条校验）：切歌加载该曲自己的偏移，
+    互不影响；归零删除条目；刷新后恢复。无时间轴歌词 / 未加载 / 读取失败时控件禁用（仍可见）。
+  - LRC 文件里的 `[offset:]` 解析（`core/lrc.js`）不变，两者叠加生效。
+
+### 简介面板（`#plAbout`，舞台 `about`）
+
+`ui/song-info-ui.js` 按当前歌曲渲染，`track` 事件驱动重渲染 → 切歌不残留上一首信息：
+
+- 行：歌曲名称（标题）、原唱 `originalArtist`、作词 `lyricist`、作曲 `composer`、
+  本站版本 `versionNote`（demo 无说明时如实标「DEMO 测试音」）、版本制作 `versionBy`、
+  生成工具 `tools[]`（**单独一行**，SUNO 等绝不混进原唱 / 词曲署名）、其他署名 `credits[]`、歌曲介绍 `about`。
+- **缺失字段隐藏**，不编造署名、不展示空标签；全部资料缺失时显示「歌曲资料待补充」。
+- 元数据在 `content/songs/*.json` 填写，`tools/new-song.mjs` 提供
+  `--original-artist / --version-note / --version-by / --tools` 旗标；catalog 携带这些字段供播放器使用。
+- 验收：`tests/player-panels.test.mjs` + `node tools/probe-player-panels.mjs`
+  （结果 `docs/player-panels-results.json`，截图 `docs/screenshots/panels-*.png`）。
 
 ## 歌词自动跟随与「回到当前歌词」
 
