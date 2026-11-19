@@ -4,6 +4,10 @@
   "artist": "合成测试音（非本人作品）",
   "composer": "合成音源",
   "lyricist": "占位歌词",
+  "originalArtist": "",
+  "versionNote": "合成测试音（DEMO，非站长作品）",
+  "versionBy": "",
+  "tools": [],
   "album": "demo-fixtures",
   "tags": [
     "demo",
@@ -23,7 +27,6 @@
   "demo": true,
   "about": "这是**工程验证用的合成音源**，不是金石竹青的作品。放一段正弦叠加的声音，用来确认播放、歌词和分享都正常。正式上线时会自动移除。",
   "credits": [
-    "合成测试音",
     "用途：确认播放与歌词正常"
   ]
 }

@@ -148,6 +148,9 @@ function player({ base }) {
   // 展开态由 aria-expanded 驱动（主题红底），见 docs/PLAYER-CONTROLS.md。
   const lyricsBtn = (id) =>
     `<button class="pbtn pbtn--text pbtn--lyrics" type="button" data-act="toggle-lyrics" id="${id}" aria-label="显示歌词" title="显示歌词" aria-expanded="false" aria-controls="plLyrics">词</button>`;
+  // 简介入口：与「词」并排的文字按钮，互斥展开；内容随切歌更新（ui/song-info-ui.js）
+  const aboutBtn = (id) =>
+    `<button class="pbtn pbtn--text pbtn--about" type="button" data-act="toggle-about" id="${id}" aria-label="显示简介" title="显示简介" aria-expanded="false" aria-controls="plAbout">简介</button>`;
   return `<div id="player-root" class="pl" data-state="idle" data-expanded="false">
   <div class="pl__bar" role="region" aria-label="播放器">
     <button class="pl__art" type="button" data-act="expand" aria-label="展开播放页">
@@ -170,6 +173,7 @@ function player({ base }) {
       ${btn('cycle-mode', '播放模式：顺序播放', 'mode-order', ' id="plMode"', 22)}
       ${btn('toggle-fav', '收藏当前歌曲', 'heart', ' id="plFav"', 22)}
       ${lyricsBtn('plLyricsBtn')}
+      ${aboutBtn('plAboutBtn')}
       ${btn('open-queue', '播放队列', 'queue', ' id="plQueueBtn"', 22)}
       ${btn('open-share', '分享当前歌曲', 'share', '', 22)}
       <div class="pl__vol" id="plVolWrap">
@@ -190,17 +194,29 @@ function player({ base }) {
     </div>
     <div class="pl__stage" id="plStage" data-stage="cover">
       <div class="pl__bigart" id="plBigArt"><img id="plBigCover" alt="" decoding="async" src="${attr(base)}assets/img/placeholder.svg"><span class="pl__hole" aria-hidden="true"></span></div>
-      <div class="pl__lyricsbox">
-        <div class="pl__lyrics" id="plLyrics" tabindex="0" aria-label="歌词"><p class="lyrics-empty">暂无歌词</p></div>
-        <button class="lrc-back" type="button" id="plLyricsBack" hidden>回到当前歌词</button>
+      <div class="pl__lyricswrap">
+        <div class="pl__toolbar">
+          <div class="pl__font" role="group" aria-label="歌词字号">
+            <span class="pl__toolbar__label">字号</span>
+            <button class="pl__font__btn" type="button" data-act="lyric-font" data-size="s" aria-pressed="false" title="歌词字号：小">小</button>
+            <button class="pl__font__btn" type="button" data-act="lyric-font" data-size="m" aria-pressed="true" title="歌词字号：中（默认）">中</button>
+            <button class="pl__font__btn" type="button" data-act="lyric-font" data-size="l" aria-pressed="false" title="歌词字号：大">大</button>
+          </div>
+          <div class="pl__calib" role="group" aria-label="歌词校准">
+            <span class="pl__calib__label">歌词校准</span>
+            <button class="pl__calib__btn" type="button" data-act="lyric-offset" data-delta="-0.5" aria-label="歌词整体延后 0.5 秒" title="歌词延后 0.5 秒" disabled>延后 0.5s</button>
+            <output class="pl__calib__val" id="plCalibVal" aria-live="polite" aria-label="当前校准量">0.0s</output>
+            <button class="pl__calib__btn" type="button" data-act="lyric-offset" data-delta="0.5" aria-label="歌词整体提前 0.5 秒" title="歌词提前 0.5 秒" disabled>提前 0.5s</button>
+            <button class="pl__calib__btn" type="button" data-act="lyric-offset-reset" aria-label="重置歌词校准" title="重置歌词校准" disabled>重置</button>
+            <span class="pl__calib__hint">提前 = 歌词更早出现 · 延后 = 歌词更晚出现 · 读数「+」为提前</span>
+          </div>
+        </div>
+        <div class="pl__lyricsbox">
+          <div class="pl__lyrics" id="plLyrics" tabindex="0" aria-label="歌词"><p class="lyrics-empty">暂无歌词</p></div>
+          <button class="lrc-back" type="button" id="plLyricsBack" hidden>回到当前歌词</button>
+        </div>
       </div>
-      <div class="pl__calib" role="group" aria-label="歌词校准">
-        <span class="pl__calib__label">歌词校准</span>
-        <button class="pl__calib__btn" type="button" data-act="lyric-offset" data-delta="-0.5" aria-label="歌词整体延后 0.5 秒" title="歌词延后 0.5 秒" disabled>-0.5s</button>
-        <output class="pl__calib__val" id="plCalibVal" aria-live="polite" aria-label="当前校准量">0.0s</output>
-        <button class="pl__calib__btn" type="button" data-act="lyric-offset" data-delta="0.5" aria-label="歌词整体提前 0.5 秒" title="歌词提前 0.5 秒" disabled>+0.5s</button>
-        <button class="pl__calib__btn" type="button" data-act="lyric-offset-reset" aria-label="重置歌词校准" title="重置歌词校准" disabled>重置</button>
-      </div>
+      <div class="pl__about" id="plAbout" aria-label="歌曲简介"><p class="pl__about__empty">歌曲资料待补充</p></div>
     </div>
     <div class="pl__fullmeta">
       <p class="pl__fullsong" id="plFullTitle">还没有在播放</p>
@@ -217,6 +233,7 @@ function player({ base }) {
       ${btn('next', '下一首', 'next')}
       ${btn('open-queue', '播放队列', 'queue', '', 22)}
       ${lyricsBtn('plLyricsBtnFull')}
+      ${aboutBtn('plAboutBtnFull')}
     </div>
     <p class="pl__state" id="plStateFull" role="status" aria-live="polite"></p>
   </section>

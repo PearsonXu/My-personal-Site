@@ -218,15 +218,15 @@ export class Player {
     this.currentSong = song;
     this.lyrics = { format: 'none', meta: {}, lines: [] };
     this.lyricIndex = -1;
-    // 歌词校准是运行时的、逐曲的：换歌即复位，不写进本地存储
-    this.lyricOffset = 0;
+    // 歌词校准逐曲保存：换歌加载该曲自己的偏移（没存过 = 0），互不影响
+    this.lyricOffset = this.store?.data?.lyricOffsets?.[song.slug] || 0;
     this._lyricsBase = null;
     this.duration = song.duration || 0;
     this._pendingSeek = startTime > 0 ? startTime : null;
     this.stateDetail = '';
     this.emit('track', { song, item });
     this.emit('lyrics', { song, lyrics: this.lyrics, pending: true });
-    this.emit('lyric-offset', { offset: 0 });
+    this.emit('lyric-offset', { offset: this.lyricOffset });
     this._setState('loading');
 
     const src = this.resolveAudio(song.audio);
@@ -307,12 +307,20 @@ export class Player {
   }
 
   /**
-   * 歌词校准（面板内的「歌词校准」控件）。运行时生效、换歌复位，不持久化。
+   * 歌词校准（歌词面板顶部工具栏内的「歌词校准」控件）。
+   * 运行时立即生效，并**按歌曲**持久化到本地存储：切歌互不影响，刷新后仍在。
    * @param seconds 偏移秒数，正值 = 歌词整体提前；钳到 ±30s，步进 0.1s
    */
   setLyricOffset(seconds) {
     const offset = clamp(Math.round((Number(seconds) || 0) * 10) / 10, -30, 30);
     this.lyricOffset = offset;
+    const slug = this.currentSong?.slug;
+    if (slug && this.store) {
+      const map = { ...this.store.data.lyricOffsets };
+      if (offset) map[slug] = offset;
+      else delete map[slug];
+      this.store.save({ lyricOffsets: map }, { immediate: true });
+    }
     if (this._lyricsBase) {
       this.lyrics = this._shiftLyrics(this._lyricsBase, offset);
       this.emit('lyrics', { song: this.currentSong, lyrics: this.lyrics, pending: false });

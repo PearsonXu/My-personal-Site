@@ -83,17 +83,21 @@ test('lyrics-entry · 「词」按钮样式：边框浅底、展开态主题红�
 test('lyrics-entry · 移动端迷你条仍显示「词」，其余功能键留在展开页', () => {
   const mobile = read('assets/css/layout-mobile.css');
   assert.match(mobile, /\.pl__extra \{ display:flex; \}/);
-  assert.match(mobile, /\.pl__extra > :not\(\.pbtn--lyrics\) \{ display:none; \}/);
-  assert.match(mobile, /\.pl__bar \{ grid-template-columns:auto minmax\(0,1fr\) auto auto;/);
+  assert.match(mobile, /\.pl__extra > :not\(\.pbtn--lyrics\):not\(\.pbtn--about\) \{ display:none; \}/);
+  assert.match(mobile, /\.pl__bar \{ grid-template-columns:auto minmax\(0,1fr\) auto; grid-template-rows:auto auto;/);
 });
 
-test('lyrics-entry · 校准组只在歌词舞台显示，触控目标 ≥44px', () => {
+test('lyrics-entry · 校准组在歌词面板顶部工具栏内，只随歌词舞台显示，触控目标 ≥44px', () => {
   const css = read('assets/css/player.css');
-  assert.match(css, /\.pl__calib \{ display:none;/);
-  assert.match(css, /\.pl__stage\[data-stage="lyrics"\] \.pl__calib \{ display:flex; \}/);
+  // 工具栏（字号 + 校准）整体只在歌词舞台显示；校准组不再挂在歌词下方
+  assert.match(css, /\.pl__lyricswrap \{ display:none;/);
+  assert.match(css, /\.pl__stage\[data-stage="lyrics"\] \.pl__lyricswrap \{ display:flex; \}/);
+  assert.match(css, /\.pl__calib \{ display:flex;/);
   const btn = /\.pl__calib__btn \{([^}]*)\}/.exec(css)[1];
   assert.match(btn, /min-width:44px; min-height:44px/);
   assert.match(btn, /border-radius:10px/);
+  const font = /\.pl__font__btn \{([^}]*)\}/.exec(css)[1];
+  assert.match(font, /min-width:44px; min-height:44px/);
 });
 
 

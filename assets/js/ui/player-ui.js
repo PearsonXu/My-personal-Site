@@ -9,7 +9,7 @@ import { MODE_ICON, STAGE_ICON, icon } from '../core/icons.js';
 import { setText, setSvg, paintRange, toast } from './common.js';
 import { byId, qsa } from './dom.js';
 
-const STAGES = ['cover', 'vinyl', 'lyrics'];
+const STAGES = ['cover', 'vinyl', 'lyrics', 'about'];
 
 export class PlayerUI {
   constructor(player, { resolve }) {
@@ -167,14 +167,14 @@ export class PlayerUI {
     if (this.el.full) this.el.full.hidden = false;
     if (this.root) this.root.dataset.expanded = 'true';
     document.body.classList.add('is-locked');
-    this._syncLyricsButtons();
+    this._syncPanelButtons();
   }
 
   collapse() {
     if (this.el.full) this.el.full.hidden = true;
     if (this.root) this.root.dataset.expanded = 'false';
     document.body.classList.remove('is-locked');
-    this._syncLyricsButtons();
+    this._syncPanelButtons();
   }
 
   /**
@@ -188,16 +188,34 @@ export class PlayerUI {
     return true;
   }
 
-  /** 迷你条与展开页两个「词」按钮的状态同步：aria-expanded 同时驱动主题红底样式 */
-  _syncLyricsButtons() {
-    const on = this.root?.dataset.expanded === 'true' && this.stage === 'lyrics';
-    for (const id of ['plLyricsBtn', 'plLyricsBtnFull']) {
-      const btn = byId(id);
-      if (!btn) continue;
-      const label = on ? '收起歌词' : '显示歌词';
-      btn.setAttribute('aria-expanded', String(on));
-      btn.setAttribute('aria-label', label);
-      btn.setAttribute('title', label);
+  /**
+   * 简介「简介」按钮：与「词」互斥 —— 同一时刻只有一个面板展开。
+   * 展开且正在看简介时再点 → 收起回封面；否则展开简介（若正看歌词则直接切换）。
+   * @returns {boolean} 点击后简介面板是否处于展开状态
+   */
+  toggleAbout() {
+    const expanded = this.root?.dataset.expanded === 'true';
+    if (expanded && this.stage === 'about') { this.setStage('cover'); return false; }
+    this.expand('about');
+    return true;
+  }
+
+  /** 迷你条与展开页的「词」「简介」按钮状态同步：aria-expanded 同时驱动主题红底样式 */
+  _syncPanelButtons() {
+    const expanded = this.root?.dataset.expanded === 'true';
+    const panels = [
+      { on: expanded && this.stage === 'lyrics', ids: ['plLyricsBtn', 'plLyricsBtnFull'], open: '收起歌词', shut: '显示歌词' },
+      { on: expanded && this.stage === 'about', ids: ['plAboutBtn', 'plAboutBtnFull'], open: '收起简介', shut: '显示简介' }
+    ];
+    for (const p of panels) {
+      for (const id of p.ids) {
+        const btn = byId(id);
+        if (!btn) continue;
+        const label = p.on ? p.open : p.shut;
+        btn.setAttribute('aria-expanded', String(p.on));
+        btn.setAttribute('aria-label', label);
+        btn.setAttribute('title', label);
+      }
     }
   }
 
@@ -212,7 +230,7 @@ export class PlayerUI {
     setSvg('plViewIcon', STAGE_ICON[this.stage], 22);
     if (lock) this.player.store?.save({ stage: this.stage, stageLocked: true }, { immediate: true });
     else this.player.store?.save({ stage: this.stage });
-    this._syncLyricsButtons();
+    this._syncPanelButtons();
     this.onStageChange?.(this.stage);
   }
 

@@ -13,6 +13,7 @@
 
 import { escapeHtml } from '../core/util.js';
 import { isTimed } from '../core/lrc.js';
+import { normalizeLrcFont } from '../store.js';
 import { byId, qs, qsa, tgt } from './dom.js';
 
 const EMPTY_TEXT = {
@@ -62,6 +63,25 @@ export class LyricsUI {
       this._resetFollow();
       if (!song) this.render(null, { format: 'none', lines: [] }, false);
     });
+
+    // 字号偏好：当前浏览器保存，启动即恢复（只影响歌词文字）
+    this.font = normalizeLrcFont(player.store?.getLrcFont?.());
+    this._applyFont(this.font);
+  }
+
+  /* ── 字号（工具栏「小 / 中 / 大」）───────────────────── */
+  /** 立即生效并持久化偏好；不触碰音频与时间轴 */
+  setFont(size) {
+    const value = normalizeLrcFont(size);
+    this.player.store?.setLrcFont?.(value);
+    this.font = value;
+    this._applyFont(value);
+    return value;
+  }
+
+  _applyFont(value) {
+    if (this.container) this.container.dataset.font = value;
+    for (const b of qsa('[data-act="lyric-font"]')) b.setAttribute('aria-pressed', String(b.dataset.size === value));
   }
 
   /* ── 自动跟随 ─────────────────────────────────────── */

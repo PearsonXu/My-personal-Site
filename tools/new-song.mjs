@@ -26,7 +26,7 @@ const flag = (name, fallback = '') => {
 };
 
 if (!title) {
-  console.error('用法：node tools/new-song.mjs "歌名" --audio <mp3 路径> [--slug x] [--lyrics x.lrc] [--album slug] [--tags a,b] [--artist 名字]');
+  console.error('用法：node tools/new-song.mjs "歌名" --audio <mp3 路径> [--slug x] [--lyrics x.lrc] [--album slug] [--tags a,b] [--artist 名字] [--original-artist 原唱] [--composer 作曲] [--lyricist 作词] [--version-note 翻唱/改编/AI生成] [--version-by 本站制作] [--tools SUNO,…]');
   process.exit(1);
 }
 
@@ -71,6 +71,11 @@ const song = {
   artist: flag('artist', site.author?.name || ''),
   composer: flag('composer', ''),
   lyricist: flag('lyricist', ''),
+  // 原作署名与本站版本制作信息分开；生成工具（SUNO 等）单独标注，不当原唱/词曲作者
+  originalArtist: flag('original-artist', ''),
+  versionNote: flag('version-note', ''),
+  versionBy: flag('version-by', ''),
+  tools: flag('tools') ? flag('tools').split(',').map((s) => s.trim()).filter(Boolean) : [],
   album: flag('album') || null,
   tags: flag('tags') ? flag('tags').split(',').map((s) => s.trim()).filter(Boolean) : [],
   date: flag('date', new Date().toISOString().slice(0, 10)),
@@ -94,7 +99,7 @@ console.log(`  歌词      ${lyricsName ? `content/lyrics/${lyricsName}` : '（�
 console.log(`  内容文件  content/songs/${slug}.json`);
 console.log('');
 console.log('下一步：');
-console.log('  1. 编辑 content/songs/' + slug + '.json 补 about / credits / tags');
+console.log('  1. 编辑 content/songs/' + slug + '.json 补 about / credits / tags / originalArtist / versionNote / versionBy / tools');
 console.log('  2. npm run build && npm run serve');
 console.log('  3. 打开 http://localhost:8000/status/ 点「探测音频响应头」确认 206');
 console.log('  4. git add -A && git commit && git push（Actions 自动发布）');

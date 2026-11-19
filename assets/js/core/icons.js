@@ -50,6 +50,7 @@ const PATHS = {
   disc: '<circle cx="12" cy="12" r="8.4"/><circle cx="12" cy="12" r="2.2"/>',
   cover: '<rect x="4" y="5" width="16" height="14" rx="2.4"/><path d="M4 15.6 8.4 11.6l3.8 3.4 3-2.4L20 16"/><circle cx="9" cy="9.4" r="1.3"/>',
   lyrics: '<path d="M5 6.4h14M5 10.8h10M5 15.2h14M5 19.6h8"/>',
+  info: '<circle cx="12" cy="12" r="8.4"/><path d="M12 11v5.2"/><path d="M12 7.6v.2"/>',
 
   /* ── 头部 / 导航 ── */
   search: '<circle cx="11" cy="11" r="6.4"/><path d="M15.8 15.8 20.5 20.5"/>',
@@ -75,7 +76,7 @@ export const MODE_ICON = {
 };
 
 /** 播放页舞台 → 图标名 */
-export const STAGE_ICON = { cover: 'cover', vinyl: 'disc', lyrics: 'lyrics' };
+export const STAGE_ICON = { cover: 'cover', vinyl: 'disc', lyrics: 'lyrics', about: 'info' };
 
 export const ICON_NAMES = Object.keys(PATHS);
 

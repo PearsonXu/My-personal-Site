@@ -12,10 +12,12 @@ const KEY = 'zx.music.v1';
 const BROKEN_KEY = 'zx.music.v1.broken';
 const THEME_KEY = 'zx.music.theme';
 const LAYOUT_KEY = 'zx.music.layout';
+const LRC_FONT_KEY = 'zx.music.lrcFont';
 const RECENT_LIMIT = 50;
+const OFFSET_LIMIT = 200;
 
 const VIEWS = ['list', 'grid', 'vinyl'];
-const STAGES = ['cover', 'vinyl', 'lyrics'];
+const STAGES = ['cover', 'vinyl', 'lyrics', 'about'];
 
 /** 三套外观。cloud 是首次访问的默认值，系统深色偏好不参与决策。 */
 export const THEMES = ['cloud', 'forest', 'midnight'];
@@ -32,6 +34,12 @@ export function normalizeLayout(value) {
   return LAYOUTS.includes(value) ? value : 'auto';
 }
 
+/** 歌词字号三档：小 / 中 / 大，默认中。只影响歌词文字，不影响其他 UI。 */
+export const LRC_FONTS = ['s', 'm', 'l'];
+export function normalizeLrcFont(value) {
+  return LRC_FONTS.includes(value) ? value : 'm';
+}
+
 const DEFAULTS = {
   version: 1,
   queue: null,
@@ -43,6 +51,7 @@ const DEFAULTS = {
   stage: 'cover',
   favorites: [],
   recent: [],
+  lyricOffsets: {},
   audioSession: false,
   theme: 'cloud',
   layout: 'auto',
@@ -124,6 +133,17 @@ export function sanitizeState(raw, repaired = []) {
       at: typeof r.at === 'number' && Number.isFinite(r.at) ? r.at : 0
     }));
   } else if (raw.recent !== undefined) { fix('recent'); }
+
+  // 歌词校准：逐曲偏移（slug → 秒，±30）。坏键 / 坏值单独丢，不影响其他曲目
+  out.lyricOffsets = {};
+  if (raw.lyricOffsets != null) {
+    if (typeof raw.lyricOffsets === 'object' && !Array.isArray(raw.lyricOffsets)) {
+      for (const [slug, v] of Object.entries(raw.lyricOffsets).slice(0, OFFSET_LIMIT)) {
+        if (!isSafeSlug(slug) || typeof v !== 'number' || !Number.isFinite(v) || v < -30 || v > 30) { fix('lyricOffsets'); continue; }
+        out.lyricOffsets[slug] = Math.round(v * 10) / 10;
+      }
+    } else { fix('lyricOffsets'); }
+  }
 
   return out;
 }
@@ -237,6 +257,19 @@ export class Store {
     this.data.layout = value;
     if (!this.available) return value;
     try { this.storage.setItem(LAYOUT_KEY, value); } catch { /* ignore */ }
+    return value;
+  }
+
+  /* ── 歌词字号（当前浏览器偏好）───────────────────────── */
+  getLrcFont() {
+    if (!this.available) return 'm';
+    try { return normalizeLrcFont(this.storage.getItem(LRC_FONT_KEY)); } catch { return 'm'; }
+  }
+
+  setLrcFont(size) {
+    const value = normalizeLrcFont(size);
+    if (!this.available) return value;
+    try { this.storage.setItem(LRC_FONT_KEY, value); } catch { /* ignore */ }
     return value;
   }
 
