@@ -11,6 +11,7 @@
 import { canonicalUrl } from '../core/paths.js';
 import { escapeHtml as esc, escapeAttr as attr } from '../core/util.js';
 import { openSheet, copyText, toast, download } from './common.js';
+import { icon } from '../core/icons.js';
 import { tgt } from './dom.js';
 
 export class ShareUI {
@@ -20,6 +21,61 @@ export class ShareUI {
     this.adapters = adapters;
     this.resolve = resolve;
     this.link = link;
+  }
+
+  /**
+   * 分享目标解析。
+   *
+   * ★ 关键：**绝不用 window.location.href 当分享地址**。
+   *   用户可能在首页或曲库播放歌曲，当前页面地址并不是正在播放那首歌的地址。
+   *   分享地址一律由「目标歌曲 slug + 站点正式域名 + 现有路由」算出。
+   */
+  songTarget(slug) {
+    const target = slug || this.player.currentSong?.slug || null;
+    if (!target) return null;
+    return this.player.catalog.songs.find((s) => s.slug === target) || null;
+  }
+
+  /** 该歌曲的正式详情页完整 URL（沿用现有路由 /songs/<slug>/） */
+  songUrl(slug) {
+    return canonicalUrl(this.site.url, 'song', slug);
+  }
+
+  songSharePayload(song) {
+    const desc = (song.about || '').replace(/[*`#>]/g, '').replace(/\s+/g, ' ').trim();
+    return {
+      title: `${song.title}｜${this.site.title}`,
+      text: desc ? `${song.title} · ${song.artist} — ${desc.slice(0, 120)}` : `${song.title} · ${song.artist}`,
+      url: this.songUrl(song.slug)
+    };
+  }
+
+  /**
+   * 分享一首歌：优先系统分享（传入该歌的 title / text / url），
+   * 不支持时复制该歌的完整链接，并打开二维码 / 海报面板。
+   * 注意：navigator.share 必须在用户手势的有效期内调用，所以前面不加任何 await。
+   */
+  async shareSong(slug) {
+    const song = this.songTarget(slug);
+    if (!song) {
+      toast('先选一首歌，再分享它', 'bad');
+      return { ok: false, reason: 'no-song' };
+    }
+    const payload = this.songSharePayload(song);
+    if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+      try {
+        await navigator.share(payload);
+        return { ok: true, via: 'system', url: payload.url };
+      } catch (err) {
+        // 用户主动取消：不当成失败，也不退回复制
+        if (err?.name === 'AbortError') return { ok: false, via: 'system', reason: 'cancelled' };
+        // 其它失败（权限 / 不支持该 payload）继续走复制回退
+      }
+    }
+    const copied = await copyText(payload.url);
+    toast(copied ? `已复制《${song.title}》的链接` : '复制失败，请在面板里手动复制', copied ? 'ok' : 'bad');
+    await this.open('song', song.slug);
+    return { ok: copied, via: 'copy', url: payload.url };
   }
 
   target(kind, slug) {
@@ -75,7 +131,8 @@ export class ShareUI {
           </div>
         </div>
         <div id="posterHost"></div>`,
-      footHtml: `${info.song ? '<button class="btn" type="button" data-share="poster"><span aria-hidden="true">▣</span> 生成歌词海报</button>' : ''}
+      footHtml: `${info.song ? `<button class="btn btn--pri" type="button" data-share="system">${icon('share', { size: 18 })} 分享这首歌</button>` : ''}
+        ${info.song ? `<button class="btn" type="button" data-share="poster">${icon('cover', { size: 18 })} 歌词海报</button>` : ''}
         ${wechat.configured ? '<button class="btn btn--quiet" type="button" data-share="wechat">配置微信分享信息</button>' : ''}
         <a class="btn btn--quiet" href="${attr(this.link(t.slug ? `${t.kind === 'song' ? 'songs' : t.kind === 'note' ? 'notes' : t.kind === 'album' ? 'albums' : 'playlists'}/${t.slug}/` : ''))}">打开页面</a>`
     });
@@ -87,6 +144,9 @@ export class ShareUI {
       if (act === 'copy') {
         const ok = await copyText(url);
         toast(ok ? '链接已复制' : '复制失败，请长按输入框手动复制', ok ? 'ok' : 'bad');
+      } else if (act === 'system') {
+        // 面板里的「分享这首歌」同样按目标歌曲生成地址，不用当前页面地址
+        await this.shareSong(t.kind === 'song' ? t.slug : undefined);
       } else if (act === 'poster') {
         await this.poster(info.song, sheet.root.querySelector('#posterHost'));
       } else if (act === 'wechat') {
