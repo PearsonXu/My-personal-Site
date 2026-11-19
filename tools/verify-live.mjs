@@ -243,7 +243,7 @@ async function main() {
     if (catalog.songs.length === 0) {
       const missing = await get('/songs/any-song-slug/');
       assert(missing.status === 404, `空曲库下单曲路径应 404，实际 ${missing.status}`);
-      return { na: true, detail: '线上曲库为空（生产构建排除 DEMO），暂无单曲页；不存在的路径正确 404。单曲机制已在本地 DEMO 构建 + 真实浏览器 195 项中验证' };
+      return { na: true, detail: '线上曲库为空（生产构建排除 DEMO），暂无单曲页；不存在的路径正确 404。单曲机制已在本地 DEMO 构建 + 真实浏览器 207 项中验证' };
     }
     const bad = [];
     for (const s of catalog.songs) {

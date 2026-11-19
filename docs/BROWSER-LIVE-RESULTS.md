@@ -1,7 +1,7 @@
 # 正式域名 · 真实浏览器复验
 
-> 由 `node tools/browser-live.mjs` 生成。目标：http://localhost:8000
-> 浏览器：Chrome/157.0.8103.79 · 2026-11-19T08:34:36.234Z
+> 由 `node tools/browser-live.mjs` 生成。目标：https://www.xuzhaoqing.com
+> 浏览器：Chrome/157.0.8103.79 · 2026-11-19T08:50:27.546Z
 > **45 / 45 通过，0 失败**
 
 截图：`docs/screenshots-live/`
