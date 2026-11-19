@@ -1,0 +1,280 @@
+{
+  "ranAt": "2026-11-19T07:51:59.224Z",
+  "base": "https://www.xuzhaoqing.com",
+  "browser": "Chrome/157.0.8103.79",
+  "total": 45,
+  "passed": 45,
+  "failed": 0,
+  "results": [
+    {
+      "group": "线上启动",
+      "name": "首次访问默认 cloud（系统深色不覆盖）",
+      "ok": true,
+      "detail": "theme=cloud layout=auto bg=rgb(245, 246, 248)"
+    },
+    {
+      "group": "线上启动",
+      "name": "应用无 JS 报错，目录加载成功",
+      "ok": true,
+      "detail": "catalog.songs=0，0 条控制台错误"
+    },
+    {
+      "group": "线上启动",
+      "name": "空曲库时点播放给出诚实提示，不假装在播",
+      "ok": true,
+      "detail": "state=idle，提示「曲库是空的」"
+    },
+    {
+      "group": "线上 cloud × desktop",
+      "name": "外观生效且无横向溢出",
+      "ok": true,
+      "detail": "--acc=#e02f2f，溢出 0px"
+    },
+    {
+      "group": "线上 cloud × desktop",
+      "name": "常驻播放器在视口内且按钮可点",
+      "ok": true,
+      "detail": "播放器与头部按钮全部可命中"
+    },
+    {
+      "group": "线上 cloud × desktop",
+      "name": "外观面板列出三套主题 + 三档布局",
+      "ok": true,
+      "detail": "主题 3 · 布局 3"
+    },
+    {
+      "group": "线上 cloud × desktop",
+      "name": "切外观 / 切布局复用同一个 audio 实例",
+      "ok": true,
+      "detail": "3 主题 × 3 布局，audio 实例与状态不变"
+    },
+    {
+      "group": "线上 cloud × desktop",
+      "name": "站内导航不断外壳：同一 audio、页面已换",
+      "ok": true,
+      "detail": "已到 note，audio 实例不变，全站仍 1 个 audio"
+    },
+    {
+      "group": "线上 cloud × desktop",
+      "name": "空曲库下搜索与空状态正确",
+      "ok": true,
+      "detail": "空状态正确，搜索可用（0 首 · 搜索「测试」）"
+    },
+    {
+      "group": "线上 cloud × desktop",
+      "name": "无 JS 报错",
+      "ok": true,
+      "detail": "0 条"
+    },
+    {
+      "group": "线上 cloud × mobile",
+      "name": "外观生效且无横向溢出",
+      "ok": true,
+      "detail": "--acc=#e02f2f，溢出 0px"
+    },
+    {
+      "group": "线上 cloud × mobile",
+      "name": "常驻播放器在视口内且按钮可点",
+      "ok": true,
+      "detail": "播放器与头部按钮全部可命中"
+    },
+    {
+      "group": "线上 cloud × mobile",
+      "name": "外观面板列出三套主题 + 三档布局",
+      "ok": true,
+      "detail": "主题 3 · 布局 3"
+    },
+    {
+      "group": "线上 cloud × mobile",
+      "name": "切外观 / 切布局复用同一个 audio 实例",
+      "ok": true,
+      "detail": "3 主题 × 3 布局，audio 实例与状态不变"
+    },
+    {
+      "group": "线上 cloud × mobile",
+      "name": "站内导航不断外壳：同一 audio、页面已换",
+      "ok": true,
+      "detail": "已到 note，audio 实例不变，全站仍 1 个 audio"
+    },
+    {
+      "group": "线上 cloud × mobile",
+      "name": "空曲库下搜索与空状态正确",
+      "ok": true,
+      "detail": "空状态正确，搜索可用（0 首 · 搜索「测试」）"
+    },
+    {
+      "group": "线上 cloud × mobile",
+      "name": "无 JS 报错",
+      "ok": true,
+      "detail": "0 条"
+    },
+    {
+      "group": "线上 forest × desktop",
+      "name": "外观生效且无横向溢出",
+      "ok": true,
+      "detail": "--acc=#2f6b46，溢出 0px"
+    },
+    {
+      "group": "线上 forest × desktop",
+      "name": "常驻播放器在视口内且按钮可点",
+      "ok": true,
+      "detail": "播放器与头部按钮全部可命中"
+    },
+    {
+      "group": "线上 forest × desktop",
+      "name": "外观面板列出三套主题 + 三档布局",
+      "ok": true,
+      "detail": "主题 3 · 布局 3"
+    },
+    {
+      "group": "线上 forest × desktop",
+      "name": "切外观 / 切布局复用同一个 audio 实例",
+      "ok": true,
+      "detail": "3 主题 × 3 布局，audio 实例与状态不变"
+    },
+    {
+      "group": "线上 forest × desktop",
+      "name": "站内导航不断外壳：同一 audio、页面已换",
+      "ok": true,
+      "detail": "已到 note，audio 实例不变，全站仍 1 个 audio"
+    },
+    {
+      "group": "线上 forest × desktop",
+      "name": "空曲库下搜索与空状态正确",
+      "ok": true,
+      "detail": "空状态正确，搜索可用（0 首 · 搜索「测试」）"
+    },
+    {
+      "group": "线上 forest × desktop",
+      "name": "无 JS 报错",
+      "ok": true,
+      "detail": "0 条"
+    },
+    {
+      "group": "线上 forest × mobile",
+      "name": "外观生效且无横向溢出",
+      "ok": true,
+      "detail": "--acc=#2f6b46，溢出 0px"
+    },
+    {
+      "group": "线上 forest × mobile",
+      "name": "常驻播放器在视口内且按钮可点",
+      "ok": true,
+      "detail": "播放器与头部按钮全部可命中"
+    },
+    {
+      "group": "线上 forest × mobile",
+      "name": "外观面板列出三套主题 + 三档布局",
+      "ok": true,
+      "detail": "主题 3 · 布局 3"
+    },
+    {
+      "group": "线上 forest × mobile",
+      "name": "切外观 / 切布局复用同一个 audio 实例",
+      "ok": true,
+      "detail": "3 主题 × 3 布局，audio 实例与状态不变"
+    },
+    {
+      "group": "线上 forest × mobile",
+      "name": "站内导航不断外壳：同一 audio、页面已换",
+      "ok": true,
+      "detail": "已到 note，audio 实例不变，全站仍 1 个 audio"
+    },
+    {
+      "group": "线上 forest × mobile",
+      "name": "空曲库下搜索与空状态正确",
+      "ok": true,
+      "detail": "空状态正确，搜索可用（0 首 · 搜索「测试」）"
+    },
+    {
+      "group": "线上 forest × mobile",
+      "name": "无 JS 报错",
+      "ok": true,
+      "detail": "0 条"
+    },
+    {
+      "group": "线上 midnight × desktop",
+      "name": "外观生效且无横向溢出",
+      "ok": true,
+      "detail": "--acc=#9d8cff，溢出 0px"
+    },
+    {
+      "group": "线上 midnight × desktop",
+      "name": "常驻播放器在视口内且按钮可点",
+      "ok": true,
+      "detail": "播放器与头部按钮全部可命中"
+    },
+    {
+      "group": "线上 midnight × desktop",
+      "name": "外观面板列出三套主题 + 三档布局",
+      "ok": true,
+      "detail": "主题 3 · 布局 3"
+    },
+    {
+      "group": "线上 midnight × desktop",
+      "name": "切外观 / 切布局复用同一个 audio 实例",
+      "ok": true,
+      "detail": "3 主题 × 3 布局，audio 实例与状态不变"
+    },
+    {
+      "group": "线上 midnight × desktop",
+      "name": "站内导航不断外壳：同一 audio、页面已换",
+      "ok": true,
+      "detail": "已到 note，audio 实例不变，全站仍 1 个 audio"
+    },
+    {
+      "group": "线上 midnight × desktop",
+      "name": "空曲库下搜索与空状态正确",
+      "ok": true,
+      "detail": "空状态正确，搜索可用（0 首 · 搜索「测试」）"
+    },
+    {
+      "group": "线上 midnight × desktop",
+      "name": "无 JS 报错",
+      "ok": true,
+      "detail": "0 条"
+    },
+    {
+      "group": "线上 midnight × mobile",
+      "name": "外观生效且无横向溢出",
+      "ok": true,
+      "detail": "--acc=#9d8cff，溢出 0px"
+    },
+    {
+      "group": "线上 midnight × mobile",
+      "name": "常驻播放器在视口内且按钮可点",
+      "ok": true,
+      "detail": "播放器与头部按钮全部可命中"
+    },
+    {
+      "group": "线上 midnight × mobile",
+      "name": "外观面板列出三套主题 + 三档布局",
+      "ok": true,
+      "detail": "主题 3 · 布局 3"
+    },
+    {
+      "group": "线上 midnight × mobile",
+      "name": "切外观 / 切布局复用同一个 audio 实例",
+      "ok": true,
+      "detail": "3 主题 × 3 布局，audio 实例与状态不变"
+    },
+    {
+      "group": "线上 midnight × mobile",
+      "name": "站内导航不断外壳：同一 audio、页面已换",
+      "ok": true,
+      "detail": "已到 note，audio 实例不变，全站仍 1 个 audio"
+    },
+    {
+      "group": "线上 midnight × mobile",
+      "name": "空曲库下搜索与空状态正确",
+      "ok": true,
+      "detail": "空状态正确，搜索可用（0 首 · 搜索「测试」）"
+    },
+    {
+      "group": "线上 midnight × mobile",
+      "name": "无 JS 报错",
+      "ok": true,
+      "detail": "0 条"
+    }
+  ]
+}
