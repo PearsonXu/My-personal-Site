@@ -172,7 +172,8 @@ hover 转 `var(--acc)`。**没有任何单独硬编码的颜色**：
   本地 DEMO 与线上生产各 47/47；截图 `docs/screenshots/panels-{local,live}-*.png`，
   报告 `docs/player-panels-results.json`（`alsoRun` 保留另一目标的上一次摘要）
 - 面板轮复测：`probe-regression` 138/0、`probe-lyrics-sync` local+live 41/41、
-  `verify-live` 18 PASS · 1 N/A · 0 FAIL（2026-11-19，部署 commit 708925d 后）
+  `verify-live` 18 PASS · 1 N/A · 0 FAIL（2026-11-19，部署 commit 281e168 后；
+  线上 3 首真实歌曲，「另一首歌」为无 LRC 的《天和山雨雪》，覆盖无歌词时校准与简介仍可用）
 - **NOT_RUN**：iOS Safari 真机、微信内浏览器真机（无设备 / 账号）；
   「全部资料缺失 → 歌曲资料待补充」分支仅单元覆盖，未真机目视
 
