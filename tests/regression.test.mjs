@@ -41,12 +41,13 @@ test('回归 · 外壳的图片资源也必须绝对化（播放器占位封面�
   assert.equal((fn.match(/closest\('#page-root'\)/g) || []).length, 2, '链接与资源两个循环都要跳过 page-root');
 });
 
-test('回归 · 静态外壳确实存在相对图片引用（所以必须绝对化）', () => {
+test('回归 · 外壳图片在构建期就是绝对路径（不依赖 JS 修正）', () => {
   build();
   const html = read('songs/index.html');
   const end = html.indexOf('<!-- ▲ 路由只替换这一块 ▲ -->');
   const shell = html.slice(end);
-  assert.match(shell, /<img[^>]+src="\.\.\/assets\/img\/placeholder\.svg"/, '播放器占位图应是相对路径（由 boot 绝对化）');
+  assert.match(shell, /<img[^>]+src="\/assets\/img\/placeholder\.svg"/, '播放器占位图应是 base 绝对路径');
+  assert.ok(!/src="\.\.\//.test(shell), '外壳不应再有 ../ 相对资源');
 });
 
 test('回归 · 路由失败也会摘掉 navigating 标记（try/finally）', () => {

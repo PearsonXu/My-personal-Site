@@ -162,21 +162,27 @@ async function main() {
     return `${expect.length} 个资源全部 200 且 MIME 正确`;
   });
 
-  await check('资源路径', '深层页面的相对资源解析正确', async () => {
+  await check('资源路径', '深层页面与首页的资源路径完全一致（不随深度变化）', async () => {
     const note = catalog.notes[0];
     if (!note) return { na: true, detail: '没有手记页可测' };
     const p = `/notes/${note.slug}/`;
-    const html = await (await fetch(`${BASE}${p}`)).text();
-    const rels = [...html.matchAll(/(?:href|src)="(\.\.\/\.\.\/assets\/[^"]+)"/g)].map((m) => m[1]);
-    assert(rels.length > 0, '深层页面没有相对资源引用');
+    const deepHtml = await (await fetch(`${BASE}${p}`)).text();
+    const homeHtml = await (await fetch(`${BASE}/`)).text();
+    const grab = (h) => [...h.matchAll(/(?:href|src)="(\/assets\/[^"]+)"/g)].map((m) => m[1]);
+    const deepRefs = grab(deepHtml);
+    const homeRefs = grab(homeHtml);
+    assert(deepRefs.length > 0, '深层页面没有绝对资源引用');
+    // 不允许出现按深度拼接的相对前缀
+    assert(!/(?:href|src)="\.\.?\//.test(deepHtml), '深层页面仍有 ./ 或 ../ 相对路径');
+    const css = (h) => grab(h).filter((r) => r.endsWith('.css')).sort();
+    assert(JSON.stringify(css(deepHtml)) === JSON.stringify(css(homeHtml)), '深层页与首页的 CSS 路径不一致');
     const bad = [];
-    for (const rel of new Set(rels)) {
-      const url = new URL(rel, `${BASE}${p}`).href;
-      const res = await fetch(url, { method: 'HEAD' });
-      if (res.status !== 200) bad.push(`${rel}=${res.status}`);
+    for (const ref of new Set(deepRefs)) {
+      const res = await fetch(new URL(ref, `${BASE}${p}`).href, { method: 'HEAD' });
+      if (res.status !== 200) bad.push(`${ref}=${res.status}`);
     }
     assert(bad.length === 0, bad.join(', '));
-    return `${p} 的 ${new Set(rels).size} 个 ../../assets 引用全部 200`;
+    return `${p} 的 ${new Set(deepRefs).size} 个绝对资源全部 200，且与首页路径一致`;
   });
 
   await check('资源路径', '宿主支持 Range / 206（进度拖动的前提）', async () => {

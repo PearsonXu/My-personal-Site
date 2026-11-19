@@ -217,6 +217,52 @@ await chain('旧数据用户（dark + grid + lyrics）', {
   await page.close();
 }
 
+/* ── 用户指定链路：首页 → 歌曲详情 → 曲库 → 关于我 → 手记 → 另一首歌 ── */
+{
+  console.log('\n── 指定链路（含内容区链接，非仅导航）──');
+  const songs = liveCatalog.songs || [];
+  const notes = liveCatalog.notes || [];
+  for (const viewport of ['desktop', 'mobile']) {
+    const { page, errors, failed } = await newPage({ viewport });
+    await page.goto(`${B}/`, { waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(() => !!window.__music, { timeout: 15000 });
+    const trail = [];
+    const step = async (label, clickFn, expect) => {
+      await clickFn();
+      await sleep(700);
+      const s = await snap(page);
+      const path = new URL(s.url).pathname;
+      trail.push(path);
+      const noAccum = !/\/(songs|notes|albums|playlists|about|me|status)\/.*\/(songs|notes|albums|playlists|about|me|status)\//.test(path);
+      check(`${viewport} ${label} → ${expect}`, path === expect && noAccum, path);
+      check(`${viewport} ${label} 样式生效`, styled(s), `sheets=${s.sheets}`);
+    };
+
+    if (songs[0]) {
+      await step('点歌曲卡片', () => page.evaluate(() => document.querySelector('.row__main, .card__link, .hero__pick__cover')?.click()), `/songs/${songs[0].slug}/`);
+    }
+    await step('点导航曲库', () => page.evaluate(() => [...document.querySelectorAll('.nav__a')].find((a) => a.textContent.includes('曲库'))?.click()), '/songs/');
+    await step('点导航关于我', () => page.evaluate(() => [...document.querySelectorAll('.nav__a')].find((a) => a.textContent.includes('关于'))?.click()), '/about/');
+    await step('点导航手记', () => page.evaluate(() => [...document.querySelectorAll('.nav__a')].find((a) => a.textContent.includes('手记'))?.click()), '/notes/');
+    if (notes[0]) {
+      await step('点手记卡片', () => page.evaluate(() => document.querySelector('.card__link')?.click()), `/notes/${notes[0].slug}/`);
+    }
+    const other = songs[1] || songs[0];
+    if (other) {
+      await step('回曲库', () => page.evaluate(() => [...document.querySelectorAll('.nav__a')].find((a) => a.textContent.includes('曲库'))?.click()), '/songs/');
+      await step('点另一首歌', (slug) => page.evaluate((s) => document.querySelector(`[data-song="${s}"] .row__main, [data-song="${s}"] .card__link`)?.click(), other.slug), `/songs/${other.slug}/`);
+    }
+    check(`${viewport} 全链路无路径累积`, trail.every((p) => !/\/(songs|notes)\/[^/]+\/(songs|notes|about|me)\//.test(p)), trail.join(' → '));
+    check(`${viewport} 全链路无失败请求`, failed.length === 0, failed.slice(0, 3).join(' | '));
+    check(`${viewport} 全链路无 Console 错误`, errors.length === 0, errors.slice(0, 3).join(' | '));
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await sleep(500);
+    const after = await snap(page);
+    check(`${viewport} 末页刷新后地址不变且正常`, styled(after) && after.mainTextLen > 20, new URL(after.url).pathname);
+    await page.close();
+  }
+}
+
 /* ── 直接打开每个子页面 + 原地刷新 ─────────────────── */
 {
   console.log('\n── 直接访问 + 刷新（全部页面）──');

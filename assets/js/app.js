@@ -77,7 +77,39 @@ function absolutizeChromeLinks() {
   }
 }
 
+/**
+ * 部署位置与构建 base 不一致时的兜底改写。
+ *
+ * 正常情况（build base == 运行时 base）什么都不做：链接本来就是正确的绝对路径。
+ * 只有把同一份产物临时放到子目录预览时才会触发，把开头的 build base 换成运行时 base。
+ * 只改「本站路径」，不动 canonical / og 这类对外规范地址。
+ */
+function rebaseForDeployment(buildBase, runtimeBase) {
+  if (!buildBase || buildBase === runtimeBase) return;
+  const sel = 'a[href], img[src], source[src], script[src], link[rel="stylesheet"], link[rel~="icon"], link[rel="preload"], link[rel="modulepreload"]';
+  for (const el of qsa(sel)) {
+    const attr = el.hasAttribute('href') ? 'href' : 'src';
+    const raw = el.getAttribute(attr);
+    if (!raw) continue;
+    if (raw.startsWith(buildBase)) {
+      el.setAttribute(attr, runtimeBase + raw.slice(buildBase.length));
+      continue;
+    }
+    if (/^https?:\/\//i.test(raw)) {
+      try {
+        const u = new URL(raw);
+        if (u.origin === location.origin && u.pathname.startsWith(buildBase)) {
+          u.pathname = runtimeBase + u.pathname.slice(buildBase.length);
+          el.setAttribute(attr, u.href);
+        }
+      } catch { /* ignore */ }
+    }
+  }
+}
+
 async function boot({ base = BASE } = {}) {
+  const buildBase = document.documentElement.dataset.base || '/';
+  rebaseForDeployment(buildBase, base);
   absolutizeHeadAssets();
   absolutizeChromeLinks();
   // 记下运行时 base：404 页等无法用相对路径的场景靠它定位站点根
@@ -138,6 +170,8 @@ async function boot({ base = BASE } = {}) {
 
   function onPage(route) {
     try {
+      // 换页后新内容里的路径仍是构建 base，部署位置不同则再兜底一次
+      rebaseForDeployment(document.documentElement.dataset.base || '/', base);
       closeSheet();
       queueUI.sheet = null;
       ui.markCurrent(player.currentSong?.slug || null);

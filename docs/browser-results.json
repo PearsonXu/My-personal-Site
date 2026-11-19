@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-11-19T10:10:24.574Z",
+  "ranAt": "2026-11-19T10:44:38.038Z",
   "browser": "Chrome/157.0.8103.79",
   "total": 215,
   "passed": 215,
@@ -75,13 +75,13 @@
       "group": "cloud × desktop",
       "name": "播放：真实 MP3 解码并推进时间",
       "ok": true,
-      "detail": "15.12s → 16.38s，duration=36.05s，buffered=36.0s"
+      "detail": "15.16s → 16.44s，duration=36.05s，buffered=36.0s"
     },
     {
       "group": "cloud × desktop",
       "name": "暂停 / 继续",
       "ok": true,
-      "detail": "暂停于 16.40s 后恢复"
+      "detail": "暂停于 16.46s 后恢复"
     },
     {
       "group": "cloud × desktop",
@@ -93,13 +93,13 @@
       "group": "cloud × desktop",
       "name": "播放/暂停图标原位切换：不跳位、不断音",
       "ok": true,
-      "detail": "按钮与图形位置零位移，音源不变，16.46s → 16.49s"
+      "detail": "按钮与图形位置零位移，音源不变，16.52s → 16.54s"
     },
     {
       "group": "cloud × desktop",
       "name": "拖动进度条",
       "ok": true,
-      "detail": "seek → 18.46s"
+      "detail": "seek → 18.47s"
     },
     {
       "group": "cloud × desktop",
@@ -273,13 +273,13 @@
       "group": "cloud × mobile",
       "name": "播放：真实 MP3 解码并推进时间",
       "ok": true,
-      "detail": "15.16s → 16.43s，duration=36.05s，buffered=36.0s"
+      "detail": "15.21s → 16.49s，duration=36.05s，buffered=36.0s"
     },
     {
       "group": "cloud × mobile",
       "name": "暂停 / 继续",
       "ok": true,
-      "detail": "暂停于 16.44s 后恢复"
+      "detail": "暂停于 16.51s 后恢复"
     },
     {
       "group": "cloud × mobile",
@@ -291,13 +291,13 @@
       "group": "cloud × mobile",
       "name": "播放/暂停图标原位切换：不跳位、不断音",
       "ok": true,
-      "detail": "按钮与图形位置零位移，音源不变，16.50s → 16.53s"
+      "detail": "按钮与图形位置零位移，音源不变，16.59s → 16.63s"
     },
     {
       "group": "cloud × mobile",
       "name": "拖动进度条",
       "ok": true,
-      "detail": "seek → 18.46s"
+      "detail": "seek → 18.47s"
     },
     {
       "group": "cloud × mobile",
@@ -375,7 +375,7 @@
       "group": "cloud × mobile",
       "name": "刷新后恢复队列与进度，且不自动出声",
       "ok": true,
-      "detail": "恢复 2 首，进度 11.27s，保持暂停"
+      "detail": "恢复 2 首，进度 11.25s，保持暂停"
     },
     {
       "group": "cloud × mobile",
@@ -465,13 +465,13 @@
       "group": "forest × desktop",
       "name": "播放：真实 MP3 解码并推进时间",
       "ok": true,
-      "detail": "15.17s → 16.46s，duration=36.05s，buffered=36.0s"
+      "detail": "15.14s → 16.43s，duration=36.05s，buffered=36.0s"
     },
     {
       "group": "forest × desktop",
       "name": "暂停 / 继续",
       "ok": true,
-      "detail": "暂停于 16.47s 后恢复"
+      "detail": "暂停于 16.45s 后恢复"
     },
     {
       "group": "forest × desktop",
@@ -483,13 +483,13 @@
       "group": "forest × desktop",
       "name": "播放/暂停图标原位切换：不跳位、不断音",
       "ok": true,
-      "detail": "按钮与图形位置零位移，音源不变，16.53s → 16.57s"
+      "detail": "按钮与图形位置零位移，音源不变，16.50s → 16.52s"
     },
     {
       "group": "forest × desktop",
       "name": "拖动进度条",
       "ok": true,
-      "detail": "seek → 18.46s"
+      "detail": "seek → 18.47s"
     },
     {
       "group": "forest × desktop",
@@ -663,13 +663,13 @@
       "group": "forest × mobile",
       "name": "播放：真实 MP3 解码并推进时间",
       "ok": true,
-      "detail": "15.25s → 16.51s，duration=36.05s，buffered=36.0s"
+      "detail": "17.20s → 18.49s，duration=36.05s，buffered=36.0s"
     },
     {
       "group": "forest × mobile",
       "name": "暂停 / 继续",
       "ok": true,
-      "detail": "暂停于 16.53s 后恢复"
+      "detail": "暂停于 18.50s 后恢复"
     },
     {
       "group": "forest × mobile",
@@ -681,7 +681,7 @@
       "group": "forest × mobile",
       "name": "播放/暂停图标原位切换：不跳位、不断音",
       "ok": true,
-      "detail": "按钮与图形位置零位移，音源不变，16.59s → 16.64s"
+      "detail": "按钮与图形位置零位移，音源不变，18.54s → 18.56s"
     },
     {
       "group": "forest × mobile",
@@ -855,13 +855,13 @@
       "group": "midnight × desktop",
       "name": "播放：真实 MP3 解码并推进时间",
       "ok": true,
-      "detail": "15.16s → 16.44s，duration=36.05s，buffered=36.0s"
+      "detail": "15.18s → 16.46s，duration=36.05s，buffered=36.0s"
     },
     {
       "group": "midnight × desktop",
       "name": "暂停 / 继续",
       "ok": true,
-      "detail": "暂停于 16.46s 后恢复"
+      "detail": "暂停于 16.48s 后恢复"
     },
     {
       "group": "midnight × desktop",
@@ -873,13 +873,13 @@
       "group": "midnight × desktop",
       "name": "播放/暂停图标原位切换：不跳位、不断音",
       "ok": true,
-      "detail": "按钮与图形位置零位移，音源不变，16.51s → 16.58s"
+      "detail": "按钮与图形位置零位移，音源不变，16.52s → 16.55s"
     },
     {
       "group": "midnight × desktop",
       "name": "拖动进度条",
       "ok": true,
-      "detail": "seek → 18.46s"
+      "detail": "seek → 18.47s"
     },
     {
       "group": "midnight × desktop",
@@ -1053,13 +1053,13 @@
       "group": "midnight × mobile",
       "name": "播放：真实 MP3 解码并推进时间",
       "ok": true,
-      "detail": "15.26s → 16.53s，duration=36.05s，buffered=36.0s"
+      "detail": "17.22s → 18.48s，duration=36.05s，buffered=36.0s"
     },
     {
       "group": "midnight × mobile",
       "name": "暂停 / 继续",
       "ok": true,
-      "detail": "暂停于 16.54s 后恢复"
+      "detail": "暂停于 18.50s 后恢复"
     },
     {
       "group": "midnight × mobile",
@@ -1071,13 +1071,13 @@
       "group": "midnight × mobile",
       "name": "播放/暂停图标原位切换：不跳位、不断音",
       "ok": true,
-      "detail": "按钮与图形位置零位移，音源不变，16.60s → 16.64s"
+      "detail": "按钮与图形位置零位移，音源不变，18.56s → 18.60s"
     },
     {
       "group": "midnight × mobile",
       "name": "拖动进度条",
       "ok": true,
-      "detail": "seek → 18.45s"
+      "detail": "seek → 18.47s"
     },
     {
       "group": "midnight × mobile",
@@ -1155,7 +1155,7 @@
       "group": "midnight × mobile",
       "name": "刷新后恢复队列与进度，且不自动出声",
       "ok": true,
-      "detail": "恢复 2 首，进度 11.25s，保持暂停"
+      "detail": "恢复 2 首，进度 11.26s，保持暂停"
     },
     {
       "group": "midnight × mobile",
@@ -1293,7 +1293,7 @@
       "group": "横竖屏",
       "name": "竖屏 → 横屏 → 竖屏：不溢出、不断歌",
       "ok": true,
-      "detail": "0.02s → 1.00s，两种朝向均无溢出"
+      "detail": "0.02s → 1.01s，两种朝向均无溢出"
     }
   ]
 }

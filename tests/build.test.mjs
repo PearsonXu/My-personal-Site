@@ -67,16 +67,39 @@ test('build · 播放器与 audio 在 #page-root 之外，且全站只有一个 
   }
 });
 
-test('build · 资源用相对路径，子路径部署不会 404', () => {
+test('build · 站内链接与资源一律用 base 绝对路径，任意深度都一致', () => {
   build(true);
   const home = read('index.html');
   const deep = read('songs/demo-night-ferry/index.html');
-  assert.match(home, /href="\.\/assets\/css\/site\.css"/);
-  assert.match(deep, /href="\.\.\/\.\.\/assets\/css\/site\.css"/);
-  assert.match(deep, /src="\.\.\/\.\.\/assets\/js\/app\.js"/);
+  // 关键：深层页与首页的资源路径必须**完全相同**，不再随深度变化
+  assert.match(home, /href="\/assets\/css\/site\.css"/);
+  assert.match(deep, /href="\/assets\/css\/site\.css"/);
+  assert.match(deep, /src="\/assets\/js\/app\.js"/);
   for (const html of [home, deep]) {
-    assert.ok(!/(href|src)="\/assets\//.test(html), '出现了绝对根路径资源');
+    // 不允许再出现按深度拼接的相对前缀
+    assert.ok(!/(href|src)="\.\.\//.test(html), '出现了 ../ 相对前缀');
+    assert.ok(!/(href|src)="\.\//.test(html), '出现了 ./ 相对前缀');
   }
+  // 站内路由链接必须是根绝对路径
+  assert.match(deep, /href="\/songs\/"/);
+  assert.match(deep, /href="\/about\/"/);
+  assert.match(home, /href="\/songs\/demo-night-ferry\/"/);
+  // 构建 base 写进 html，供运行时兜底比对
+  assert.match(home, /data-base="\/"/);
+});
+
+test('build · --base 支持子目录部署，链接与资源统一带前缀', () => {
+  execFileSync(process.execPath, [path.join(ROOT, 'tools/build-site.mjs'), '--demo', '--base', '/My-personal-Site/'], { cwd: ROOT, stdio: 'pipe' });
+  const home = read('index.html');
+  const deep = read('songs/demo-night-ferry/index.html');
+  assert.match(home, /data-base="\/My-personal-Site\/"/);
+  assert.match(home, /href="\/My-personal-Site\/songs\/"/);
+  assert.match(deep, /href="\/My-personal-Site\/assets\/css\/site\.css"/);
+  assert.match(deep, /href="\/My-personal-Site\/songs\/"/);
+  assert.ok(!/(href|src)="\.\.\//.test(deep));
+  const nf = read('404.html');
+  assert.match(nf, /id="goHome" href="\/My-personal-Site\/"/);
+  build(true); // 复原默认 base，避免影响后续测试
 });
 test('build · 旧站与专业背景信息已彻底移除', () => {
   build(true);

@@ -2,7 +2,7 @@ import { escapeHtml as esc, escapeAttr as attr } from '../../../../assets/js/cor
 import { sectionHead, emptyState } from '../components.mjs';
 import { icon } from '../../../../assets/js/core/icons.js';
 
-export function renderAbout(model, { rel }) {
+export function renderAbout(model, { base }) {
   const { site } = model;
   const body = `<section class="sec"><div class="wrap wrap--prose">
   ${sectionHead({ no: '§ 关于', kicker: 'About', title: '关于我', lede: esc(site.author?.bio || '') })}
@@ -39,7 +39,7 @@ export function renderAbout(model, { rel }) {
   };
 }
 
-export function renderMe(model, { rel }) {
+export function renderMe(model, { base }) {
   const { site } = model;
   const body = `<section class="sec"><div class="wrap">
   ${sectionHead({ no: '§ 我的', kicker: 'Local', title: '我的', lede: '收藏、最近播放和进度都留在这台设备的这个浏览器里。换设备、换浏览器或清理站点数据就会没有了——不是账号，也不会同步到别处。' })}
@@ -68,7 +68,7 @@ export function renderMe(model, { rel }) {
     body
   };
 }
-export function renderStatus(model, { rel }) {
+export function renderStatus(model, { base }) {
   const { site } = model;
   const body = `<section class="sec"><div class="wrap">
   ${sectionHead({ no: '§ 自检', kicker: 'Check', title: '播放自检', lede: '如果听不了或者拖不动进度，来这里点两下，看看是这台设备的浏览器的问题，还是音源的问题。' })}
@@ -124,7 +124,8 @@ export function renderStatus(model, { rel }) {
  *  - 链接用运行时 base 修正（app.js 启动时写入 zx.music.base），默认站点根；
  *  - 提供明确的恢复入口：回首页 / 返回上一页 / 去曲库。
  */
-export function renderStandaloneNotFound(site) {
+export function renderStandaloneNotFound(site, base = '/') {
+  const b = base.endsWith('/') ? base : `${base}/`;
   const name = esc(site.author?.name || '金石竹青');
   const title = esc(site.title || '音乐小屋');
   return `<!DOCTYPE html>
@@ -171,9 +172,9 @@ export function renderStandaloneNotFound(site) {
   <p>链接可能拼错了，或者这首歌还没放进来。${name}的小屋还在慢慢布置。</p>
   <p class="path" id="badPath">—</p>
   <div class="acts">
-    <a class="btn btn--pri" id="goHome" href="/">回首页</a>
+    <a class="btn btn--pri" id="goHome" href="${attr(b)}">回首页</a>
     <button class="btn" type="button" id="goBack">返回上一页</button>
-    <a class="btn" id="goLib" href="/songs/">去曲库</a>
+    <a class="btn" id="goLib" href="${attr(b)}songs/">去曲库</a>
   </div>
   <p class="foot">如果反复出现，麻烦把上面这个地址告诉我。</p>
 </div>
@@ -181,12 +182,14 @@ export function renderStandaloneNotFound(site) {
 (function () {
   var bad = document.getElementById('badPath');
   if (bad) bad.textContent = location.pathname + location.search;
-  // 站点可能部署在子路径下：用 app.js 记录的 base 修正链接，默认站点根
-  var base = '/';
+  // 链接已经是构建期算好的绝对路径（含 base）。
+  // 只有当实际部署 base 与构建 base 不一致时（例如临时放到子目录预览），
+  // 才用运行时记录的 base 兜底修正；否则保持构建值，绝不做相对拼接。
+  var base = ${JSON.stringify(b)};
   try {
-    var b = localStorage.getItem('zx.music.base');
-    if (typeof b === 'string' && b.charAt(0) === '/' && b.charAt(b.length - 1) === '/' && b.length < 120) base = b;
-  } catch (e) { /* 存储不可用就用根路径 */ }
+    var saved = localStorage.getItem('zx.music.base');
+    if (typeof saved === 'string' && saved.charAt(0) === '/' && saved.charAt(saved.length - 1) === '/' && saved.length < 120 && saved !== base) base = saved;
+  } catch (e) { /* 存储不可用就用构建 base */ }
   var home = document.getElementById('goHome');
   var lib = document.getElementById('goLib');
   if (home) home.setAttribute('href', base);
@@ -203,16 +206,16 @@ export function renderStandaloneNotFound(site) {
 `;
 }
 
-export function renderNotFound(model, { rel }) {
+export function renderNotFound(model, { base }) {
   const { site, songs } = model;
   const body = `<section class="sec"><div class="wrap">
   ${sectionHead({ no: '404', kicker: 'Not Found', title: '这一页不在小屋里', lede: '链接可能拼错了，或者那首歌还没发布。' })}
   <div class="hero__cta">
-    <a class="btn btn--pri" href="${attr(rel)}">回首页</a>
-    <a class="btn" href="${attr(rel)}songs/">去曲库</a>
-    <a class="btn btn--quiet" href="${attr(rel)}notes/">看手记</a>
+    <a class="btn btn--pri" href="${attr(base)}">回首页</a>
+    <a class="btn" href="${attr(base)}songs/">去曲库</a>
+    <a class="btn btn--quiet" href="${attr(base)}notes/">看手记</a>
   </div>
-  ${songs.length ? `<h2 class="sub">也许你在找这些</h2><ul class="linklist">${songs.slice(0, 8).map((s) => `<li><a class="link" href="${attr(rel)}songs/${attr(s.slug)}/">${esc(s.title)}</a> <span class="c-mute">${esc(s.artist)}</span></li>`).join('')}</ul>` : ''}
+  ${songs.length ? `<h2 class="sub">也许你在找这些</h2><ul class="linklist">${songs.slice(0, 8).map((s) => `<li><a class="link" href="${attr(base)}songs/${attr(s.slug)}/">${esc(s.title)}</a> <span class="c-mute">${esc(s.artist)}</span></li>`).join('')}</ul>` : ''}
 </div></section>`;
   return {
     kind: 'notfound', slug: null,

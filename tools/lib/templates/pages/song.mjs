@@ -18,7 +18,7 @@ function lyricsBlock(song) {
   ${timed ? '<p class="note">点任意一句可以跳到那个时间点。播放时当前句会自动高亮并滚动。</p>' : '<p class="note">这是纯文本歌词，没有时间轴，因此不做逐句高亮。</p>'}`;
 }
 
-function shareBlock(song, site, rel, qrSvg) {
+function shareBlock(song, site, base, qrSvg) {
   const url = canonicalUrl(site.url, 'song', song.slug);
   const wechat = site.backends?.wechat || {};
   return `<div class="share" id="share">
@@ -43,7 +43,7 @@ function shareBlock(song, site, rel, qrSvg) {
   </div>
 </div>`;
 }
-export function renderSong(model, { rel, song, qrSvg }) {
+export function renderSong(model, { base, song, qrSvg }) {
   const { site, songs, albums, notes } = model;
   const album = albums.find((a) => a.slug === song.album);
   const siblings = album ? album.tracks.filter((s) => s !== song.slug).map((s) => songs.find((x) => x.slug === s)).filter(Boolean) : [];
@@ -56,27 +56,27 @@ export function renderSong(model, { rel, song, qrSvg }) {
   const body = `<article class="song" data-song-page="${attr(song.slug)}">
   <div class="wrap">
     <nav class="crumbs" aria-label="面包屑">
-      <a href="${attr(rel)}">首页</a> <span aria-hidden="true">/</span>
-      <a href="${attr(rel)}songs/">曲库</a> <span aria-hidden="true">/</span>
+      <a href="${attr(base)}">首页</a> <span aria-hidden="true">/</span>
+      <a href="${attr(base)}songs/">曲库</a> <span aria-hidden="true">/</span>
       <span aria-current="page">${esc(song.title)}</span>
     </nav>
 
     <div class="song__head">
       <div class="song__art">
-        <img src="${attr(rel + song.coverPath)}" alt="${attr(song.title)} 封面" width="420" height="420" decoding="async" fetchpriority="high">
+        <img src="${attr(base + song.coverPath)}" alt="${attr(song.title)} 封面" width="420" height="420" decoding="async" fetchpriority="high">
       </div>
       <div class="song__info">
         <p class="eyebrow">单曲 ${demoBadge(song)}</p>
         <h1 class="song__title">${esc(song.title)}</h1>
         <p class="song__artist">${esc(song.artist)}</p>
         <dl class="kv kv--inline">
-          ${album ? `<div><dt>专辑</dt><dd><a class="link" href="${attr(rel)}albums/${attr(album.slug)}/">${esc(album.title)}</a></dd></div>` : ''}
+          ${album ? `<div><dt>专辑</dt><dd><a class="link" href="${attr(base)}albums/${attr(album.slug)}/">${esc(album.title)}</a></dd></div>` : ''}
           <div><dt>时长</dt><dd>${formatTime(song.duration)}</dd></div>
           <div><dt>发布</dt><dd>${esc(song.date)}</dd></div>
           ${song.composer ? `<div><dt>作曲</dt><dd>${esc(song.composer)}</dd></div>` : ''}
           ${song.lyricist ? `<div><dt>作词</dt><dd>${esc(song.lyricist)}</dd></div>` : ''}
         </dl>
-        ${tags(song.tags, rel)}
+        ${tags(song.tags, base)}
         <div class="hero__cta">
           <button class="btn btn--pri btn--big" type="button" data-act="play-song" data-slug="${attr(song.slug)}" data-context="song-page">
             ${icon('play', { size: 20 })} 播放这首歌
@@ -98,11 +98,11 @@ export function renderSong(model, { rel, song, qrSvg }) {
       ${lyricsBlock(song)}
     </section>
 
-    ${shareBlock(song, site, rel, qrSvg)}
+    ${shareBlock(song, site, base, qrSvg)}
 
-    ${siblings.length ? `<section class="sec--inner"><h2 class="sub">专辑《${esc(album.title)}》里的其他歌</h2>${songList(siblings, rel)}</section>` : ''}
+    ${siblings.length ? `<section class="sec--inner"><h2 class="sub">专辑《${esc(album.title)}》里的其他歌</h2>${songList(siblings, base)}</section>` : ''}
 
-    ${related.length ? `<section class="sec--inner"><h2 class="sub">相关手记</h2><ul class="linklist">${related.map((n) => `<li><a class="link" href="${attr(rel)}notes/${attr(n.slug)}/">${esc(n.title)}</a> <span class="c-mute">${esc(n.date)}</span></li>`).join('')}</ul></section>` : ''}
+    ${related.length ? `<section class="sec--inner"><h2 class="sub">相关手记</h2><ul class="linklist">${related.map((n) => `<li><a class="link" href="${attr(base)}notes/${attr(n.slug)}/">${esc(n.title)}</a> <span class="c-mute">${esc(n.date)}</span></li>`).join('')}</ul></section>` : ''}
   </div>
 </article>`;
 

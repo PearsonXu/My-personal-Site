@@ -22,7 +22,7 @@ import { loadContent, publicCatalog } from './lib/content.mjs';
 import { coverPng, ogPng } from './lib/art.mjs';
 import { composeLayout } from './lib/css.mjs';
 import { buildSearchIndex } from '../assets/js/core/search.js';
-import { relPrefix, routeFor, canonicalUrl } from '../assets/js/core/paths.js';
+import { normalizeBase, routeFor, canonicalUrl } from '../assets/js/core/paths.js';
 import { renderDocument } from './lib/templates/shell.mjs';
 import { renderHome } from './lib/templates/pages/home.mjs';
 import { renderLibrary } from './lib/templates/pages/library.mjs';
@@ -36,6 +36,16 @@ const args = process.argv.slice(2);
 const INCLUDE_DEMO = args.includes('--demo');
 const SERVE = args.includes('--serve');
 const OUT = path.join(ROOT, 'dist');
+
+/**
+ * 部署 base path。默认 "/"（自定义域名根目录）。
+ * 部署到子目录时：node tools/build-site.mjs --base /My-personal-Site/
+ * 所有站内链接与资源都用它拼成绝对路径，不再依赖页面深度。
+ */
+const baseArgIdx = args.indexOf('--base');
+const BASE_PATH = normalizeBase(
+  (baseArgIdx >= 0 && args[baseArgIdx + 1]) || process.env.BASE_PATH || '/'
+);
 
 function log(...a) { console.log(...a); }
 function copyDir(src, dest) {
@@ -133,10 +143,11 @@ async function main() {
   /* 6. 页面 */
   const pages = [];
   const addPage = (route, rendered, extra = {}) => {
-    const depth = route ? route.split('/').filter(Boolean).length : 0;
-    const rel = relPrefix(depth);
+    // ★ 统一 base：所有站内链接与资源都生成 **绝对路径**（BASE_PATH + 路径）。
+    //   以前按页面深度生成 ./ ../ ../../，只要页面被服务在别的深度（404 页就是任意深度），
+    //   相对路径就会逐跳累积成 /songs/x/songs/songs/about/me/… 这种坏地址。
     const html = renderDocument({
-      site, rel, kind: rendered.kind, slug: rendered.slug,
+      site, base: BASE_PATH, kind: rendered.kind, slug: rendered.slug,
       meta: rendered.meta, body: rendered.body, pageClass: rendered.pageClass || '', ...extra
     });
     const file = route ? path.join(OUT, route, 'index.html') : path.join(OUT, 'index.html');
@@ -144,31 +155,31 @@ async function main() {
     pages.push({ route: route || '', kind: rendered.kind, slug: rendered.slug, file: path.relative(OUT, file), bytes: Buffer.byteLength(html) });
   };
 
-  addPage('', renderHome(model, { rel: './' }));
-  addPage(routeFor('library'), renderLibrary(model, { rel: '../' }));
-  addPage(routeFor('albums'), renderAlbums(model, { rel: '../' }));
-  addPage(routeFor('playlists'), renderPlaylists(model, { rel: '../' }));
-  addPage(routeFor('notes'), renderNotes(model, { rel: '../' }));
-  addPage(routeFor('about'), renderAbout(model, { rel: '../' }));
-  addPage(routeFor('me'), renderMe(model, { rel: '../' }));
-  addPage(routeFor('status'), renderStatus(model, { rel: '../' }));
+  addPage('', renderHome(model, { base: BASE_PATH }));
+  addPage(routeFor('library'), renderLibrary(model, { base: BASE_PATH }));
+  addPage(routeFor('albums'), renderAlbums(model, { base: BASE_PATH }));
+  addPage(routeFor('playlists'), renderPlaylists(model, { base: BASE_PATH }));
+  addPage(routeFor('notes'), renderNotes(model, { base: BASE_PATH }));
+  addPage(routeFor('about'), renderAbout(model, { base: BASE_PATH }));
+  addPage(routeFor('me'), renderMe(model, { base: BASE_PATH }));
+  addPage(routeFor('status'), renderStatus(model, { base: BASE_PATH }));
 
   for (const song of songs) {
-    addPage(routeFor('song', song.slug), renderSong(model, { rel: '../../', song, qrSvg: await qrFor('song', song.slug) }));
+    addPage(routeFor('song', song.slug), renderSong(model, { base: BASE_PATH, song, qrSvg: await qrFor('song', song.slug) }));
   }
   for (const album of albums) {
-    addPage(routeFor('album', album.slug), renderCollection(model, { rel: '../../', item: album, kind: 'albums', qrSvg: await qrFor('album', album.slug) }));
+    addPage(routeFor('album', album.slug), renderCollection(model, { base: BASE_PATH, item: album, kind: 'albums', qrSvg: await qrFor('album', album.slug) }));
   }
   for (const playlist of playlists) {
-    addPage(routeFor('playlist', playlist.slug), renderCollection(model, { rel: '../../', item: playlist, kind: 'playlists', qrSvg: await qrFor('playlist', playlist.slug) }));
+    addPage(routeFor('playlist', playlist.slug), renderCollection(model, { base: BASE_PATH, item: playlist, kind: 'playlists', qrSvg: await qrFor('playlist', playlist.slug) }));
   }
   for (const note of notes) {
-    addPage(routeFor('note', note.slug), renderNote(model, { rel: '../../', note, qrSvg: await qrFor('note', note.slug) }));
+    addPage(routeFor('note', note.slug), renderNote(model, { base: BASE_PATH, note, qrSvg: await qrFor('note', note.slug) }));
   }
 
   // 404：GitHub Pages 会把 404.html 挂在任意深度的未匹配 URL 上，
   // 所以它必须零外部依赖、内联样式，否则 CSS/JS 会按错误深度解析而全部 404 → 白屏。
-  write(path.join(OUT, '404.html'), renderStandaloneNotFound(site));
+  write(path.join(OUT, '404.html'), renderStandaloneNotFound(site, BASE_PATH));
   /* 7. GitHub Pages 必需 / 有益文件 */
   const cname = path.join(ROOT, 'CNAME');
   if (fs.existsSync(cname)) fs.copyFileSync(cname, path.join(OUT, 'CNAME'));

@@ -84,7 +84,8 @@ for (const page of manifest.pages) {
   }
   // 外壳里的相对引用：SPA 改深度后会失效，单独列出
   for (const raw of outside) {
-    if (/^(https?:)?\/\//i.test(raw)) continue;
+    // 绝对 URL 与根绝对路径（/assets/…）都不受页面深度影响，只有 ./ ../ 这类才是隐患
+    if (/^(https?:)?\/\//i.test(raw) || raw.startsWith('/')) continue;
     const tag = raw;
     if (!shellRelative.has(tag)) shellRelative.set(tag, []);
     shellRelative.get(tag).push(page.route || '/');

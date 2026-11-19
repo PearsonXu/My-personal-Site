@@ -9,7 +9,7 @@ function indexPage(model, ctx, kind) {
   const label = kind === 'albums' ? '专辑' : '歌单';
   const body = `<section class="sec"><div class="wrap">
   ${sectionHead({ no: `§ ${label}`, kicker: kind === 'albums' ? 'Albums' : 'Playlists', title: label, lede: `共 ${items.length} 个。每个都有独立链接，可以一键播放或整张加入队列。` })}
-  ${collectionGrid(items, ctx.rel, kind, `慢慢整理，会有的。`)}
+  ${collectionGrid(items, ctx.base, kind, `慢慢整理，会有的。`)}
 </div></section>`;
   return {
     kind,
@@ -26,7 +26,7 @@ function indexPage(model, ctx, kind) {
 export const renderAlbums = (model, ctx) => indexPage(model, ctx, 'albums');
 export const renderPlaylists = (model, ctx) => indexPage(model, ctx, 'playlists');
 
-export function renderCollection(model, { rel, item, kind, qrSvg }) {
+export function renderCollection(model, { base, item, kind, qrSvg }) {
   const { site, songs, notes } = model;
   const isAlbum = kind === 'albums';
   const single = isAlbum ? 'album' : 'playlist';
@@ -39,13 +39,13 @@ export function renderCollection(model, { rel, item, kind, qrSvg }) {
 
   const body = `<section class="sec"><div class="wrap">
   <nav class="crumbs" aria-label="面包屑">
-    <a href="${attr(rel)}">首页</a> <span aria-hidden="true">/</span>
-    <a href="${attr(rel)}${attr(kind)}/">${esc(label)}</a> <span aria-hidden="true">/</span>
+    <a href="${attr(base)}">首页</a> <span aria-hidden="true">/</span>
+    <a href="${attr(base)}${attr(kind)}/">${esc(label)}</a> <span aria-hidden="true">/</span>
     <span aria-current="page">${esc(item.title)}</span>
   </nav>
 
   <div class="song__head">
-    <div class="song__art"><img src="${attr(rel + item.coverPath)}" alt="${attr(item.title)} 封面" width="420" height="420" decoding="async" fetchpriority="high"></div>
+    <div class="song__art"><img src="${attr(base + item.coverPath)}" alt="${attr(item.title)} 封面" width="420" height="420" decoding="async" fetchpriority="high"></div>
     <div class="song__info">
       <p class="eyebrow">${esc(label)} ${demoBadge(item)}</p>
       <h1 class="song__title">${esc(item.title)}</h1>
@@ -55,7 +55,7 @@ export function renderCollection(model, { rel, item, kind, qrSvg }) {
         <div><dt>总时长</dt><dd>${formatTime(total)}</dd></div>
         ${item.date ? `<div><dt>发布</dt><dd>${esc(item.date)}</dd></div>` : ''}
       </dl>
-      ${tags(item.tags, rel)}
+      ${tags(item.tags, base)}
       ${collectionActions(kind, item.slug, { disabled: tracks.length === 0 })}
     </div>
   </div>
@@ -64,7 +64,7 @@ export function renderCollection(model, { rel, item, kind, qrSvg }) {
   ${item.aboutHtml ? `<div class="prose">${item.aboutHtml}</div>` : ''}
 
   <h2 class="sub">曲目${isAlbum ? '（按专辑顺序）' : '（按歌单顺序）'}</h2>
-  ${songList(tracks, rel, { ordered: true, emptyText: '曲目还在整理，慢慢会放进来。' })}
+  ${songList(tracks, base, { ordered: true, emptyText: '曲目还在整理，慢慢会放进来。' })}
 
   <div class="share">
     <h3 class="sub">分享这个${label}</h3>
@@ -76,7 +76,7 @@ export function renderCollection(model, { rel, item, kind, qrSvg }) {
       <p class="note">扫码或复制链接都能直达本页。微信里打开后需要点一下播放按钮才会出声。</p></div>
   </div>
 
-  ${related.length ? `<section class="sec--inner"><h2 class="sub">相关手记</h2><ul class="linklist">${related.map((n) => `<li><a class="link" href="${attr(rel)}notes/${attr(n.slug)}/">${esc(n.title)}</a> <span class="c-mute">${esc(n.date)}</span></li>`).join('')}</ul></section>` : ''}
+  ${related.length ? `<section class="sec--inner"><h2 class="sub">相关手记</h2><ul class="linklist">${related.map((n) => `<li><a class="link" href="${attr(base)}notes/${attr(n.slug)}/">${esc(n.title)}</a> <span class="c-mute">${esc(n.date)}</span></li>`).join('')}</ul></section>` : ''}
 </div></section>`;
 
   return {

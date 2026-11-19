@@ -3,11 +3,11 @@ import { canonicalUrl } from '../../../../assets/js/core/paths.js';
 import { sectionHead, collectionGrid, songList } from '../components.mjs';
 import { icon } from '../../../../assets/js/core/icons.js';
 
-export function renderNotes(model, { rel }) {
+export function renderNotes(model, { base }) {
   const { site, notes } = model;
   const body = `<section class="sec"><div class="wrap">
   ${sectionHead({ no: '§ 手记', kicker: 'Notes', title: '手记', lede: notes.length ? `${notes.length} 篇。旋律带来的故事与心情，还有听歌时想到的事。` : '旋律带来的故事与心情，写下来放在这里。' })}
-  ${collectionGrid(notes, rel, 'notes', '想到什么就记下来，慢慢会有。')}
+  ${collectionGrid(notes, base, 'notes', '想到什么就记下来，慢慢会有。')}
 </div></section>`;
   return {
     kind: 'notes',
@@ -21,7 +21,7 @@ export function renderNotes(model, { rel }) {
   };
 }
 
-export function renderNote(model, { rel, note, qrSvg }) {
+export function renderNote(model, { base, note, qrSvg }) {
   const { site, songs, albums, playlists } = model;
   const relSongs = note.songs.map((s) => songs.find((x) => x.slug === s)).filter(Boolean);
   const relAlbums = note.albums.map((s) => albums.find((x) => x.slug === s)).filter(Boolean);
@@ -30,8 +30,8 @@ export function renderNote(model, { rel, note, qrSvg }) {
 
   const body = `<article class="sec"><div class="wrap wrap--prose">
   <nav class="crumbs" aria-label="面包屑">
-    <a href="${attr(rel)}">首页</a> <span aria-hidden="true">/</span>
-    <a href="${attr(rel)}notes/">手记</a> <span aria-hidden="true">/</span>
+    <a href="${attr(base)}">首页</a> <span aria-hidden="true">/</span>
+    <a href="${attr(base)}notes/">手记</a> <span aria-hidden="true">/</span>
     <span aria-current="page">${esc(note.title)}</span>
   </nav>
   <header class="article__head">
@@ -41,10 +41,10 @@ export function renderNote(model, { rel, note, qrSvg }) {
   </header>
   <div class="prose">${note.html}</div>
 
-  ${relSongs.length ? `<section class="sec--inner"><h2 class="sub">这篇提到的歌</h2>${songList(relSongs, rel)}
+  ${relSongs.length ? `<section class="sec--inner"><h2 class="sub">这篇提到的歌</h2>${songList(relSongs, base)}
     <p class="hero__cta"><button class="btn" type="button" data-act="play-slugs" data-slugs="${attr(relSongs.map((s) => s.slug).join(','))}">${icon('play', { size: 20 })} 播放这些歌</button></p></section>` : ''}
-  ${relAlbums.length ? `<section class="sec--inner"><h2 class="sub">相关专辑</h2>${collectionGrid(relAlbums, rel, 'albums', '')}</section>` : ''}
-  ${relPlaylists.length ? `<section class="sec--inner"><h2 class="sub">相关歌单</h2>${collectionGrid(relPlaylists, rel, 'playlists', '')}</section>` : ''}
+  ${relAlbums.length ? `<section class="sec--inner"><h2 class="sub">相关专辑</h2>${collectionGrid(relAlbums, base, 'albums', '')}</section>` : ''}
+  ${relPlaylists.length ? `<section class="sec--inner"><h2 class="sub">相关歌单</h2>${collectionGrid(relPlaylists, base, 'playlists', '')}</section>` : ''}
 
   <div class="share">
     <h3 class="sub">分享这篇手记</h3>

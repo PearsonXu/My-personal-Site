@@ -45,23 +45,44 @@ npm run verify:live      # 纯 HTTP 复验，输出 docs/LIVE-VERIFICATION.md
 npm run browser:live     # 真实 Chrome 复验线上播放器与三套外观，输出 docs/BROWSER-LIVE-RESULTS.md
 ```
 
-## base path 是怎么做到不用改配置的
+## base path 怎么处理（统一 helper，绝对路径）
 
-- **HTML**：每个页面按自身深度生成相对前缀（`./` / `../` / `../../`）。
-- **JS**：`baseFromModuleUrl(import.meta.url, 'assets/js/app.js')` 从模块自身 URL 反推 base。
-- **媒体**：`resolveMedia()` 把目录里的站内相对路径挂到运行时 base 上。
+**所有站内链接与资源在构建期就生成绝对路径**，由一个 base 统一拼接：
 
-所以**同一份 `dist/` 既能跑在根域名，也能跑在子路径**，不需要重新构建。
-
-本地实测（已通过）：
-
-```bash
-npm run build:demo
-node tools/serve.mjs --port=8000                          # base = /
-BASE_PATH=/My-personal-Site node tools/serve.mjs --port=8001   # 模拟子路径
+```
+href="/songs/"                 href="/songs/<slug>/"
+href="/about/"                 src="/assets/css/site.css"
 ```
 
-两种模式下 `/songs/<slug>/`、深层页面的 `../../assets/...`、音频 Range 请求都是 200 / 206。
+- 默认 `base = /`（自定义域名根目录）
+- 部署到子目录：`node tools/build-site.mjs --base /My-personal-Site/`
+  → 全部变成 `/My-personal-Site/songs/`、`/My-personal-Site/assets/...`
+- 构建 base 写进 `<html data-base="…">`；`app.js` 若发现运行时 base 与之不同
+  （例如把同一份产物临时放到子目录预览），会统一改写本站路径兜底，
+  **不动 canonical / og 这类对外规范地址**。
+
+### 为什么不再用「按页面深度的相对路径」
+
+早期实现给每页算 `./`、`../`、`../../` 前缀。它的正确性依赖
+「页面被服务在与生成深度完全一致的 URL 上」。而 **404 页会被挂在任意深度**，
+于是相对路径逐跳累积成真实故障地址：
+
+```
+/songs/demo-paper-boat/songs/songs/about/me/notes/songs/demo-night-ferry/songs/demo-paper-boat/
+```
+
+改成绝对路径后，**任意深度、任意页面、404 页的链接与资源都完全一致**，
+这类累积从结构上不可能再发生。详见 `docs/INCIDENT-BLANK-PAGE.md`。
+
+本地实测（均已通过）：
+
+```bash
+npm run build:demo && npm run serve                    # base = /
+node tools/build-site.mjs --demo --base /My-personal-Site/
+BASE_PATH=/My-personal-Site npm run serve              # 子目录
+```
+
+两种模式下页面、深层资源、404 页链接与点击链路全部正确。
 
 ## 回退到分支发布（不推荐）
 

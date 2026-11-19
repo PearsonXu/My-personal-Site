@@ -52,8 +52,10 @@
 13. **控件图标一律用 `core/icons.js` 的内联 SVG**，禁止 Emoji / Unicode 字符 / 图标字体。
     主按钮同时渲染播放与暂停两个 SVG，靠 `data-state` 切 display，**不要用 JS 换 innerHTML**。
     hover 不做缩放（会让几何尺寸漂移）。详见 `docs/PLAYER-CONTROLS.md`。
-14. **`#page-root` 之外的任何链接都必须在启动时绝对化**（`absolutizeChromeLinks`）。
-    外壳不随路由替换，相对 href 会被 pushState 后的新深度重新解析 → 指向不存在的路径 → 白屏。
+14. **站内链接与资源一律由构建期 base 拼成绝对路径**（`--base`，默认 `/`）。
+    **禁止**再按页面深度生成 `./` / `../` / `../../` 前缀：404 页会被挂在任意深度，
+    相对路径会逐跳累积成 `/songs/x/songs/songs/about/me/…`。
+    `absolutizeChromeLinks` / `rebaseForDeployment` 只是兜底，不是正确性的来源。
     详见 `docs/INCIDENT-BLANK-PAGE.md`。
 15. **404.html 必须零外部依赖、内联样式**。它会被挂在任意深度的 URL 上，
     任何相对路径的 CSS/JS 都会 404，退化成没样式没脚本的白屏。

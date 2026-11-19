@@ -11,9 +11,9 @@ export function demoBadge(item) {
   return item.demo ? '<span class="badge badge--demo" title="工程验证用合成音，非本人作品">DEMO</span>' : '';
 }
 
-export function tags(list, rel) {
+export function tags(list, base) {
   if (!list?.length) return '';
-  return `<ul class="tags">${list.map((t) => `<li><a class="tag" href="${attr(rel)}songs/?tag=${encodeURIComponent(t)}">#${esc(t)}</a></li>`).join('')}</ul>`;
+  return `<ul class="tags">${list.map((t) => `<li><a class="tag" href="${attr(base)}songs/?tag=${encodeURIComponent(t)}">#${esc(t)}</a></li>`).join('')}</ul>`;
 }
 
 export function sectionHead({ no, kicker, title, lede = '', id = '' }) {
@@ -43,16 +43,16 @@ export function songActions(slug, { compact = false } = {}) {
 </div>`;
 }
 
-export function songRow(song, rel, { index = null } = {}) {
-  const href = `${rel}songs/${song.slug}/`;
+export function songRow(song, base, { index = null } = {}) {
+  const href = `${base}songs/${song.slug}/`;
   const album = song.album
-    ? `<a class="row__al" href="${attr(rel)}albums/${attr(song.album)}/">${esc(song.albumTitle || song.album)}</a>`
+    ? `<a class="row__al" href="${attr(base)}albums/${attr(song.album)}/">${esc(song.albumTitle || song.album)}</a>`
     : '<span class="row__al c-mute">单曲</span>';
   return `<li class="row" data-song="${attr(song.slug)}">
   ${index === null ? '' : `<span class="row__no">${index}</span>`}
   <button class="row__play" type="button" data-act="play-song" data-slug="${attr(song.slug)}" aria-label="播放 ${attr(song.title)}">${icon('play', { size: 20 })}</button>
   <a class="row__main" href="${attr(href)}">
-    <img class="row__art" src="${attr(rel + song.coverPath)}" alt="" width="44" height="44" loading="lazy" decoding="async">
+    <img class="row__art" src="${attr(base + song.coverPath)}" alt="" width="44" height="44" loading="lazy" decoding="async">
     <span class="row__txt"><span class="row__t">${esc(song.title)}${demoBadge(song)}</span><span class="row__a">${esc(song.artist)}</span></span>
   </a>
   ${album}
@@ -61,18 +61,18 @@ export function songRow(song, rel, { index = null } = {}) {
 </li>`;
 }
 
-export function songList(songs, rel, { ordered = false, emptyText = '' } = {}) {
+export function songList(songs, base, { ordered = false, emptyText = '' } = {}) {
   if (!songs.length) {
     return emptyState({ icon: 'note', title: '第一首歌，正在路上。', text: emptyText || '小屋慢慢布置，音乐也会陆续到来。' });
   }
-  return `<ol class="rows${ordered ? ' rows--ordered' : ''}">${songs.map((s, i) => songRow(s, rel, { index: ordered ? i + 1 : null })).join('\n')}</ol>`;
+  return `<ol class="rows${ordered ? ' rows--ordered' : ''}">${songs.map((s, i) => songRow(s, base, { index: ordered ? i + 1 : null })).join('\n')}</ol>`;
 }
 
-export function songCard(song, rel) {
-  const href = `${rel}songs/${song.slug}/`;
+export function songCard(song, base) {
+  const href = `${base}songs/${song.slug}/`;
   return `<article class="card" data-song="${attr(song.slug)}">
   <a class="card__link" href="${attr(href)}">
-    <span class="card__art"><img src="${attr(rel + song.coverPath)}" alt="${attr(song.title)} 封面" width="300" height="300" loading="lazy" decoding="async"></span>
+    <span class="card__art"><img src="${attr(base + song.coverPath)}" alt="${attr(song.title)} 封面" width="300" height="300" loading="lazy" decoding="async"></span>
     <span class="card__t">${esc(song.title)}${demoBadge(song)}</span>
     <span class="card__s">${esc(song.artist)}</span>
   </a>
@@ -81,18 +81,18 @@ export function songCard(song, rel) {
 </article>`;
 }
 
-export function songGrid(songs, rel) {
+export function songGrid(songs, base) {
   if (!songs.length) return emptyState({ icon: 'note', title: '第一首歌，正在路上。', text: '小屋慢慢布置，音乐也会陆续到来。' });
-  return `<div class="grid grid--cards">${songs.map((s) => songCard(s, rel)).join('\n')}</div>`;
+  return `<div class="grid grid--cards">${songs.map((s) => songCard(s, base)).join('\n')}</div>`;
 }
-export function collectionCard(item, rel, kind) {
-  const href = `${rel}${kind}/${item.slug}/`;
+export function collectionCard(item, base, kind) {
+  const href = `${base}${kind}/${item.slug}/`;
   const sub = kind === 'albums' ? `${item.artist} · ${item.tracks.length} 首`
     : kind === 'playlists' ? `${item.tracks.length} 首`
       : `${item.date} · ${item.readingMinutes || 1} 分钟`;
   return `<article class="card card--collection">
   <a class="card__link" href="${attr(href)}">
-    <span class="card__art"><img src="${attr(rel + item.coverPath)}" alt="${attr(item.title)} 封面" width="300" height="300" loading="lazy" decoding="async"></span>
+    <span class="card__art"><img src="${attr(base + item.coverPath)}" alt="${attr(item.title)} 封面" width="300" height="300" loading="lazy" decoding="async"></span>
     <span class="card__t">${esc(item.title)}${demoBadge(item)}</span>
     <span class="card__s">${esc(sub)}</span>
   </a>
@@ -100,7 +100,7 @@ export function collectionCard(item, rel, kind) {
 </article>`;
 }
 
-export function collectionGrid(items, rel, kind, emptyText) {
+export function collectionGrid(items, base, kind, emptyText) {
   if (!items.length) {
     return emptyState({
       icon: kind === 'notes' ? 'pen' : 'disc',
@@ -108,7 +108,7 @@ export function collectionGrid(items, rel, kind, emptyText) {
       text: emptyText || '慢慢会有。'
     });
   }
-  return `<div class="grid grid--cards">${items.map((it) => collectionCard(it, rel, kind)).join('\n')}</div>`;
+  return `<div class="grid grid--cards">${items.map((it) => collectionCard(it, base, kind)).join('\n')}</div>`;
 }
 
 /** 播放整张 / 加入队列 的操作条 */

@@ -124,6 +124,34 @@ x-github-request-id: 382A:3E880C:190AFDB:1AC307F:6AFEC983
 `img[src]` / `source[src]` / `use[href]`，同样跳过 `#page-root` 内部。
 新增断言：**boot 后与导航后，外壳里不允许残留任何相对引用**（jsdom + 真实浏览器各一条）。
 
+## 追加根因：按页面深度的相对前缀（路径累积）
+
+用户提供的故障地址：
+
+```
+http://localhost:8000/songs/demo-paper-boat/songs/songs/about/me/notes/songs/demo-night-ferry/songs/demo-paper-boat/
+```
+
+这是**逐跳累积**：每一跳都把一个相对路径追加到当前目录后面。
+拆开看正好是「歌曲页 → 曲库 → 曲库 → 关于 → 我的 → 手记 → 某首歌 → 另一首歌」。
+
+根因比前面两条更根本：**整站链接与资源都用「按页面深度算出的相对前缀」**
+（首页 `./`、一级页 `../`、二级页 `../../`）。
+它的正确性依赖「页面被服务在与生成深度完全一致的 URL 上」。
+而 404 页会被 Pages 挂在**任意深度**，它自己也带着一套相对前缀，
+于是在 404 页上每点一次链接就再累积一层——上面那串地址就是这样长出来的。
+
+### 结构性修复（不再依赖运行时补救）
+
+- 构建期引入统一 `BASE_PATH`（`--base`，默认 `/`），
+  **所有** `href` / `src` 一律 `${BASE_PATH}…` 绝对路径：
+  `/songs/`、`/songs/<slug>/`、`/about/`、`/assets/css/site.css` …
+- 模板里的 `rel` 前缀参数统一改名为 `base`（100 处），`relPrefix(depth)` 不再参与生成
+- `<html data-base="…">` 记录构建 base；`app.js` 的 `rebaseForDeployment()` 仅在实际部署
+  base 与构建 base 不一致时兜底改写，且不动 canonical / og
+- 404 页链接同样用构建 base 生成（子目录部署时自动带前缀）
+- `absolutizeChromeLinks()` 保留为兜底，但**正确性不再依赖它**
+
 ## 四、修复
 
 | 文件 | 改动 |

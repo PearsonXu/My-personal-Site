@@ -20,7 +20,7 @@ const NAV = [
   { kind: 'me', href: 'me/', label: '我的', icon: 'heart' }
 ];
 
-function head({ site, rel, meta, kind, slug, extraHead = '' }) {
+function head({ site, base, meta, kind, slug, extraHead = '' }) {
   const root = site.url.replace(/\/+$/, '');
   const canonical = canonicalUrl(site.url, kind, slug);
   const ogImage = meta.image ? `${root}/${meta.image}` : `${root}/assets/img/og/default.png`;
@@ -55,12 +55,12 @@ function head({ site, rel, meta, kind, slug, extraHead = '' }) {
     if (meta.song.albumTitle) lines.push(`<meta property="music:album" content="${attr(meta.song.albumTitle)}">`);
   }
   lines.push(
-    `<link rel="icon" href="${attr(rel)}assets/img/favicon.svg" type="image/svg+xml">`,
-    `<link rel="stylesheet" href="${attr(rel)}assets/css/site.css">`,
-    `<link rel="stylesheet" href="${attr(rel)}assets/css/player.css">`,
-    `<link rel="stylesheet" href="${attr(rel)}assets/css/themes.css">`,
-    `<link rel="stylesheet" href="${attr(rel)}assets/css/layout.css">`,
-    `<link rel="preload" href="${attr(rel)}assets/data/catalog.json" as="fetch" crossorigin="anonymous">`
+    `<link rel="icon" href="${attr(base)}assets/img/favicon.svg" type="image/svg+xml">`,
+    `<link rel="stylesheet" href="${attr(base)}assets/css/site.css">`,
+    `<link rel="stylesheet" href="${attr(base)}assets/css/player.css">`,
+    `<link rel="stylesheet" href="${attr(base)}assets/css/themes.css">`,
+    `<link rel="stylesheet" href="${attr(base)}assets/css/layout.css">`,
+    `<link rel="preload" href="${attr(base)}assets/data/catalog.json" as="fetch" crossorigin="anonymous">`
   );
   if (meta.jsonLd) lines.push(`<script type="application/ld+json">${JSON.stringify(meta.jsonLd)}</script>`);
   // 首帧前定好外观与布局，避免闪烁。
@@ -69,17 +69,17 @@ function head({ site, rel, meta, kind, slug, extraHead = '' }) {
   if (extraHead) lines.push(extraHead);
   return lines.join('\n');
 }
-function header({ site, rel, kind }) {
+function header({ site, base, kind }) {
   const links = NAV.map((item) => {
     const active = item.kind === kind || (item.kind === 'library' && kind === 'song')
       || (item.kind === 'albums' && kind === 'album')
       || (item.kind === 'playlists' && kind === 'playlist')
       || (item.kind === 'notes' && kind === 'note');
-    return `<li><a class="nav__a${active ? ' is-active' : ''}" href="${attr(rel + item.href)}"${active ? ' aria-current="page"' : ''}>${icon(item.icon, { size: 18 })}${esc(item.label)}</a></li>`;
+    return `<li><a class="nav__a${active ? ' is-active' : ''}" href="${attr(base + item.href)}"${active ? ' aria-current="page"' : ''}>${icon(item.icon, { size: 18 })}${esc(item.label)}</a></li>`;
   }).join('\n');
   return `<header class="head" id="siteHead">
   <div class="wrap head__in">
-    <a class="brand" href="${attr(rel)}">
+    <a class="brand" href="${attr(base)}">
       <span class="brand__mark" aria-hidden="true">${icon('note', { size: 18 })}</span>
       <span class="brand__txt"><strong>${esc(site.shortTitle || site.title)}</strong><em>${esc(site.author?.name || '')}</em></span>
     </a>
@@ -95,7 +95,7 @@ function header({ site, rel, kind }) {
 </header>`;
 }
 
-function footer({ site, rel }) {
+function footer({ site, base }) {
   const year = new Date().getFullYear();
   return `<footer class="foot">
   <div class="wrap foot__in">
@@ -107,19 +107,19 @@ function footer({ site, rel }) {
     <nav class="foot__col" aria-label="页脚导航">
       <p class="foot__head">小屋</p>
       <ul>
-        <li><a href="${attr(rel)}songs/">曲库</a></li>
-        <li><a href="${attr(rel)}albums/">专辑</a></li>
-        <li><a href="${attr(rel)}playlists/">歌单</a></li>
-        <li><a href="${attr(rel)}notes/">创作手记</a></li>
-        <li><a href="${attr(rel)}me/">我的（本地数据）</a></li>
+        <li><a href="${attr(base)}songs/">曲库</a></li>
+        <li><a href="${attr(base)}albums/">专辑</a></li>
+        <li><a href="${attr(base)}playlists/">歌单</a></li>
+        <li><a href="${attr(base)}notes/">创作手记</a></li>
+        <li><a href="${attr(base)}me/">我的（本地数据）</a></li>
       </ul>
     </nav>
     <nav class="foot__col" aria-label="关于">
       <p class="foot__head">关于</p>
       <ul>
-        <li><a href="${attr(rel)}about/">关于我</a></li>
+        <li><a href="${attr(base)}about/">关于我</a></li>
         ${site.author?.github ? `<li><a href="${attr(site.author.github)}" target="_blank" rel="noopener">GitHub ↗</a></li>` : ''}
-        <li><a href="${attr(rel)}status/">播放自检</a></li>
+        <li><a href="${attr(base)}status/">播放自检</a></li>
       </ul>
     </nav>
     <div class="foot__col">
@@ -139,7 +139,7 @@ function footer({ site, rel }) {
  * 持久播放器骨架。每个页面完全一致，JS 只做绑定与更新，绝不重建。
  * 移动端显示为迷你条，点封面或展开按钮进入全屏播放页。
  */
-function player({ rel }) {
+function player({ base }) {
   const btn = (act, label, iconName, extra = '', size = 24) =>
     `<button class="pbtn" type="button" data-act="${act}" aria-label="${attr(label)}" title="${attr(label)}"${extra}>${icon(iconName, { size })}</button>`;
   const toggle = (id, extraClass = '') =>
@@ -147,7 +147,7 @@ function player({ rel }) {
   return `<div id="player-root" class="pl" data-state="idle" data-expanded="false">
   <div class="pl__bar" role="region" aria-label="播放器">
     <button class="pl__art" type="button" data-act="expand" aria-label="展开播放页">
-      <img id="plCover" alt="" width="52" height="52" decoding="async" src="${attr(rel)}assets/img/placeholder.svg">
+      <img id="plCover" alt="" width="52" height="52" decoding="async" src="${attr(base)}assets/img/placeholder.svg">
     </button>
     <div class="pl__meta">
       <p class="pl__title" id="plTitle">还没有在播放</p>
@@ -185,7 +185,7 @@ function player({ rel }) {
       <button class="pbtn" type="button" data-act="cycle-view" aria-label="切换展示模式" title="切换展示模式" id="plViewIcon">${icon('cover', { size: 22 })}</button>
     </div>
     <div class="pl__stage" id="plStage" data-stage="cover">
-      <div class="pl__bigart" id="plBigArt"><img id="plBigCover" alt="" decoding="async" src="${attr(rel)}assets/img/placeholder.svg"><span class="pl__hole" aria-hidden="true"></span></div>
+      <div class="pl__bigart" id="plBigArt"><img id="plBigCover" alt="" decoding="async" src="${attr(base)}assets/img/placeholder.svg"><span class="pl__hole" aria-hidden="true"></span></div>
       <div class="pl__lyrics" id="plLyrics" tabindex="0" aria-label="歌词"></div>
     </div>
     <div class="pl__fullmeta">
@@ -212,33 +212,33 @@ function player({ rel }) {
 }
 /**
  * 渲染一份完整的静态 HTML 文档。
- * @param rel 该页面回到站点根的相对前缀（"./" / "../" / "../../"）
+ * @param base 该页面回到站点根的相对前缀（"./" / "../" / "../../"）
  */
-export function renderDocument({ site, rel, kind, slug = null, meta, body, extraHead = '', pageClass = '' }) {
+export function renderDocument({ site, base, kind, slug = null, meta, body, extraHead = '', pageClass = '' }) {
   return `<!DOCTYPE html>
-<html lang="${attr(site.lang || 'zh-CN')}" data-theme="${attr(site.theme?.default || 'cloud')}" data-layout="${attr(site.layout?.default || 'auto')}">
+<html lang="${attr(site.lang || 'zh-CN')}" data-theme="${attr(site.theme?.default || 'cloud')}" data-layout="${attr(site.layout?.default || 'auto')}" data-base="${attr(base)}">
 <head>
-${head({ site, rel, meta, kind, slug, extraHead })}
+${head({ site, base, meta, kind, slug, extraHead })}
 </head>
 <body data-kind="${attr(kind)}"${slug ? ` data-slug="${attr(slug)}"` : ''}>
 <a class="skip" href="#main">跳到主要内容</a>
-${header({ site, rel, kind })}
+${header({ site, base, kind })}
 
 <!-- ▼ 路由只替换这一块 ▼ -->
 <div id="page-root" data-page="${attr(kind)}">
 <main id="main" class="page ${attr(pageClass)}">
 ${body}
 </main>
-${footer({ site, rel })}
+${footer({ site, base })}
 </div>
 <!-- ▲ 路由只替换这一块 ▲ -->
 
-${player({ rel })}
+${player({ base })}
 
 <div id="overlay-root"></div>
 <div id="toasts" class="toasts" role="status" aria-live="polite" aria-atomic="false"></div>
 <noscript><p class="noscript">这个音乐小屋的播放器需要 JavaScript。页面内容本身可以正常阅读；开启 JavaScript 后即可试听。</p></noscript>
-<script type="module" src="${attr(rel)}assets/js/app.js"></script>
+<script type="module" src="${attr(base)}assets/js/app.js"></script>
 </body>
 </html>
 `;

@@ -43,7 +43,7 @@ test('首页 · 只有「听听音乐」「关于我」两个按钮，链接真�
   build(false);
   const hero = heroOf(read('index.html'));
   const links = [...hero.matchAll(/<a class="btn[^"]*" href="([^"]+)">[\s\S]*?<\/a>/g)].map((m) => m[1]);
-  assert.deepEqual(links, ['./songs/', './about/'], `首屏按钮链接：${links.join(', ')}`);
+  assert.deepEqual(links, ['/songs/', '/about/'], `首屏按钮链接：${links.join(', ')}`);
   assert.match(hero, /听听音乐/);
   assert.match(hero, /关于我/);
   for (const gone of ['去曲库看看', '浏览曲库', '播放最新一首']) {
@@ -95,9 +95,9 @@ test('首页 · 有歌时用真实封面做推荐卡片，含歌名与播放入�
   const first = JSON.parse(read('assets/data/catalog.json')).songs[0];
   assert.ok(html.includes('hero__pick'), '有歌却没有推荐卡片');
   assert.ok(!html.includes('hero__in--single'), '有歌时不应单栏');
-  assert.ok(html.includes(`src="./${first.cover}"`), '没用真实封面');
+  assert.ok(html.includes(`src="/${first.cover}"`), '没用真实封面');
   assert.ok(html.includes(`data-act="play-song" data-slug="${first.slug}"`), '没有播放入口');
-  assert.ok(html.includes(`href="./songs/${first.slug}/"`), '没有单曲页链接');
+  assert.ok(html.includes(`href="/songs/${first.slug}/"`), '没有单曲页链接');
   assert.ok(fs.existsSync(path.join(DIST, first.cover)), '封面文件不存在');
 });
 test('空状态 · 文案温和；有歌时不显示空状态且搜索照常', () => {

@@ -2,7 +2,7 @@ import { escapeHtml as esc, escapeAttr as attr } from '../../../../assets/js/cor
 import { sectionHead, songList, songGrid, emptyState } from '../components.mjs';
 import { icon } from '../../../../assets/js/core/icons.js';
 
-export function renderLibrary(model, { rel }) {
+export function renderLibrary(model, { base }) {
   const { site, songs } = model;
   const allTags = [...new Set(songs.flatMap((s) => s.tags))].sort();
   const hasSongs = songs.length > 0;
@@ -39,9 +39,9 @@ export function renderLibrary(model, { rel }) {
     <p class="libcount" id="libCount" role="status" aria-live="polite">${songs.length} 首</p>
 
     <div class="viewbox" data-viewbox="library" data-view="list">
-      <div data-viewpane="list" id="libList">${songList(songs, rel)}</div>
-      <div data-viewpane="grid" id="libGrid" hidden>${songGrid(songs, rel)}</div>
-      <div data-viewpane="vinyl" id="libVinyl" hidden>${songGrid(songs, rel)}</div>
+      <div data-viewpane="list" id="libList">${songList(songs, base)}</div>
+      <div data-viewpane="grid" id="libGrid" hidden>${songGrid(songs, base)}</div>
+      <div data-viewpane="vinyl" id="libVinyl" hidden>${songGrid(songs, base)}</div>
     </div>
 
     <div id="libEmpty" hidden>${emptyState({ icon: 'search', title: '没有匹配的歌', text: '换个关键词试试，或者清空标签筛选。' })}</div>
