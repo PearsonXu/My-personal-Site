@@ -60,6 +60,8 @@ export class Player {
     this.currentSong = null;
     this.lyrics = { format: 'none', meta: {}, lines: [] };
     this.lyricIndex = -1;
+    this.lyricOffset = 0;
+    this._lyricsBase = null;
     this.duration = 0;
     this.volumeSupported = true;
     this._token = 0;
@@ -128,6 +130,13 @@ export class Player {
     a.addEventListener('stalled', () => { if (!a.paused) this._setState('buffering', '网络似乎卡住了'); });
     a.addEventListener('timeupdate', () => {
       if (guard()) return;
+      this._onTime();
+    });
+    a.addEventListener('seeked', () => {
+      if (guard()) return;
+      // 拖动 / 刷新恢复进度 / 单曲循环重播落地后：立刻按真实 currentTime 重新定位，
+      // 不等下一次 timeupdate（后台标签里 timeupdate 可能被节流）。
+      this.emit('seek', { time: this.audio.currentTime || 0 });
       this._onTime();
     });
     a.addEventListener('volumechange', () => this.emit('volume', { volume: a.volume, muted: a.muted }));
@@ -209,11 +218,15 @@ export class Player {
     this.currentSong = song;
     this.lyrics = { format: 'none', meta: {}, lines: [] };
     this.lyricIndex = -1;
+    // 歌词校准是运行时的、逐曲的：换歌即复位，不写进本地存储
+    this.lyricOffset = 0;
+    this._lyricsBase = null;
     this.duration = song.duration || 0;
     this._pendingSeek = startTime > 0 ? startTime : null;
     this.stateDetail = '';
     this.emit('track', { song, item });
     this.emit('lyrics', { song, lyrics: this.lyrics, pending: true });
+    this.emit('lyric-offset', { offset: 0 });
     this._setState('loading');
 
     const src = this.resolveAudio(song.audio);
@@ -252,30 +265,67 @@ export class Player {
   async _loadLyrics(song, token) {
     if (song.instrumental || !song.lyrics) {
       if (token !== this._token) return;
-      this.lyrics = { format: 'none', meta: {}, lines: [] };
-      this.emit('lyrics', { song, lyrics: this.lyrics, pending: false });
+      this._applyLyrics(song, { format: 'none', meta: {}, lines: [] });
       return;
     }
     // 页面上已经预渲染了这首歌的歌词 → 直接用，省一次请求，也天然没有竞态
     const inline = this._inlineLyrics(song.slug);
     if (inline) {
       if (token !== this._token) return;
-      this.lyrics = inline;
-      this.emit('lyrics', { song, lyrics: this.lyrics, pending: false });
+      this._applyLyrics(song, inline);
       return;
     }
     try {
       const text = await this.fetchText(this.resolve(song.lyrics));
       if (token !== this._token) return; // ★ 过期回调丢弃
-      this.lyrics = parseLrc(text);
-      this.lyricIndex = lineIndexAt(this.lyrics.lines, this.audio.currentTime || 0);
-      this.emit('lyrics', { song, lyrics: this.lyrics, pending: false });
+      this._applyLyrics(song, parseLrc(text));
     } catch (err) {
       if (token !== this._token) return;
-      this.lyrics = { format: 'none', meta: {}, lines: [], error: String(err.message || err) };
-      this.emit('lyrics', { song, lyrics: this.lyrics, pending: false });
+      this._applyLyrics(song, { format: 'none', meta: {}, lines: [], error: String(err.message || err) });
     }
   }
+
+  /** 歌词落地的唯一入口：记下原始时间轴（供校准反复平移），再按当前偏移生效 */
+  _applyLyrics(song, lyrics) {
+    this._lyricsBase = lyrics;
+    this.lyrics = this.lyricOffset ? this._shiftLyrics(lyrics, this.lyricOffset) : lyrics;
+    this.emit('lyrics', { song, lyrics: this.lyrics, pending: false });
+    // ★ 落地即定位：异步歌词回来时播放可能已在曲中（刷新恢复进度 / 慢网缓冲后落地）。
+    //   这里若只赋值不 emit，高亮会冻在旧行直到「下一句」时间戳到达 ——
+    //   真实歌曲句间隔可达 20s+，听感上就是「歌词和音乐差了一段时间」。
+    if (isTimed(this.lyrics)) {
+      const t = this.audio.currentTime || 0;
+      this.lyricIndex = lineIndexAt(this.lyrics.lines, t);
+      this.emit('lyric-line', { index: this.lyricIndex, time: t });
+    }
+  }
+
+  /** 平移时间轴：offset 秒，正值 = 歌词提前（与 LRC [offset:] 同一约定），下钳到 0 */
+  _shiftLyrics(lyrics, offset) {
+    if (!offset || !lyrics?.lines?.length) return lyrics;
+    return { ...lyrics, lines: lyrics.lines.map((l) => (l.time == null ? l : { ...l, time: Math.max(0, l.time - offset) })) };
+  }
+
+  /**
+   * 歌词校准（面板内的「歌词校准」控件）。运行时生效、换歌复位，不持久化。
+   * @param seconds 偏移秒数，正值 = 歌词整体提前；钳到 ±30s，步进 0.1s
+   */
+  setLyricOffset(seconds) {
+    const offset = clamp(Math.round((Number(seconds) || 0) * 10) / 10, -30, 30);
+    this.lyricOffset = offset;
+    if (this._lyricsBase) {
+      this.lyrics = this._shiftLyrics(this._lyricsBase, offset);
+      this.emit('lyrics', { song: this.currentSong, lyrics: this.lyrics, pending: false });
+      if (isTimed(this.lyrics)) {
+        this.lyricIndex = lineIndexAt(this.lyrics.lines, this.audio.currentTime || 0);
+        this.emit('lyric-line', { index: this.lyricIndex, time: this.audio.currentTime || 0 });
+      }
+    }
+    this.emit('lyric-offset', { offset });
+    return offset;
+  }
+
+  adjustLyricOffset(delta) { return this.setLyricOffset(this.lyricOffset + (Number(delta) || 0)); }
 
   _inlineLyrics(slug) {
     if (typeof document === 'undefined') return null;
@@ -396,6 +446,7 @@ export class Player {
       this.lyricIndex = lineIndexAt(this.lyrics.lines, t);
       this.emit('lyric-line', { index: this.lyricIndex, time: t });
     }
+    this.emit('seek', { time: t });
     this._updatePositionState();
     this._persistNow();
   }

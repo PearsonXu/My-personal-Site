@@ -1,0 +1,262 @@
+{
+  "at": "2026-11-19T14:20:52.070Z",
+  "chrome": "headless Google Chrome (puppeteer-core)",
+  "bases": [
+    "http://localhost:8391 (dist)",
+    "https://www.xuzhaoqing.com"
+  ],
+  "pass": 36,
+  "fail": 0,
+  "reproducedOnOldBuild": 4,
+  "checks": [
+    {
+      "group": "local",
+      "name": "首句高亮按时落地",
+      "ok": true,
+      "detail": "t=19.66 idx=0"
+    },
+    {
+      "group": "local",
+      "name": "逐句同步以 currentTime 为准（8 次采样）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "group": "local",
+      "name": "自动跟随不自我暂停（按钮保持隐藏）",
+      "ok": true,
+      "detail": "backHidden=true"
+    },
+    {
+      "group": "local",
+      "name": "当前行保持在容器中部附近",
+      "ok": true,
+      "detail": "Δ=84px"
+    },
+    {
+      "group": "local",
+      "name": "自动滚动不带动整页",
+      "ok": true,
+      "detail": "winY=0"
+    },
+    {
+      "group": "local",
+      "name": "用户滚轮暂停跟随并显示按钮",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "group": "local",
+      "name": "手动滚动期间不自动拽回",
+      "ok": true,
+      "detail": "scrollTop 160→160"
+    },
+    {
+      "group": "local",
+      "name": "点击回到当前歌词恢复跟随并居中",
+      "ok": true,
+      "detail": "scrollTop=0"
+    },
+    {
+      "group": "local",
+      "name": "向前拖动立即定位并恢复跟随",
+      "ok": true,
+      "detail": "idx=18 active=18"
+    },
+    {
+      "group": "local",
+      "name": "向后拖动立即定位",
+      "ok": true,
+      "detail": "idx=5"
+    },
+    {
+      "group": "local",
+      "name": "暂停恢复后按 currentTime 定位",
+      "ok": true,
+      "detail": "t=41.65"
+    },
+    {
+      "group": "local",
+      "name": "重开歌词面板立即回到当前行",
+      "ok": true,
+      "detail": "Δ=1px"
+    },
+    {
+      "group": "local",
+      "name": "慢网缓冲后按 currentTime 重新同步",
+      "ok": true,
+      "detail": "缓冲期 state=playing，恢复后 t=47.28"
+    },
+    {
+      "group": "local",
+      "name": "恢复进度+慢网落地：高亮立即在正确行",
+      "ok": true,
+      "detail": "t=71.55 idx=10 active=10（旧构建在此冻住=根因复现）"
+    },
+    {
+      "group": "local",
+      "name": "reduced-motion 瞬时定位（150ms 内完成滚动）",
+      "ok": true,
+      "detail": "scrollTop 314→861"
+    },
+    {
+      "group": "local",
+      "name": "切歌：歌词与暂停状态随新歌重置",
+      "ok": true,
+      "detail": "slug=demo-night-ferry"
+    },
+    {
+      "group": "local",
+      "name": "播放结束状态诚实（队列播完=paused）",
+      "ok": true,
+      "detail": "state=paused"
+    },
+    {
+      "group": "local",
+      "name": "重播按 currentTime 重新定位（首句前/首句）",
+      "ok": true,
+      "detail": "t=0.97 idx=0 active=0"
+    },
+    {
+      "group": "local",
+      "name": "全程无 Console 错误",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "group": "local",
+      "name": "手机点按播放进入 playing（非空断言）",
+      "ok": true,
+      "detail": "state=playing t=0.23"
+    },
+    {
+      "group": "local",
+      "name": "手机首句高亮按时落地",
+      "ok": true,
+      "detail": "t=19.77 idx=0"
+    },
+    {
+      "group": "local",
+      "name": "手机触摸滚动暂停跟随并显示按钮",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "group": "local",
+      "name": "手机按钮触达 ≥44px",
+      "ok": true,
+      "detail": "44px"
+    },
+    {
+      "group": "local",
+      "name": "手机点按回到当前歌词恢复跟随",
+      "ok": true,
+      "detail": "scrollTop=0"
+    },
+    {
+      "group": "live",
+      "name": "首句高亮按时落地",
+      "ok": true,
+      "detail": "t=19.70 idx=0"
+    },
+    {
+      "group": "live",
+      "name": "逐句同步以 currentTime 为准（8 次采样）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "group": "live",
+      "name": "自动跟随不自我暂停（按钮保持隐藏）",
+      "ok": false,
+      "expectedOld": true,
+      "detail": "修复前复现（线上旧构建）：backHidden=null"
+    },
+    {
+      "group": "live",
+      "name": "当前行保持在容器中部附近",
+      "ok": true,
+      "detail": "Δ=133px"
+    },
+    {
+      "group": "live",
+      "name": "自动滚动不带动整页",
+      "ok": true,
+      "detail": "winY=0"
+    },
+    {
+      "group": "live",
+      "name": "用户滚轮暂停跟随并显示按钮",
+      "ok": false,
+      "expectedOld": true,
+      "detail": "修复前复现（线上旧构建）：旧构建没有「回到当前歌词」按钮"
+    },
+    {
+      "group": "live",
+      "name": "向前拖动立即定位并恢复跟随",
+      "ok": true,
+      "detail": "idx=18 active=18"
+    },
+    {
+      "group": "live",
+      "name": "向后拖动立即定位",
+      "ok": true,
+      "detail": "idx=5"
+    },
+    {
+      "group": "live",
+      "name": "暂停恢复后按 currentTime 定位",
+      "ok": true,
+      "detail": "t=41.66"
+    },
+    {
+      "group": "live",
+      "name": "重开歌词面板立即回到当前行",
+      "ok": false,
+      "expectedOld": true,
+      "detail": "修复前复现（线上旧构建）：Δ=141px"
+    },
+    {
+      "group": "live",
+      "name": "慢网缓冲后按 currentTime 重新同步",
+      "ok": true,
+      "detail": "缓冲期 state=playing，恢复后 t=47.08"
+    },
+    {
+      "group": "live",
+      "name": "恢复进度+慢网落地：高亮立即在正确行",
+      "ok": false,
+      "expectedOld": true,
+      "detail": "修复前复现（线上旧构建）：t=71.25 idx=10 active=null（旧构建在此冻住=根因复现）"
+    },
+    {
+      "group": "live",
+      "name": "reduced-motion 瞬时定位（150ms 内完成滚动）",
+      "ok": true,
+      "detail": "scrollTop 0→530"
+    },
+    {
+      "group": "live",
+      "name": "播放结束状态诚实（队列播完=paused）",
+      "ok": true,
+      "detail": "state=paused"
+    },
+    {
+      "group": "live",
+      "name": "重播按 currentTime 重新定位（首句前/首句）",
+      "ok": true,
+      "detail": "t=0.95 idx=-1 active=null"
+    },
+    {
+      "group": "live",
+      "name": "全程无 Console 错误",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "notRun": [
+    "iOS Safari 真机（无设备）",
+    "微信内浏览器真机（无设备 / 账号）",
+    "线上部署复测需在 push 部署后重跑：node tools/probe-lyrics-sync.mjs"
+  ]
+}

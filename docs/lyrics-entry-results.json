@@ -1,0 +1,70 @@
+{
+  "at": "2026-11-19T13:21:38.539Z",
+  "results": [
+    {
+      "name": "桌面 · 迷你条「词」常驻可见且 ≥44×44",
+      "ok": true,
+      "detail": "{\"w\":44,\"h\":44,\"text\":\"词\",\"label\":\"显示歌词\",\"expanded\":\"false\",\"bg\":\"rgb(247, 248, 250)\",\"color\":\"rgb(31, 35, 41)\",\"border\":\"rgba(17, 24, 39, 0.16)\",\"radius\":\"12px\",\"visible\":true}"
+    },
+    {
+      "name": "桌面 · 未展开态：浅底 + 边框 + aria",
+      "ok": true,
+      "detail": "rgb(247, 248, 250) / rgba(17, 24, 39, 0.16)"
+    },
+    {
+      "name": "桌面 · 展开态：主题红底白字 + 收起歌词",
+      "ok": true,
+      "detail": "{\"w\":44,\"h\":44,\"text\":\"词\",\"label\":\"收起歌词\",\"expanded\":\"true\",\"bg\":\"rgb(224, 47, 47)\",\"color\":\"rgb(255, 255, 255)\",\"border\":\"rgba(0, 0, 0, 0)\",\"radius\":\"12px\",\"visible\":true}"
+    },
+    {
+      "name": "桌面 · 高亮 + 自动滚动保留",
+      "ok": true,
+      "detail": "{\"active\":true,\"scrolled\":true,\"idx\":9}"
+    },
+    {
+      "name": "桌面 · 歌词校准 +1.0s 生效且高亮仍在",
+      "ok": true,
+      "detail": "{\"off\":1,\"t\":2.2,\"val\":\"+1.0s\",\"active\":true,\"base\":3.2}"
+    },
+    {
+      "name": "桌面 · 再点收起回封面，红色态消退，播放不中断",
+      "ok": true,
+      "detail": "rgba(224, 47, 47, 0.08) / playing"
+    },
+    {
+      "name": "移动 · 迷你条「词」常驻可见且 ≥44×44",
+      "ok": true,
+      "detail": "{\"w\":44,\"h\":44,\"text\":\"词\",\"label\":\"显示歌词\",\"expanded\":\"false\",\"bg\":\"rgb(247, 248, 250)\",\"color\":\"rgb(31, 35, 41)\",\"border\":\"rgba(17, 24, 39, 0.16)\",\"radius\":\"12px\",\"visible\":true}"
+    },
+    {
+      "name": "移动 · 390px 无横向溢出",
+      "ok": true,
+      "detail": "overflow=0px"
+    },
+    {
+      "name": "移动 · 展开态红底 + 44×44",
+      "ok": true,
+      "detail": "{\"w\":44,\"h\":44,\"text\":\"词\",\"label\":\"收起歌词\",\"expanded\":\"true\",\"bg\":\"rgb(224, 47, 47)\",\"color\":\"rgb(255, 255, 255)\",\"border\":\"rgba(0, 0, 0, 0)\",\"radius\":\"12px\",\"visible\":true}"
+    },
+    {
+      "name": "移动 · 面板内校准可点",
+      "ok": true,
+      "detail": "+0.5s"
+    },
+    {
+      "name": "移动 · 360px 迷你条无横向溢出",
+      "ok": true,
+      "detail": "overflow=0px"
+    },
+    {
+      "name": "空状态 · 未选歌时「词」仍可发现",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "空状态 · 面板与 toast 都提示「暂无歌词」，校准禁用",
+      "ok": true,
+      "detail": "{\"panel\":\"暂无歌词\",\"toast\":\"暂无歌词\",\"disabled\":true}"
+    }
+  ]
+}

@@ -146,6 +146,8 @@ async function boot({ base = BASE } = {}) {
   const ui = new PlayerUI(player, { resolve });
   player.ui = ui;
   const lyrics = new LyricsUI(player);
+  // 重新打开歌词面板（「词」按钮 / 展示模式切换 / 键盘 L）时立即回到当前行并恢复自动跟随
+  ui.onStageChange = (stage) => { if (stage === 'lyrics') lyrics.refollow(); };
   const queueUI = new QueueUI(player);
   const library = new LibraryUI(player, { catalog, searchIndex, resolve, link });
   const share = new ShareUI(player, { site, adapters, resolve, link });
@@ -270,7 +272,7 @@ async function handleClick(e, app) {
   if (!btn) return;
   const act = btn.dataset.act;
   const slug = btn.dataset.slug;
-  const { player, ui, library, queueUI, share, status, me, store } = app;
+  const { player, ui, lyrics, library, queueUI, share, status, me, store } = app;
 
   switch (act) {
     case 'play-song':
@@ -321,6 +323,17 @@ async function handleClick(e, app) {
     case 'expand': ui.expand(); break;
     case 'collapse': ui.collapse(); break;
     case 'open-lyrics': ui.expand('lyrics'); break;
+    case 'toggle-lyrics': {
+      const opened = ui.toggleLyrics();
+      // 无歌词时入口仍可发现：面板里有空状态，这里再给一句明确提示。
+      // 加载中 / 纯音乐 / 读取失败各有面板自己的文案，不叠加 toast。
+      if (opened && !lyrics.pending && !player.currentSong?.instrumental && !player.lyrics?.error && !player.lyrics?.lines?.length) {
+        toast('暂无歌词');
+      }
+      break;
+    }
+    case 'lyric-offset': player.adjustLyricOffset(Number(btn.dataset.delta) || 0); break;
+    case 'lyric-offset-reset': player.setLyricOffset(0); break;
     case 'open-queue': queueUI.open(); break;
     case 'open-share': await share.open(btn.dataset.kind, slug); break;
     case 'cycle-view': ui.cycleStage(); break;

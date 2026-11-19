@@ -52,6 +52,8 @@
 13. **控件图标一律用 `core/icons.js` 的内联 SVG**，禁止 Emoji / Unicode 字符 / 图标字体。
     主按钮同时渲染播放与暂停两个 SVG，靠 `data-state` 切 display，**不要用 JS 换 innerHTML**。
     hover 不做缩放（会让几何尺寸漂移）。详见 `docs/PLAYER-CONTROLS.md`。
+    唯一例外：歌词入口是常驻**文字按钮「词」**（`pbtn--text`），文字即标签，不是图标字符；
+    时间偏移调整在歌词面板内的「歌词校准」组，别塞回控制区。
 14. **站内链接与资源一律由构建期 base 拼成绝对路径**（`--base`，默认 `/`）。
     **禁止**再按页面深度生成 `./` / `../` / `../../` 前缀：404 页会被挂在任意深度，
     相对路径会逐跳累积成 `/songs/x/songs/songs/about/me/…`。
@@ -61,6 +63,10 @@
     任何相对路径的 CSS/JS 都会 404，退化成没样式没脚本的白屏。
 16. **持久化状态必须逐字段校验**（`sanitizeState`）。坏字段单独回退，
     有效收藏 / 最近播放 / 队列一律保留；禁止用「清空全部数据」当作修复手段。
+17. **歌词落地即定位**：`_applyLyrics` 必须按真实 `currentTime` 算行号并 emit `lyric-line`，
+    禁止静默赋值（恢复进度 / 慢网时高亮会冻到下一句）。自动跟随必须区分滚动来源：
+    自己的 scrollTo 不算用户滚动；用户意图（wheel/touch/pointer/键盘）才暂停并显示
+    「回到当前歌词」。详见 `docs/LYRICS-SYNC.md`。
 18. **导航被 abort ≠ 失败**：`Router.navigate` / popstate 的 catch 里，`AbortError` 或
     令牌已过期一律静默返回，**禁止**走 `location.assign` 整页回退 —— 那会把地址拽回
     已作废的旧 URL（连点落错页、后退失效、音乐白断）。只有真失败（HTTP 错误 / 空内容）

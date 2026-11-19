@@ -43,7 +43,7 @@
 .aboutgrid { grid-template-columns:1fr; }
 
 /* 迷你播放器：三个主控都保留，主按钮 56px */
-.pl__bar { grid-template-columns:auto minmax(0,1fr) auto; gap:var(--sp2); padding:8px var(--sp4); }
+.pl__bar { grid-template-columns:auto minmax(0,1fr) auto auto; gap:var(--sp2); padding:8px var(--sp4); }
 .pl__art img { width:44px; height:44px; }
 .pl__btns { gap:4px; }
 .pl__seekwrap { position:absolute; left:0; right:0; bottom:0; padding:0; }
@@ -51,7 +51,9 @@
 .pl__seekwrap .range { height:12px; }
 .pl__seekwrap .range::-webkit-slider-runnable-track { height:2px; }
 .pl__seekwrap .range::-webkit-slider-thumb { width:9px; height:9px; margin-top:-3.5px; }
-.pl__extra { display:none; }
+/* 迷你条操作区只保留常驻的歌词文字按钮「词」，其余功能键仍在展开页 */
+.pl__extra { display:flex; }
+.pl__extra > :not(.pbtn--lyrics) { display:none; }
 .pl__state { position:absolute; left:var(--sp4); right:var(--sp4); bottom:-1.2em; font-size:.6rem; }
 .pl__fullbtns { gap:8px; }
 .pl__stage { margin:var(--sp4) auto; }

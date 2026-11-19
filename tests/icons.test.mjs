@@ -140,14 +140,21 @@ test('icons · 产物不再出现 Emoji / Unicode 控件字符', () => {
   }
 });
 
-test('icons · 每个控件按钮内联 SVG 且保留 aria-label', () => {
+test('icons · 每个控件按钮内联 SVG 且保留 aria-label（文字按钮例外）', () => {
   buildDemo();
   const html = read('index.html');
   const buttons = [...html.matchAll(/<button[^>]*class="[^"]*(?:pbtn|iact|icon-btn|row__play|card__play)[^"]*"[^>]*>[\s\S]*?<\/button>/g)].map((m) => m[0]);
   assert.ok(buttons.length > 8, `控件按钮太少：${buttons.length}`);
   for (const b of buttons) {
-    assert.match(b, /<svg class="icon/, `控件无内联 SVG：${b.slice(0, 90)}`);
     assert.match(b, /aria-label="[^"]+"/, `控件缺 aria-label：${b.slice(0, 90)}`);
+    if (/pbtn--text/.test(b)) {
+      // 显式声明的文字按钮（目前只有歌词「词」）：可见文字就是标签，不要求 SVG。
+      // 仍然禁止 Emoji / Unicode 图形字符（上一项测试守着）。
+      const text = b.replace(/<[^>]+>/g, '').trim();
+      assert.ok(text.length > 0, `文字按钮没有可见文字：${b.slice(0, 90)}`);
+    } else {
+      assert.match(b, /<svg class="icon/, `控件无内联 SVG：${b.slice(0, 90)}`);
+    }
   }
 });
 

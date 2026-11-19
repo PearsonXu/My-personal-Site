@@ -24,6 +24,7 @@
     "verify:live": "node tools/verify-live.mjs",
     "browser:live": "node tools/browser-live.mjs",
     "probe:regression": "node tools/probe-regression.mjs",
+    "probe:lyrics": "node tools/probe-lyrics-sync.mjs",
     "audit:links": "node tools/audit-links.mjs",
     "compare:hrefs": "node tools/compare-hrefs.mjs"
   },

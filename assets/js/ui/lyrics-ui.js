@@ -2,12 +2,18 @@
  * ui/lyrics-ui.js — 歌词渲染 / 高亮 / 自动滚动 / 点击跳转。
  *
  * 兼容三种形态：带时间轴 LRC、纯文本、无歌词（含纯音乐）。
- * 自动滚动在用户手动滚动后暂停 4 秒，避免「想看上一句却被拽回去」。
+ *
+ * 自动跟随的滚动来源判定（修过两个真实故障）：
+ *  1. 自己的 scrollTo 也会触发 scroll 事件 —— 若把它当用户滚动，自动跟随会自我暂停，
+ *     可见行落后 audible 行一句以上。程序化滚动期间打标记（scrollend + 兜底定时器）忽略。
+ *  2. 用户意图用 wheel / touchstart / pointerdown / 键盘翻页事件判定，比 scroll 更早也更准。
+ * 用户手动滚动后停止跟随并显示「回到当前歌词」按钮；点击 / 拖动进度 / 切歌 / 重开面板恢复。
+ * 只滚动歌词容器自己，绝不带动整页；尊重 prefers-reduced-motion。
  */
 
 import { escapeHtml } from '../core/util.js';
 import { isTimed } from '../core/lrc.js';
-import { byId, qs, tgt } from './dom.js';
+import { byId, qs, qsa, tgt } from './dom.js';
 
 const EMPTY_TEXT = {
   instrumental: '纯音乐 · 这首没有歌词',
@@ -24,15 +30,94 @@ export class LyricsUI {
     this.slug = null;
     this.lines = [];
     this.timed = false;
+    this.pending = false;
     this.activeIndex = -1;
-    this._userScrollUntil = 0;
+    this.backBtn = byId('plLyricsBack');
+    this._followPaused = false;
+    this._autoScroll = false;
+    this._autoScrollTimer = null;
 
-    this.container?.addEventListener('scroll', () => { this._userScrollUntil = Date.now() + 4000; }, { passive: true });
-    this.container?.addEventListener('click', (e) => this._onClick(e));
+    const c = this.container;
+    c?.addEventListener('scroll', () => {
+      if (this._autoScroll) return; // 自动跟随自己产生的滚动，不算用户意图
+      this._pauseFollow();
+    }, { passive: true });
+    // 用户意图事件：滚轮 / 触摸 / 指针（含拖滚动条）/ 键盘翻页
+    for (const ev of ['wheel', 'touchstart', 'pointerdown']) {
+      c?.addEventListener(ev, () => this._pauseFollow(), { passive: true });
+    }
+    c?.addEventListener('keydown', (e) => {
+      if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' ', 'Spacebar'].includes(e.key)) this._pauseFollow();
+    });
+    // scrollend 并非全平台都有（旧 Safari 没有）→ _scrollTo 里另有兜底定时器
+    c?.addEventListener('scrollend', () => { this._autoScroll = false; }, { passive: true });
+    c?.addEventListener('click', (e) => this._onClick(e));
+    this.backBtn?.addEventListener('click', () => this._resumeFollow());
 
     player.on('lyrics', ({ song, lyrics, pending }) => this.render(song, lyrics, pending));
     player.on('lyric-line', ({ index }) => this.highlight(index));
-    player.on('track', ({ song }) => { if (!song) this.render(null, { format: 'none', lines: [] }, false); });
+    player.on('lyric-offset', ({ offset }) => this.renderOffset(offset));
+    player.on('seek', () => this._reposition());
+    player.on('track', ({ song }) => {
+      this._resetFollow();
+      if (!song) this.render(null, { format: 'none', lines: [] }, false);
+    });
+  }
+
+  /* ── 自动跟随 ─────────────────────────────────────── */
+  _resetFollow() {
+    this._followPaused = false;
+    this._autoScroll = false;
+    clearTimeout(this._autoScrollTimer);
+    if (this.backBtn) this.backBtn.hidden = true;
+  }
+
+  _pauseFollow() {
+    if (!this.timed || !this.container || this._followPaused) return;
+    this._followPaused = true;
+    if (this.backBtn) this.backBtn.hidden = false;
+  }
+
+  _resumeFollow() {
+    this._followPaused = false;
+    if (this.backBtn) this.backBtn.hidden = true;
+    this._scrollToCurrent();
+  }
+
+  /** 拖动进度 / seeked 落地：即使行号没变也立即定位，并恢复跟随 */
+  _reposition() {
+    if (!this.timed || !this.container) return;
+    this._followPaused = false;
+    if (this.backBtn) this.backBtn.hidden = true;
+    this._scrollToCurrent();
+  }
+
+  /** 歌词面板重新可见（「词」按钮 / 展示模式 / 键盘 L）：立即回到当前行 */
+  refollow() {
+    if (!this.timed || !this.container) return;
+    this._resumeFollow();
+  }
+
+  _scrollToCurrent() {
+    if (!this.container) return;
+    const node = this.activeIndex >= 0
+      ? this.container.querySelector(`.lrc__line[data-i="${this.activeIndex}"]`)
+      : null;
+    const top = node
+      ? node.offsetTop - this.container.clientHeight / 2 + node.clientHeight / 2
+      : 0;
+    this._scrollTo(Math.max(0, top));
+  }
+
+  _scrollTo(top) {
+    const c = this.container;
+    if (!c) return;
+    const reduce = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this._autoScroll = true;
+    clearTimeout(this._autoScrollTimer);
+    this._autoScrollTimer = setTimeout(() => { this._autoScroll = false; }, reduce ? 80 : 900);
+    if (typeof c.scrollTo === 'function') c.scrollTo({ top, behavior: reduce ? 'auto' : 'smooth' });
+    else c.scrollTop = top;
   }
 
   _onClick(e) {
@@ -40,7 +125,7 @@ export class LyricsUI {
     if (!li || !this.timed) return;
     const t = Number(li.dataset.t);
     if (Number.isFinite(t)) {
-      this._userScrollUntil = 0;
+      // seek 会发 'seek' 事件 → _reposition 恢复跟随并定位，这里不用手动清状态
       this.player.seek(t);
       if (this.player.state !== 'playing') this.player.play();
     }
@@ -50,7 +135,12 @@ export class LyricsUI {
     this.slug = song?.slug || null;
     this.lines = lyrics?.lines || [];
     this.timed = isTimed(lyrics);
+    this.pending = !!pending;
     this.activeIndex = -1;
+    this._resetFollow();
+    // 歌词校准只对「已加载的带时间轴歌词」有意义，其余情况禁用（按钮仍可见）
+    const canCalib = !!song && !pending && !lyrics?.error && this.timed && this.lines.length > 0;
+    for (const b of qsa('.pl__calib__btn')) b.disabled = !canCalib;
     if (!this.container) return;
 
     if (!song) { this.container.innerHTML = `<p class="lyrics-empty">${EMPTY_TEXT.none}</p>`; return; }
@@ -67,19 +157,28 @@ export class LyricsUI {
     this.container.scrollTop = 0;
   }
 
+  /** 校准量读数：正值 = 歌词提前（与 LRC [offset:] 同一约定） */
+  renderOffset(offset) {
+    const el = byId('plCalibVal');
+    if (el) el.textContent = `${offset > 0 ? '+' : ''}${offset.toFixed(1)}s`;
+  }
+
   highlight(index) {
     if (!this.container || !this.timed) return;
     if (index === this.activeIndex) return;
     const prev = this.container.querySelector('.lrc__line.is-active');
     prev?.classList.remove('is-active');
     this.activeIndex = index;
-    if (index < 0) return;
+    // 首句之前：回到容器顶部（只滚容器，不带动整页）
+    if (index < 0) {
+      if (!this._followPaused) this._scrollTo(0);
+      return;
+    }
     const node = this.container.querySelector(`.lrc__line[data-i="${index}"]`);
     if (!node) return;
     node.classList.add('is-active');
-    if (Date.now() < this._userScrollUntil) return;
-    const target = node.offsetTop - this.container.clientHeight / 2 + node.clientHeight / 2;
-    this.container.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
+    // 仅在当前行变化时滚动；用户手动滚动期间不打扰
+    if (!this._followPaused) this._scrollToCurrent();
   }
 }
 

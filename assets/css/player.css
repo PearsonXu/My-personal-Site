@@ -39,6 +39,14 @@
 .pbtn.is-on { color:var(--acc-2); }
 .pbtn.is-active { color:var(--acc); background:rgba(var(--acc-rgb),.14); }
 
+/* 歌词文字按钮「词」：常驻迷你条与展开页，圆角 + 清晰边框 + 浅色底。
+   文字是标签而非图标字符（pbtn--text 例外，见 docs/PLAYER-CONTROLS.md）。
+   点击区沿用 --pbtn-size（桌面 / 手机都是 44×44）。展开态走主题红底白字。 */
+.pbtn--lyrics { border-color:var(--line-2); background:var(--panel-2); color:var(--text); font-family:var(--font-d); font-size:.95rem; font-weight:600; line-height:1; }
+.pbtn--lyrics:hover:not(:disabled) { border-color:var(--acc); color:var(--acc); background:rgba(var(--acc-rgb),.08); }
+.pbtn--lyrics[aria-expanded="true"],
+.pbtn--lyrics[aria-expanded="true"]:hover:not(:disabled) { background:var(--acc); border-color:transparent; color:var(--on-acc); }
+
 /* 主按钮：圆形，播放/暂停原位切换。颜色全部走主题变量 */
 .pbtn--play {
   width:var(--play-size); height:var(--play-size); border-radius:50%;
@@ -97,12 +105,29 @@
 .pl__stage[data-stage="vinyl"] .pl__hole { display:block; position:absolute; left:50%; top:50%; width:16%; height:16%; transform:translate(-50%,-50%); border-radius:50%; background:var(--bg); border:1px solid var(--line-2); }
 .pl[data-state="paused"] .pl__stage[data-stage="vinyl"] .pl__bigart img,
 .pl[data-state="idle"] .pl__stage[data-stage="vinyl"] .pl__bigart img { animation-play-state:paused; }
+.pl__stage[data-stage="lyrics"] { flex-direction:column; gap:var(--sp2); }
 .pl__stage[data-stage="lyrics"] .pl__bigart { display:none; }
 .pl__lyrics { display:none; width:100%; max-height:min(52vh,460px); overflow-y:auto; -webkit-overflow-scrolling:touch; padding:var(--sp5) var(--sp3); text-align:center; scroll-behavior:smooth; -webkit-mask-image:linear-gradient(180deg,transparent,#000 12%,#000 88%,transparent); mask-image:linear-gradient(180deg,transparent,#000 12%,#000 88%,transparent); }
 .pl__stage[data-stage="lyrics"] .pl__lyrics { display:block; }
+/* 歌词容器 + 「回到当前歌词」浮按钮的定位盒：按钮绝对贴在容器下缘，不占滚动内容 */
+.pl__lyricsbox { position:relative; width:100%; min-height:0; display:flex; flex-direction:column; }
+.pl__lyricsbox .pl__lyrics { flex:1; }
+.lrc-back { position:absolute; left:50%; bottom:14px; transform:translateX(-50%); z-index:2; min-height:44px; padding:8px 18px; border-radius:999px; border:1px solid var(--line-2); background:var(--panel-2); color:var(--text); font-size:.82rem; font-weight:600; box-shadow:0 4px 16px rgba(0,0,0,.14); cursor:pointer; }
+.lrc-back:hover { border-color:var(--acc); color:var(--acc); }
+.lrc-back[hidden] { display:none; }
 .pl__lyrics .lrc__line { padding:10px 12px; font-size:1.02rem; color:var(--mute); }
 .pl__lyrics .lrc__line.is-active { color:var(--lyric-active); font-size:1.14rem; font-weight:600; background:none; transform:none; }
 .pl__lyrics .lyrics-empty { color:var(--mute); font-size:.9rem; padding:var(--sp6) 0; }
+/* 歌词校准：只活在歌词面板里（lyrics 舞台才显示），与「词」按钮职责分开。
+   无时间轴歌词 / 未加载时由 LyricsUI 置 disabled。 */
+.pl__calib { display:none; align-items:center; justify-content:center; flex-wrap:wrap; gap:var(--sp2); width:100%; max-width:760px; margin:0 auto; padding-top:var(--sp2); }
+.pl__stage[data-stage="lyrics"] .pl__calib { display:flex; }
+.pl__calib__label { font-family:var(--font-m); font-size:.72rem; letter-spacing:.08em; color:var(--mute); }
+.pl__calib__btn { min-width:44px; min-height:44px; padding:0 12px; border-radius:10px; border:1px solid var(--line-2); background:var(--panel-2); color:var(--dim); font-family:var(--font-m); font-size:.78rem; cursor:pointer; transition:color var(--dur) var(--ease),border-color var(--dur) var(--ease); }
+.pl__calib__btn:hover:not(:disabled) { color:var(--acc); border-color:var(--acc); }
+.pl__calib__btn:focus-visible { outline:2px solid var(--acc); outline-offset:2px; }
+.pl__calib__btn:disabled { opacity:.35; cursor:not-allowed; }
+.pl__calib__val { min-width:3.6em; text-align:center; font-family:var(--font-m); font-size:.78rem; color:var(--text); }
 .pl__fullmeta { max-width:760px; width:100%; margin-inline:auto; text-align:center; }
 .pl__fullsong { font-family:var(--font-d); font-size:1.3rem; }
 .pl__fullartist { color:var(--dim); font-size:.9rem; }
@@ -115,4 +140,6 @@
 @media (prefers-reduced-motion:reduce) {
   .pl__stage[data-stage="vinyl"] .pl__bigart img { animation:none; }
   .pl[data-state="blocked"] .pbtn--play { animation:none; }
+  /* 歌词自动跟随改为瞬时定位（JS 侧也会选 behavior:'auto'，这里兜底 scrollTop 赋值路径） */
+  .pl__lyrics { scroll-behavior:auto; }
 }

@@ -80,6 +80,52 @@ hover 转 `var(--acc)`。**没有任何单独硬编码的颜色**：
 - **键盘焦点**：`:focus-visible` 2px `var(--acc)` 描边 + 2px offset
 - **禁用**：`opacity:.35`、`cursor:not-allowed`，主按钮转为中性灰
 
+## 歌词入口：常驻文字按钮「词」
+
+歌词入口不再是图标，而是**文字按钮「词」**（`pbtn--text pbtn--lyrics`）：
+
+- **位置**：迷你条 `.pl__extra`（与播放模式 / 音量同区）+ 展开页 `.pl__fullbtns`（与模式 / 队列同区）。
+  手机迷你条的操作区只保留这一个键（`layout-mobile.css`），**不进「更多」菜单**。
+- **外观**：圆角 12px、`var(--line-2)` 边框 + `var(--panel-2)` 浅底、正文色文字，三套主题都有对比度。
+  展开态由 `aria-expanded="true"` 驱动：`var(--acc)` 主题红底 + `var(--on-acc)` 文字。
+- **点击区**：沿用 `--pbtn-size`，桌面 / 手机都是 **44×44**。
+- **行为**：`data-act="toggle-lyrics"` —— 收起时点击展开歌词面板；展开且正在看歌词时再点收起回封面。
+  `aria-label` 在「显示歌词 / 收起歌词」间切换，`aria-controls="plLyrics"`。
+- **无歌词**：按钮永远可点；面板显示空状态，同时 toast「暂无歌词」。
+- **文字按钮例外**：AGENTS 规则 13 要求控件用内联 SVG；「词」是**文字标签**而非图标字符，
+  是唯一的 `pbtn--text` 例外，`tests/icons.test.mjs` 对它仍要求 aria-label + 可见文字，
+  Emoji / Unicode 图形字符禁令不变。
+
+### 歌词校准（面板内）
+
+时间偏移调整放在歌词面板底部的「歌词校准」组（`-0.5s / 读数 / +0.5s / 重置`），与「词」按钮职责分开：
+
+- `Player.setLyricOffset / adjustLyricOffset`：运行时平移时间轴，**正值 = 歌词提前**（与 LRC `[offset:]` 同一约定），
+  钳位 ±30s、步进 0.1s；基于原始时间轴反复平移，不累积误差。
+- 校准后重算 `lyricIndex` 并重发 `lyrics` / `lyric-line` / `lyric-offset` 事件 → 高亮、自动滚动、点击跳转照常。
+- **换歌复位、不持久化**；无时间轴歌词 / 未加载 / 读取失败时控件禁用（仍可见）。
+- LRC 文件里的 `[offset:]` 解析（`core/lrc.js`）不变，两者叠加生效。
+
+## 歌词自动跟随与「回到当前歌词」
+
+同步与跟随的工程约定（根因取证见 `docs/LYRICS-SYNC.md`）：
+
+- **时间依据只有 `audio.currentTime`**。`timeupdate` / `seeked` / `playing` / `loadedmetadata`
+  都重新定位；歌词异步落地（`_applyLyrics`）**立即**按当前时间计算行号并 emit `lyric-line`，
+  不允许静默赋值（否则恢复进度 / 慢网时高亮冻到下一句，真实歌曲句间隔可达 20s+）。
+- **当前行** = 时间戳 ≤ currentTime 的最后一行（`core/lrc.js#lineIndexAt`）；
+  高亮 `is-active`，其余行弱化；首句前 idx=-1 回容器顶；纯文本 / 无歌词不模拟同步。
+- **自动滚动只滚 `#plLyrics` 容器**，当前行保持在容器中部附近；仅在当前行变化时滚动。
+- **滚动来源判定**：wheel / touchstart / pointerdown / 键盘翻页 = 用户意图 → 暂停跟随；
+  程序化滚动打标记（`scrollend` + 兜底定时器）期间产生的 scroll 事件**不算**用户滚动
+  （旧代码把自己的 smooth scroll 当用户滚动，导致跟随自我暂停、可见行落后一句以上）。
+- 暂停跟随时显示悬浮按钮 **「回到当前歌词」**（`#plLyricsBack`，44px 触达，不占滚动内容）；
+  点击恢复跟随并立即居中。**拖动进度 / 切歌 / 重开歌词面板**（`onStageChange` → `refollow()`）
+  也会立即定位并恢复跟随。
+- `prefers-reduced-motion`：滚动瞬时（`behavior:'auto'` + CSS `scroll-behavior:auto`）。
+- 回归：`tests/lyrics-sync.test.mjs`（8 项）；真实浏览器 `npm run probe:lyrics`
+  （本地 + 线上对比、慢网、恢复进度、触摸；线上旧构建项记 `expectedOld` 复现证据）。
+
 ## 一致性
 
 首页 hero、曲库行、封面墙卡片、单曲页主按钮、专辑/歌单操作条、手记关联歌曲、

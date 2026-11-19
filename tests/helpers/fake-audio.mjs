@@ -49,7 +49,9 @@ export class FakeAudio extends EventTarget {
 
   load() {
     this.loadCalls++;
-    this.currentSrc = this.src;
+    // 真实浏览器的 currentSrc 永远是绝对 URL（IDL 会解析相对 src）；
+    // Player 的过期音源守卫拿它和绝对化的 _expectedSrc 比较，假音频必须同语义。
+    this.currentSrc = this.src ? new URL(this.src, 'https://example.invalid/').href : '';
     this.ended = false;
     this.error = null;      // 真实媒体元素：load() 会清掉上一次的错误
     this.readyState = 0;

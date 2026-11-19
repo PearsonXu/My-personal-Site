@@ -18,6 +18,8 @@ export class PlayerUI {
     this.root = byId('player-root');
     this.seeking = false;
     this.stage = player.store?.data?.stage || 'cover';
+    /** @type {null | ((stage: string) => void)} 由 app.js 注入：歌词面板重新可见时立即定位当前行 */
+    this.onStageChange = null;
 
     this.el = {
       cover: byId('plCover'),
@@ -165,12 +167,38 @@ export class PlayerUI {
     if (this.el.full) this.el.full.hidden = false;
     if (this.root) this.root.dataset.expanded = 'true';
     document.body.classList.add('is-locked');
+    this._syncLyricsButtons();
   }
 
   collapse() {
     if (this.el.full) this.el.full.hidden = true;
     if (this.root) this.root.dataset.expanded = 'false';
     document.body.classList.remove('is-locked');
+    this._syncLyricsButtons();
+  }
+
+  /**
+   * 歌词「词」按钮：收起时点击 → 展开歌词面板；展开且正在看歌词时再点 → 收起面板回封面。
+   * @returns {boolean} 点击后歌词面板是否处于展开状态
+   */
+  toggleLyrics() {
+    const expanded = this.root?.dataset.expanded === 'true';
+    if (expanded && this.stage === 'lyrics') { this.setStage('cover'); return false; }
+    this.expand('lyrics');
+    return true;
+  }
+
+  /** 迷你条与展开页两个「词」按钮的状态同步：aria-expanded 同时驱动主题红底样式 */
+  _syncLyricsButtons() {
+    const on = this.root?.dataset.expanded === 'true' && this.stage === 'lyrics';
+    for (const id of ['plLyricsBtn', 'plLyricsBtnFull']) {
+      const btn = byId(id);
+      if (!btn) continue;
+      const label = on ? '收起歌词' : '显示歌词';
+      btn.setAttribute('aria-expanded', String(on));
+      btn.setAttribute('aria-label', label);
+      btn.setAttribute('title', label);
+    }
   }
 
   toggleExpand() {
@@ -184,6 +212,8 @@ export class PlayerUI {
     setSvg('plViewIcon', STAGE_ICON[this.stage], 22);
     if (lock) this.player.store?.save({ stage: this.stage, stageLocked: true }, { immediate: true });
     else this.player.store?.save({ stage: this.stage });
+    this._syncLyricsButtons();
+    this.onStageChange?.(this.stage);
   }
 
   cycleStage() {
