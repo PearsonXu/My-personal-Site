@@ -5,60 +5,12 @@
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import fs from 'node:fs';
 import path from 'node:path';
-import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { JSDOM } from 'jsdom';
 import { loadContent } from '../tools/lib/content.mjs';
+import { makeApp, click, wait } from './helpers/dom-app.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const DIST = path.join(ROOT, 'dist');
-
-async function makeApp(startPath = '/') {
-  execFileSync(process.execPath, [path.join(ROOT, 'tools/build-site.mjs'), '--demo'], { cwd: ROOT, stdio: 'pipe' });
-  const html = fs.readFileSync(path.join(DIST, startPath, 'index.html'), 'utf8');
-  const dom = new JSDOM(html, { url: `https://www.xuzhaoqing.com${startPath}`, pretendToBeVisual: true });
-  const { window } = dom;
-  window.scrollTo = () => {};
-  window.HTMLElement.prototype.scrollIntoView = () => {};
-  window.Element.prototype.scrollTo = () => {};
-  const errors = [];
-  window.addEventListener('error', (e) => errors.push(e.message));
-
-  window.fetch = async (url) => {
-    const p = decodeURIComponent(new URL(String(url), 'https://www.xuzhaoqing.com').pathname).replace(/^\/+/, '');
-    const file = p.endsWith('/') || p === '' ? path.join(DIST, p, 'index.html') : path.join(DIST, p);
-    if (!fs.existsSync(file)) return { ok: false, status: 404, headers: { get: () => null }, text: async () => '' };
-    const body = fs.readFileSync(file, 'utf8');
-    return { ok: true, status: 200, headers: { get: () => null }, text: async () => body, json: async () => JSON.parse(body) };
-  };
-  for (const key of ['window', 'document', 'location', 'history', 'DOMParser', 'Node', 'Event', 'MouseEvent', 'HTMLElement', 'localStorage', 'navigator', 'CSS']) {
-    if (window[key] === undefined) continue;
-    // Node 25 的 navigator 等全局是只读 getter，必须用 defineProperty 覆盖
-    Object.defineProperty(globalThis, key, { value: window[key], configurable: true, writable: true });
-  }
-  globalThis.fetch = window.fetch;
-
-  // jsdom 不实现媒体播放，且 paused 是只读 getter：用可控 stub 模拟真实事件序列
-  const audio = window.document.getElementById('zx-audio');
-  let paused = true;
-  Object.defineProperty(audio, 'paused', { get: () => paused, configurable: true });
-  audio.play = async () => {
-    paused = false;
-    audio.dispatchEvent(new window.Event('play'));
-    audio.dispatchEvent(new window.Event('playing'));
-  };
-  audio.pause = () => { paused = true; audio.dispatchEvent(new window.Event('pause')); };
-  audio.load = () => { audio.dispatchEvent(new window.Event('loadstart')); };
-
-  const { boot } = await import('../assets/js/app.js');
-  const app = await boot({ base: '/' });
-  return { window, app, audio, errors };
-}
-
-const click = (window, el) => el.dispatchEvent(new window.MouseEvent('click', { bubbles: true, cancelable: true, button: 0 }));
-const wait = (ms = 40) => new Promise((r) => setTimeout(r, ms));
 
 test('app · 启动后目录、播放器、UI 全部就位', async () => {
   const { window, app, errors } = await makeApp('/');
@@ -109,6 +61,57 @@ test('app · 队列面板可打开、可删除', async () => {
   assert.equal(app.player.queue.length, 1);
 });
 
+test('app · 导航到更深路径后，外壳导航链接仍是正确的绝对地址（白屏回归）', async () => {
+  const { window, app } = await makeApp('/');
+  const doc = window.document;
+  // 启动后外壳链接应已绝对化
+  const before = [...doc.querySelectorAll('.nav__a[href]')].map((a) => a.getAttribute('href'));
+  assert.ok(before.every((h) => /^https?:\/\//.test(h)), `外壳链接未绝对化：${before.join(', ')}`);
+
+  await app.router.navigate('https://www.xuzhaoqing.com/notes/hello-music-house/');
+  await wait(60);
+  const after = [...doc.querySelectorAll('.nav__a[href]')].map((a) => ({ label: a.textContent.trim(), href: a.href }));
+  const songs = after.find((a) => a.label.includes('曲库'));
+  assert.equal(songs.href, 'https://www.xuzhaoqing.com/songs/', `曲库链接被解析成了 ${songs.href}`);
+  for (const a of after) {
+    assert.ok(!/\/notes\/hello-music-house\//.test(a.href), `${a.label} 被解析到深层目录：${a.href}`);
+  }
+  // 再点一次曲库，必须真的落在 /songs/
+  await app.router.navigate(songs.href);
+  await wait(60);
+  assert.equal(window.location.pathname, '/songs/');
+  assert.equal(doc.body.dataset.kind, 'library');
+});
+
+test('app · 从深层页面启动时外壳链接同样正确', async () => {
+  const { window } = await makeApp('/songs/demo-night-ferry/');
+  const links = [...window.document.querySelectorAll('.nav__a[href]')].map((a) => a.href);
+  assert.ok(links.includes('https://www.xuzhaoqing.com/songs/'), links.join(', '));
+  assert.ok(links.includes('https://www.xuzhaoqing.com/'), links.join(', '));
+});
+
+test('app · 启动时记录运行时 base，供 404 页定位站点根', async () => {
+  const { window } = await makeApp('/');
+  assert.equal(window.localStorage.getItem('zx.music.base'), '/');
+});
+
+test('app · 本地数据坏字段被就地修好，收藏保留且有提示', async () => {
+  const { window, app } = await makeApp('/', {
+    storage: {
+      'zx.music.v1': JSON.stringify({
+        view: '坏值', mode: '坏值', volume: 'loud',
+        favorites: ['demo-night-ferry', null, 7],
+        recent: [null, { slug: 'demo-paper-boat', at: 1 }]
+      })
+    }
+  });
+  assert.deepEqual(app.store.data.favorites, ['demo-night-ferry']);
+  assert.equal(app.store.data.view, 'list');
+  assert.equal(app.store.data.volume, 1);
+  assert.ok(app.store.repaired.length > 0);
+  assert.equal(window.document.querySelectorAll('audio').length, 1);
+});
+
 test('app · 外观入口可打开，选主题后写入 localStorage', async () => {
   const { window } = await makeApp('/');
   assert.equal(window.document.documentElement.dataset.theme, 'cloud', '首次访问必须是 cloud');
@@ -143,6 +146,7 @@ test('app · 展示模式切换只改 DOM，不动 audio', async () => {
   click(window, window.document.querySelector('[data-act="play-song"]'));
   await wait();
   click(window, window.document.querySelector('[data-act="set-view"][data-view="vinyl"]'));
+  await wait(); // 点击分发经过错误边界的微任务，需要让出一拍
   assert.equal(window.document.querySelector('[data-viewbox]').dataset.view, 'vinyl');
   assert.equal(window.document.getElementById('zx-audio'), audio);
   assert.equal(app.player.state, 'playing');

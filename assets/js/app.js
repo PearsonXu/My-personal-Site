@@ -20,7 +20,7 @@ import { ShareUI } from './ui/share-ui.js';
 import { StatusUI } from './ui/status-ui.js';
 import { MeUI } from './ui/me-ui.js';
 import { Appearance } from './ui/appearance-ui.js';
-import { toast, closeSheet, isSheetOpen, copyText } from './ui/common.js';
+import { toast, closeSheet, isSheetOpen, copyText, showErrorBanner } from './ui/common.js';
 import { byId, qs, qsa, tgt } from './ui/dom.js';
 
 const BASE = baseFromModuleUrl(import.meta.url, 'assets/js/app.js');
@@ -44,8 +44,33 @@ function absolutizeHeadAssets() {
   }
 }
 
+/**
+ * 把「持久外壳」里的链接绝对化。
+ *
+ * ★ 这是白屏故障的根因之一：header 导航在 #page-root **之外**，
+ *   它的 href 是按「首次进入页面的深度」生成的相对路径（./songs/ 或 ../../songs/）。
+ *   SPA 用 pushState 改了文档 URL 之后，这些相对 href 会被按**新深度**重新解析：
+ *   从首页进入 /notes/ 后，./songs/ 变成 /notes/songs/ —— 一个不存在的路径。
+ *   再点一次导航就会真的跳到 404，且刷新也回不来。
+ *
+ *   启动时（document URL 还是真实页面地址）把外壳链接转成绝对 URL，之后与路由无关。
+ *   #page-root 内部的链接不动：它们随页面一起替换，深度本来就是对的。
+ */
+function absolutizeChromeLinks() {
+  for (const a of qsa('a[href]')) {
+    if (a.closest('#page-root')) continue;
+    const raw = a.getAttribute('href');
+    if (!raw || raw.startsWith('#')) continue;
+    if (/^(https?:)?\/\//i.test(raw) || /^(mailto:|tel:|data:|javascript:)/i.test(raw)) continue;
+    try { a.setAttribute('href', new URL(raw, location.href).href); } catch { /* ignore */ }
+  }
+}
+
 async function boot({ base = BASE } = {}) {
   absolutizeHeadAssets();
+  absolutizeChromeLinks();
+  // 记下运行时 base：404 页等无法用相对路径的场景靠它定位站点根
+  try { localStorage.setItem('zx.music.base', base); } catch { /* 存储不可用则忽略 */ }
   const link = (p) => joinUrl(base, p);
   const loadJson = async (p) => {
     const res = await fetch(link(p), { cache: 'no-cache' });
@@ -101,28 +126,57 @@ async function boot({ base = BASE } = {}) {
   });
 
   function onPage(route) {
-    closeSheet();
-    queueUI.sheet = null;
-    ui.markCurrent(player.currentSong?.slug || null);
-    ui.refreshFavorites();
-    bindPageLyrics(player);
-    if (route.kind === 'library') library.mount();
-    if (route.kind === 'me') me.render();
-    if (route.kind === 'status') status.mount();
-    library.setView(library.view, { lock: false });
-    qs('.nav')?.classList.remove('is-open');
+    try {
+      closeSheet();
+      queueUI.sheet = null;
+      ui.markCurrent(player.currentSong?.slug || null);
+      ui.refreshFavorites();
+      bindPageLyrics(player);
+      if (route.kind === 'library') library.mount();
+      if (route.kind === 'me') me.render();
+      if (route.kind === 'status') status.mount();
+      library.setView(library.view, { lock: false });
+      qs('.nav')?.classList.remove('is-open');
+    } catch (err) {
+      // 渲染增强失败不能把页面留成半截：内容已经在 DOM 里，给出提示与恢复入口
+      console.error('[app] 页面初始化失败', err);
+      showErrorBanner('这一页的部分交互没能初始化，内容仍可阅读。', { base, detail: String(err?.message || err) });
+    }
   }
 
   router.start();
   app.router = router;
 
   /* ── 全局事件委托：换页后无需重新绑定 ─────────────── */
-  document.addEventListener('click', (e) => handleClick(e, app));
+  // 每个动作都包在边界里：一次失败只影响这次操作，不会变成未捕获 rejection
+  document.addEventListener('click', (e) => {
+    Promise.resolve()
+      .then(() => handleClick(e, app))
+      .catch((err) => {
+        console.error('[app] 操作失败', err);
+        showErrorBanner('这个操作没能完成，页面其它部分仍然可用。', { base, detail: String(err?.message || err) });
+      });
+  });
   document.addEventListener('change', (e) => {
     const t = tgt(e);
-    if (t.matches?.('[data-act="toggle-audio-session"]')) status.toggleAudioSession(t.checked);
+    try {
+      if (t.matches?.('[data-act="toggle-audio-session"]')) status.toggleAudioSession(t.checked);
+    } catch (err) {
+      console.error('[app] 切换失败', err);
+      showErrorBanner('这个开关没能切换。', { base, detail: String(err?.message || err) });
+    }
   });
-  document.addEventListener('keydown', (e) => handleKey(e, app));
+  document.addEventListener('keydown', (e) => {
+    try { handleKey(e, app); } catch (err) { console.error('[app] 快捷键失败', err); }
+  });
+
+  /* ── 兜底边界：任何漏网异常都要给出可见提示与恢复入口 ── */
+  window.addEventListener('error', (e) => {
+    showErrorBanner('页面脚本遇到一个错误，可以重新加载试试。', { base, detail: String(e.message || '') });
+  });
+  window.addEventListener('unhandledrejection', (e) => {
+    showErrorBanner('有一个操作没有正常完成，可以重新加载试试。', { base, detail: String(e.reason?.message || e.reason || '') });
+  });
 
   /* ── 前后台：绝不主动暂停 ─────────────────────────── */
   document.addEventListener('visibilitychange', () => {
@@ -140,6 +194,11 @@ async function boot({ base = BASE } = {}) {
 
   if (store.data.queue?.items?.length) {
     toast('已恢复上次的队列与进度，点播放继续', '', 3600);
+  }
+  // 坏字段被就地修好时给一句温和提示，绝不清空用户的收藏 / 歌单 / 设置
+  if (store.repaired?.length) {
+    console.warn('[store] 已修复的本地字段：', store.repaired.join(', '));
+    toast('有一小部分本地设置读不出来，已恢复默认；收藏和歌单都还在。', '', 5200);
   }
   return app;
 }
@@ -291,10 +350,14 @@ function handleKey(e, app) {
   else if (e.key.toLowerCase() === 'q') { app.queueUI.open(); }
 }
 
-// 只有在真实浏览器文档里才自动启动；测试环境显式调用 boot({ base })
-if (typeof document !== 'undefined' && typeof location !== 'undefined' && /^https?:$/.test(location.protocol)) {
+// 只有在真实浏览器文档里才自动启动。
+// 测试环境显式调用 boot({ base })，并设置 __ZX_TEST__ 抑制自动启动，
+// 否则会 boot 两次 → 事件监听器重复绑定 → 一次点击被处理两遍（收藏被 toggled 两次等）。
+if (typeof document !== 'undefined' && typeof location !== 'undefined'
+  && /^https?:$/.test(location.protocol) && !globalThis.__ZX_TEST__) {
   boot().catch((err) => {
     console.error('[app] 启动失败', err);
-    toast(`播放器启动失败：${err.message}`, 'bad', 8000);
+    // 预渲染的内容还在，所以不做整页替换；只补一条可见提示与恢复入口
+    showErrorBanner('播放器没能启动，页面内容仍然可以阅读。', { base: BASE, detail: String(err?.message || err) });
   });
 }

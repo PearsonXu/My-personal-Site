@@ -111,6 +111,98 @@ export function renderStatus(model, { rel }) {
   };
 }
 
+/**
+ * 独立 404 页。
+ *
+ * ★ 这是白屏故障的第二个根因：GitHub Pages 会把 404.html 挂在**任意深度**的
+ *   未匹配 URL 上（例如 /notes/songs/）。原来它用 `./assets/...` 相对路径，
+ *   于是被按那个深度解析 → CSS / JS 全部 404 → 内容在但样式全丢，看着就是白屏，
+ *   而且刷新仍然停在同一个坏 URL 上，永远恢复不了。
+ *
+ * 因此这一页：
+ *  - 内联全部样式，**零外部请求**，无论部署在什么路径都能正常显示；
+ *  - 链接用运行时 base 修正（app.js 启动时写入 zx.music.base），默认站点根；
+ *  - 提供明确的恢复入口：回首页 / 返回上一页 / 去曲库。
+ */
+export function renderStandaloneNotFound(site) {
+  const name = esc(site.author?.name || '金石竹青');
+  const title = esc(site.title || '音乐小屋');
+  return `<!DOCTYPE html>
+<html lang="${attr(site.lang || 'zh-CN')}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>这一页不在小屋里 — ${title}</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    min-height: 100vh; display: grid; place-items: center; padding: 24px;
+    background: #f5f6f8; color: #1f2329;
+    font: 16px/1.75 -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Helvetica, Arial, sans-serif;
+  }
+  .box { width: 100%; max-width: 560px; background: #fff; border: 1px solid rgba(17,24,39,.09);
+         border-radius: 16px; padding: 32px 28px; box-shadow: 0 10px 30px -18px rgba(20,30,50,.45); }
+  .code { font: 600 12px/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+          letter-spacing: .14em; color: #e02f2f; text-transform: uppercase; }
+  h1 { font-size: 1.5rem; line-height: 1.35; margin: 12px 0 10px; letter-spacing: -.01em; }
+  p { color: #4e5969; font-size: .95rem; }
+  .path { margin-top: 14px; padding: 10px 12px; border-radius: 8px; background: #f7f8fa;
+          border: 1px solid rgba(17,24,39,.09); color: #86909c; word-break: break-all;
+          font: 12px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  .acts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+  a, button { font: inherit; cursor: pointer; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+         min-height: 44px; padding: 10px 20px; border-radius: 999px; text-decoration: none;
+         border: 1px solid rgba(17,24,39,.16); background: transparent; color: #1f2329; }
+  .btn--pri { background: #e02f2f; color: #fff; border-color: transparent; font-weight: 600; }
+  .btn:hover { border-color: rgba(17,24,39,.28); }
+  .btn--pri:hover { border-color: transparent; }
+  .btn:focus-visible { outline: 2px solid #e02f2f; outline-offset: 3px; }
+  .foot { margin-top: 20px; font-size: .82rem; color: #86909c; }
+  @media (max-width: 480px) { .box { padding: 24px 20px; } .acts .btn { flex: 1 1 100%; } }
+</style>
+</head>
+<body>
+<div class="box">
+  <p class="code">404 · Not Found</p>
+  <h1>这一页不在小屋里</h1>
+  <p>链接可能拼错了，或者这首歌还没放进来。${name}的小屋还在慢慢布置。</p>
+  <p class="path" id="badPath">—</p>
+  <div class="acts">
+    <a class="btn btn--pri" id="goHome" href="/">回首页</a>
+    <button class="btn" type="button" id="goBack">返回上一页</button>
+    <a class="btn" id="goLib" href="/songs/">去曲库</a>
+  </div>
+  <p class="foot">如果反复出现，麻烦把上面这个地址告诉我。</p>
+</div>
+<script>
+(function () {
+  var bad = document.getElementById('badPath');
+  if (bad) bad.textContent = location.pathname + location.search;
+  // 站点可能部署在子路径下：用 app.js 记录的 base 修正链接，默认站点根
+  var base = '/';
+  try {
+    var b = localStorage.getItem('zx.music.base');
+    if (typeof b === 'string' && b.charAt(0) === '/' && b.charAt(b.length - 1) === '/' && b.length < 120) base = b;
+  } catch (e) { /* 存储不可用就用根路径 */ }
+  var home = document.getElementById('goHome');
+  var lib = document.getElementById('goLib');
+  if (home) home.setAttribute('href', base);
+  if (lib) lib.setAttribute('href', base + 'songs/');
+  var back = document.getElementById('goBack');
+  if (back) back.addEventListener('click', function () {
+    if (history.length > 1) history.back();
+    else location.assign(base);
+  });
+})();
+</script>
+</body>
+</html>
+`;
+}
+
 export function renderNotFound(model, { rel }) {
   const { site, songs } = model;
   const body = `<section class="sec"><div class="wrap">

@@ -797,6 +797,69 @@ async function main() {
       await page.close();
     }
   }
+  /* ── 白屏故障回归：跨深度导航链路 + 404 页自洽 ───── */
+  for (const viewport of ['desktop', 'mobile']) {
+    const group = `白屏回归 · ${viewport}`;
+    const page = await newPage(browser, { viewport, theme: 'cloud', layout: viewport });
+    await goto(page, `${BASE}/`);
+    await check(group, '连续跨深度导航都落在正确路径且样式生效', async () => {
+      const bad = [];
+      for (const [label, expect] of [['手记', '/notes/'], ['曲库', '/songs/'], ['专辑', '/albums/'], ['我的', '/me/'], ['首页', '/']]) {
+        await page.evaluate((l) => [...document.querySelectorAll('.nav__a')].find((a) => a.textContent.includes(l))?.click(), label);
+        await sleep(600);
+        const m = await page.evaluate(() => ({
+          path: location.pathname,
+          sheets: [...document.styleSheets].length,
+          head: getComputedStyle(document.querySelector('.head')).position,
+          len: document.getElementById('main').textContent.trim().length
+        }));
+        if (m.path !== expect) bad.push(`${label}→${m.path}（期望 ${expect}）`);
+        if (m.head !== 'sticky' || m.sheets < 4) bad.push(`${label} 样式丢失`);
+        if (m.len < 20) bad.push(`${label} 内容为空`);
+      }
+      assert(bad.length === 0, bad.join('; '));
+      return '5 次跨深度导航路径与样式全部正确';
+    });
+    await check(group, '导航后刷新仍正常', async () => {
+      await reload(page);
+      const m = await page.evaluate(() => ({
+        len: document.getElementById('main').textContent.trim().length,
+        head: getComputedStyle(document.querySelector('.head')).position
+      }));
+      assert(m.len > 50 && m.head === 'sticky', JSON.stringify(m));
+      return `len=${m.len}`;
+    });
+    await page.close();
+  }
+
+  {
+    const page = await newPage(browser, { viewport: 'desktop' });
+    await page.goto(`${BASE}/notes/songs/`, { waitUntil: 'domcontentloaded' });
+    await sleep(500);
+    await check('白屏回归 · 404 页', '任意深度的 404 页零外部依赖且样式生效', async () => {
+      const m = await page.evaluate(() => ({
+        boxBg: getComputedStyle(document.querySelector('.box')).backgroundColor,
+        len: document.body.textContent.trim().length,
+        home: document.getElementById('goHome').getAttribute('href'),
+        path: document.getElementById('badPath').textContent,
+        external: [...document.querySelectorAll('link[rel="stylesheet"],script[src],img')].length
+      }));
+      assert(m.external === 0, `404 页仍引用 ${m.external} 个外部资源`);
+      assert(m.boxBg === 'rgb(255, 255, 255)', `样式未生效：${m.boxBg}`);
+      assert(m.len > 40 && m.home === '/' && m.path === '/notes/songs/', JSON.stringify(m));
+      return '内联样式生效、显示坏地址、回首页链接正确';
+    });
+    await check('白屏回归 · 404 页', '点「回首页」能恢复', async () => {
+      await page.click('#goHome');
+      await page.waitForFunction(() => !!window.__music, { timeout: 15000 });
+      await sleep(300);
+      const m = await page.evaluate(() => ({ path: location.pathname, len: document.getElementById('main').textContent.trim().length }));
+      assert(m.path === '/' && m.len > 50, JSON.stringify(m));
+      return m.path;
+    });
+    await page.close();
+  }
+
   /* ── 自动适配：窄屏 / 平板 / 宽屏 ───────────────── */
   for (const [label, vp] of [['窄屏 360×740', { width: 360, height: 740 }], ['平板 768×1024', { width: 768, height: 1024 }], ['宽屏 1920×1080', { width: 1920, height: 1080 }]]) {
     const page = await newPage(browser, { viewport: 'desktop', theme: 'cloud', layout: 'auto' });

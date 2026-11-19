@@ -55,6 +55,8 @@ export async function makeApp(startPath = '/', { storage } = {}) {
   audio.pause = () => { paused = true; audio.dispatchEvent(new window.Event('pause')); };
   audio.load = () => { audio.dispatchEvent(new window.Event('loadstart')); };
 
+  // 抑制 app.js 的自动启动：测试里只允许显式 boot 一次，避免重复绑定监听器
+  globalThis.__ZX_TEST__ = true;
   const { boot } = await import('../../assets/js/app.js');
   const app = await boot({ base: '/' });
   return { window, app, audio, errors };

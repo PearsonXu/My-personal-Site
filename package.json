@@ -22,7 +22,8 @@
     "verify": "npm run typecheck && npm run build:demo && npm test",
     "browser:check": "node tools/browser-check.mjs",
     "verify:live": "node tools/verify-live.mjs",
-    "browser:live": "node tools/browser-live.mjs"
+    "browser:live": "node tools/browser-live.mjs",
+    "probe:regression": "node tools/probe-regression.mjs"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",

@@ -29,7 +29,7 @@ import { renderLibrary } from './lib/templates/pages/library.mjs';
 import { renderSong } from './lib/templates/pages/song.mjs';
 import { renderAlbums, renderPlaylists, renderCollection } from './lib/templates/pages/collection.mjs';
 import { renderNotes, renderNote } from './lib/templates/pages/notes.mjs';
-import { renderAbout, renderMe, renderStatus, renderNotFound } from './lib/templates/pages/misc.mjs';
+import { renderAbout, renderMe, renderStatus, renderNotFound, renderStandaloneNotFound } from './lib/templates/pages/misc.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -166,9 +166,9 @@ async function main() {
     addPage(routeFor('note', note.slug), renderNote(model, { rel: '../../', note, qrSvg: await qrFor('note', note.slug) }));
   }
 
-  // 404：GitHub Pages 用根目录的 404.html
-  const nf = renderNotFound(model, { rel: './' });
-  write(path.join(OUT, '404.html'), renderDocument({ site, rel: './', kind: nf.kind, slug: null, meta: nf.meta, body: nf.body }));
+  // 404：GitHub Pages 会把 404.html 挂在任意深度的未匹配 URL 上，
+  // 所以它必须零外部依赖、内联样式，否则 CSS/JS 会按错误深度解析而全部 404 → 白屏。
+  write(path.join(OUT, '404.html'), renderStandaloneNotFound(site));
   /* 7. GitHub Pages 必需 / 有益文件 */
   const cname = path.join(ROOT, 'CNAME');
   if (fs.existsSync(cname)) fs.copyFileSync(cname, path.join(OUT, 'CNAME'));

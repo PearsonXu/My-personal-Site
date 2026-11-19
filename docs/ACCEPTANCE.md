@@ -10,8 +10,9 @@
 | 项 | 命令 | 结果 |
 | --- | --- | --- |
 | 类型检查 | `npm run typecheck`（`tsc --noEmit`，checkJs） | **PASS · 0 error** |
-| 单元 + jsdom 集成 | `npm test` | **PASS · 144 / 144** |
-| 真实浏览器验收 | `npm run browser:check` | **PASS · 207 / 207** |
+| 单元 + jsdom 集成 | `npm test` | **PASS · 164 / 164** |
+| 真实浏览器验收 | `npm run browser:check` | **PASS · 213 / 213** |
+| 白屏故障专项取证 | `npm run probe:regression` | **PASS · 73 / 73** |
 | 生产构建 | `npm run build` | **PASS** · 排除 DEMO，空状态正确 |
 | DEMO 构建 | `npm run build:demo` | **PASS** · 15 页面 |
 | 产物完整性 | `node tools/check-assets.mjs --dist dist` | **PASS** |
@@ -32,7 +33,23 @@ Content-Range: bytes 100000-101023/576783
 `/notes/<slug>/`、`/about/`、`/me/`、`/status/` 全部 200；不存在的路径 404。
 子路径模式 `BASE_PATH=/My-personal-Site` 下页面与深层相对资源同样全部 200。
 
-## 二、真实浏览器逐项（207 项，明细见 `docs/BROWSER-RESULTS.md`）
+## 白屏故障（已修复）
+
+根因、证据与恢复办法见 `docs/INCIDENT-BLANK-PAGE.md`。回归覆盖：
+
+| 项 | 在哪验证 |
+| --- | --- |
+| 跨深度连续导航路径与样式正确（桌面 / 手机） | `probe-regression` 3 条链路 + B:「白屏回归 · desktop / mobile」 |
+| 从深层页面启动同样正确 | `probe-regression` + `app-boot` |
+| 导航后刷新仍正常 | 同上 |
+| 404 页零外部依赖、样式生效、能恢复 | `regression.test.mjs` + B:「白屏回归 · 404 页」 |
+| 旧数据用户（dark / grid / lyrics）正常 | `probe-regression` |
+| 坏字段只修坏字段，收藏与最近播放保留 | `regression.test.mjs` + `probe-regression` |
+| 整块 JSON 损坏时备份原文并继续运行 | 同上 |
+| 错误横幅与恢复入口（内联样式） | `regression.test.mjs` |
+| 点击 / 渲染 / 启动都有错误边界 | `regression.test.mjs` |
+
+## 二、真实浏览器逐项（213 项，明细见 `docs/BROWSER-RESULTS.md`）
 
 覆盖 **cloud / forest / midnight × 桌面 1440×900 / 手机 390×844** 六种组合，
 每组合跑完整功能清单 + 布局健康检查，并出 5 张截图（共 36 张，见 `docs/screenshots/`）。

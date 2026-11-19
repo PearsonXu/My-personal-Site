@@ -80,47 +80,53 @@ export class Router {
     if (this._controller) this._controller.abort();
     this._controller = new AbortController();
     document.documentElement.dataset.navigating = 'true';
+    try {
+      const res = await fetch(href, { signal: this._controller.signal, headers: { 'X-ZX-Router': '1' } });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const html = await res.text();
+      if (token !== this._token) return; // 已经被更新的导航取代
 
-    const res = await fetch(href, { signal: this._controller.signal, headers: { 'X-ZX-Router': '1' } });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const html = await res.text();
-    if (token !== this._token) return; // 已经被更新的导航取代
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const incoming = /** @type {any} */ (doc.querySelector('#page-root'));
+      const target = qs('#page-root');
+      if (!incoming || !target) throw new Error('目标页面缺少 #page-root');
 
-    const doc = new DOMParser().parseFromString(html, 'text/html');
-    const incoming = /** @type {any} */ (doc.querySelector('#page-root'));
-    const target = qs('#page-root');
-    if (!incoming || !target) throw new Error('目标页面缺少 #page-root');
+      // ★ 只换内容，节点本身与播放器保持不动
+      target.innerHTML = incoming.innerHTML;
+      target.dataset.page = incoming.dataset.page || '';
+      // 换进来是空的就当失败处理，交给上层回退为整页跳转，绝不留下空白页
+      if (!target.textContent.trim() && !target.querySelector('img,svg,canvas')) {
+        throw new Error('目标页面内容为空');
+      }
 
-    // ★ 只换内容，节点本身与播放器保持不动
-    target.innerHTML = incoming.innerHTML;
-    target.dataset.page = incoming.dataset.page || '';
+      document.title = doc.title;
+      for (const [selector, attr] of META_SELECTORS) {
+        const from = doc.querySelector(selector);
+        const to = qs(selector);
+        if (from && to) to.setAttribute(attr, from.getAttribute(attr));
+      }
+      const body = doc.body;
+      document.body.dataset.kind = body.dataset.kind || '';
+      if (body.dataset.slug) document.body.dataset.slug = body.dataset.slug;
+      else delete document.body.dataset.slug;
 
-    document.title = doc.title;
-    for (const [selector, attr] of META_SELECTORS) {
-      const from = doc.querySelector(selector);
-      const to = qs(selector);
-      if (from && to) to.setAttribute(attr, from.getAttribute(attr));
+      this._syncNav();
+      const route = parseRoute(new URL(href).pathname, this.base) || { kind: 'home', slug: null };
+      this.current = route;
+
+      const hash = new URL(href).hash;
+      if (hash) {
+        const el = qs(hash);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        else window.scrollTo({ top: 0 });
+      } else {
+        window.scrollTo({ top: 0 });
+      }
+      this.onNavigate(route, { initial: false, push });
+    } finally {
+      // 无论成功失败都要摘掉标记，否则「导航中」状态会永久残留
+      if (token === this._token) delete document.documentElement.dataset.navigating;
     }
-    const body = doc.body;
-    document.body.dataset.kind = body.dataset.kind || '';
-    if (body.dataset.slug) document.body.dataset.slug = body.dataset.slug;
-    else delete document.body.dataset.slug;
-
-    this._syncNav();
-    const route = parseRoute(new URL(href).pathname, this.base) || { kind: 'home', slug: null };
-    this.current = route;
-
-    const hash = new URL(href).hash;
-    if (hash) {
-      const el = qs(hash);
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      else window.scrollTo({ top: 0 });
-    } else {
-      window.scrollTo({ top: 0 });
-    }
-
-    delete document.documentElement.dataset.navigating;
-    this.onNavigate(route, { initial: false, push });
   }
 
   _syncNav() {

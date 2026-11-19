@@ -1,0 +1,210 @@
+#!/usr/bin/env node
+/**
+ * tools/probe-regression.mjs — 白屏故障的取证 / 回归验证。
+ * 真实浏览器跑触发路径，抓 Console / 失败请求 / URL，并区分
+ * 「整页未渲染」与「内容在但样式丢失」。
+ */
+import puppeteer from 'puppeteer-core';
+import { startServer } from './serve.mjs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const PORT = Number((process.argv.find((a) => a.startsWith('--port=')) || '--port=8410').split('=')[1]);
+const B = `http://127.0.0.1:${PORT}`;
+const server = startServer(path.join(ROOT, 'dist'), PORT);
+await new Promise((r) => setTimeout(r, 300));
+const browser = await puppeteer.launch({
+  executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+  headless: 'new', args: ['--no-sandbox', '--mute-audio', '--disable-dev-shm-usage']
+});
+
+let pass = 0; let fail = 0;
+const ok = (n, d = '') => { pass++; console.log(`  ✓ ${n}${d ? ` — ${d}` : ''}`); };
+const bad = (n, d = '') => { fail++; console.log(`  ✗ ${n} — ${d}`); };
+const check = (n, cond, d = '') => (cond ? ok(n, d) : bad(n, d));
+
+const snap = (page) => page.evaluate(() => {
+  const main = document.getElementById('main');
+  const head = document.querySelector('.head');
+  return {
+    url: location.href,
+    kind: document.body.dataset.kind,
+    mainTextLen: main ? main.textContent.trim().length : 0,
+    sheets: [...document.styleSheets].length,
+    headPosition: head ? getComputedStyle(head).position : null,
+    theme: document.documentElement.dataset.theme,
+    layout: document.documentElement.dataset.layout,
+    banner: !!document.querySelector('[role="alert"]')
+  };
+});
+
+async function newPage({ seed, viewport = 'desktop' } = {}) {
+  const ctx = await browser.createBrowserContext();
+  const page = await ctx.newPage();
+  await page.setViewport(viewport === 'mobile'
+    ? { width: 390, height: 844, deviceScaleFactor: 2, isMobile: true, hasTouch: true }
+    : { width: 1440, height: 900 });
+  const errors = []; const failed = [];
+  page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
+  page.on('console', (m) => { if (m.type() === 'error') errors.push(`console: ${m.text()}`); });
+  page.on('response', (r) => { if (r.status() >= 400) failed.push(`${r.status()} ${r.url()}`); });
+  page.on('requestfailed', (r) => failed.push(`FAILED ${r.url()}`));
+  if (seed) {
+    await page.evaluateOnNewDocument((s) => {
+      for (const [k, v] of Object.entries(s)) localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v));
+    }, seed);
+  }
+  return { page, errors, failed };
+}
+
+const navTo = async (page, label) => {
+  await page.evaluate((l) => [...document.querySelectorAll('.nav__a')].find((a) => a.textContent.includes(l))?.click(), label);
+  await new Promise((r) => setTimeout(r, 650));
+};
+
+/** 样式生效判据：head 必须 sticky（只有 site.css 给），且样式表 ≥4 */
+const styled = (s) => s.headPosition === 'sticky' && s.sheets >= 4;
+
+async function chain(label, { start, seed, viewport }) {
+  console.log(`\n── ${label} ──`);
+  const { page, errors, failed } = await newPage({ seed, viewport });
+  await page.goto(`${B}${start}`, { waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() => !!window.__music, { timeout: 15000 });
+  for (const [lbl, expect] of [['手记', '/notes/'], ['曲库', '/songs/'], ['专辑', '/albums/'], ['我的', '/me/'], ['首页', '/']]) {
+    await navTo(page, lbl);
+    const s = await snap(page);
+    check(`点「${lbl}」落在 ${expect}`, new URL(s.url).pathname === expect, s.url);
+    check(`${expect} 样式生效`, styled(s), `sheets=${s.sheets} head=${s.headPosition} len=${s.mainTextLen}`);
+  }
+  check('全程无失败请求', failed.length === 0, failed.slice(0, 3).join(' | '));
+  check('全程无 Console 错误', errors.length === 0, errors.slice(0, 3).join(' | '));
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await new Promise((r) => setTimeout(r, 600));
+  const after = await snap(page);
+  check('刷新后仍正常', after.mainTextLen > 50 && styled(after), `kind=${after.kind}`);
+  await page.close();
+}
+await chain('桌面·从首页出发', { start: '/' });
+await chain('桌面·从深层单曲页出发', { start: '/songs/demo-night-ferry/' });
+await chain('手机·从首页出发', { start: '/', viewport: 'mobile' });
+await chain('旧数据用户（dark + grid + lyrics）', {
+  start: '/',
+  seed: { 'zx.music.theme': 'dark', 'zx.music.v1': { view: 'grid', stage: 'lyrics', viewLocked: true, stageLocked: true, favorites: ['demo-night-ferry'] } }
+});
+
+/* ── 坏字段用户：只修坏字段，收藏必须保住 ─────────── */
+{
+  console.log('\n── 坏字段本地数据 ──');
+  const seed = {
+    'zx.music.v1': {
+      view: '不存在的视图', stage: 42, mode: '乱写', volume: 'loud', position: -5,
+      muted: 'yes', queue: { items: 'oops' },
+      favorites: ['demo-night-ferry', 123, null, 'demo-paper-boat'],
+      recent: [null, { slug: 'demo-night-ferry', at: 1 }, 'bad']
+    }
+  };
+  const { page, errors } = await newPage({ seed });
+  await page.goto(`${B}/`, { waitUntil: 'domcontentloaded' });
+  const booted = await page.waitForFunction(() => !!window.__music, { timeout: 15000 }).then(() => true).catch(() => false);
+  check('坏字段下应用仍能启动', booted);
+  if (booted) {
+    const d = await page.evaluate(() => ({
+      favs: window.__music.store.data.favorites,
+      recent: window.__music.store.data.recent,
+      view: window.__music.store.data.view,
+      mode: window.__music.store.data.mode,
+      volume: window.__music.store.data.volume,
+      repaired: window.__music.store.repaired
+    }));
+    check('有效收藏被保留', d.favs.includes('demo-night-ferry') && d.favs.includes('demo-paper-boat'), JSON.stringify(d.favs));
+    check('坏收藏条目被剔除', d.favs.length === 2);
+    check('有效最近播放被保留', d.recent.length === 1 && d.recent[0].slug === 'demo-night-ferry');
+    check('坏字段回退默认', d.view === 'list' && d.mode === 'order' && d.volume === 1, JSON.stringify(d));
+    check('记录了被修字段', Array.isArray(d.repaired) && d.repaired.length > 0, d.repaired.join(','));
+    // 播一首歌：pushRecent 会遍历 recent，坏条目曾在这里抛异常
+    await page.click('[data-act="play-song"]').catch(() => {});
+    await new Promise((r) => setTimeout(r, 900));
+    const st = await page.evaluate(() => window.__music.player.state);
+    check('坏数据修复后能正常播放', st === 'playing', st);
+  }
+  check('坏字段场景无未捕获异常', errors.filter((e) => e.startsWith('pageerror')).length === 0, errors.slice(0, 2).join(' | '));
+  await page.close();
+}
+
+/* ── 整块 JSON 损坏：备份 + 默认值继续跑 ──────────── */
+{
+  console.log('\n── 本地数据整块损坏 ──');
+  const { page } = await newPage({ seed: { 'zx.music.v1': '{坏掉的 JSON' } });
+  await page.goto(`${B}/`, { waitUntil: 'domcontentloaded' });
+  const booted = await page.waitForFunction(() => !!window.__music, { timeout: 15000 }).then(() => true).catch(() => false);
+  check('损坏 JSON 下仍能启动', booted);
+  if (booted) {
+    const backup = await page.evaluate(() => localStorage.getItem('zx.music.v1.broken'));
+    check('原文已备份，未静默销毁', backup === '{坏掉的 JSON', String(backup));
+  }
+  await page.close();
+}
+
+/* ── 主题 / 视图 / 播放 交叉操作后再导航 ─────────── */
+{
+  console.log('\n── 主题 / 视图 / 播放 交叉操作 ──');
+  const { page, errors, failed } = await newPage();
+  await page.goto(`${B}/`, { waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() => !!window.__music);
+  for (const t of ['forest', 'midnight', 'cloud']) {
+    await page.evaluate((x) => window.__music.appearance.setTheme(x, { announce: false }), t);
+    await new Promise((r) => setTimeout(r, 120));
+  }
+  for (const v of ['grid', 'vinyl', 'list']) {
+    await page.evaluate((x) => window.__music.library.setView(x), v);
+    await new Promise((r) => setTimeout(r, 120));
+  }
+  await page.click('[data-act="play-song"]');
+  await page.waitForFunction(() => window.__music.player.state === 'playing', { timeout: 15000 });
+  await navTo(page, '手记');
+  await navTo(page, '曲库');
+  const s = await snap(page);
+  check('交叉操作后导航仍落在 /songs/', new URL(s.url).pathname === '/songs/', s.url);
+  check('交叉操作后样式生效', styled(s));
+  check('交叉操作后仍在播放', await page.evaluate(() => window.__music.player.state === 'playing'));
+  check('交叉操作无失败请求', failed.length === 0, failed.slice(0, 3).join(' | '));
+  check('交叉操作无 Console 错误', errors.length === 0, errors.slice(0, 3).join(' | '));
+  await page.close();
+}
+
+/* ── 直接打开不存在的深层 URL：404 页必须自洽 ─────── */
+{
+  console.log('\n── 深层不存在 URL 的 404 页 ──');
+  const { page, failed } = await newPage();
+  await page.goto(`${B}/notes/songs/`, { waitUntil: 'domcontentloaded' });
+  await new Promise((r) => setTimeout(r, 500));
+  const info = await page.evaluate(() => {
+    const box = document.querySelector('.box');
+    const home = document.getElementById('goHome');
+    return {
+      hasBox: !!box,
+      bg: getComputedStyle(document.body).backgroundColor,
+      boxBg: box ? getComputedStyle(box).backgroundColor : null,
+      textLen: document.body.textContent.trim().length,
+      homeHref: home ? home.getAttribute('href') : null,
+      path: document.getElementById('badPath')?.textContent
+    };
+  });
+  check('404 页有内容', info.textLen > 40, `len=${info.textLen}`);
+  check('404 页样式生效（内联，不依赖外部 CSS）', info.boxBg === 'rgb(255, 255, 255)', `boxBg=${info.boxBg}`);
+  check('404 页显示坏地址', info.path === '/notes/songs/', String(info.path));
+  check('404 页回首页链接指向站点根', info.homeHref === '/', String(info.homeHref));
+  const assetFails = failed.filter((u) => /\/assets\//.test(u));
+  check('404 页不再请求任何 assets（零外部依赖）', assetFails.length === 0, assetFails.slice(0, 3).join(' | '));
+  await page.click('#goHome');
+  await new Promise((r) => setTimeout(r, 900));
+  const back = await snap(page);
+  check('从 404 页点「回首页」能恢复', new URL(back.url).pathname === '/' && back.mainTextLen > 50, back.url);
+  await page.close();
+}
+
+console.log(`\n══ 回归取证：${pass} 通过 · ${fail} 失败 ══`);
+await browser.close();
+server.close();
+process.exit(fail ? 1 : 0);

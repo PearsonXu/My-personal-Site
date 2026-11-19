@@ -90,6 +90,47 @@ export function setSvg(id, name, size = 22) {
   node.innerHTML = icon(name, { size });
 }
 
+/**
+ * 可见的错误横幅 + 恢复入口。
+ *
+ * 刻意用**内联样式**：故障场景里 CSS 本身可能 404（例如被挂到错误深度的 404 页），
+ * 那时依赖 class 的提示会跟着一起看不见。内联样式保证任何情况下都能读到、点到。
+ * 同一时间只保留一条，避免异常风暴刷屏。
+ */
+let errorBanner = null;
+export function showErrorBanner(message, { base = '/', detail = '' } = {}) {
+  if (typeof document === 'undefined') return;
+  if (errorBanner) errorBanner.remove();
+  const wrap = document.createElement('div');
+  wrap.setAttribute('role', 'alert');
+  wrap.style.cssText = [
+    'position:fixed', 'left:12px', 'right:12px', 'top:12px', 'z-index:9999',
+    'margin:0 auto', 'max-width:640px', 'padding:14px 16px',
+    'background:#fff', 'color:#1f2329', 'border:1px solid rgba(17,24,39,.16)',
+    'border-left:4px solid #d92b2b', 'border-radius:12px',
+    'box-shadow:0 12px 32px -16px rgba(20,30,50,.5)',
+    'font:14px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",Helvetica,Arial,sans-serif'
+  ].join(';');
+  const home = `${base}`.endsWith('/') ? base : `${base}/`;
+  wrap.innerHTML = `
+    <p style="margin:0 0 4px;font-weight:600">页面出了点问题</p>
+    <p style="margin:0;color:#4e5969">${escapeHtml(message)}</p>
+    ${detail ? `<p style="margin:6px 0 0;color:#86909c;font-size:12px;word-break:break-all">${escapeHtml(detail)}</p>` : ''}
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">
+      <button type="button" data-err="reload" style="min-height:40px;padding:8px 16px;border-radius:999px;border:1px solid transparent;background:#e02f2f;color:#fff;font:inherit;font-weight:600;cursor:pointer">重新加载</button>
+      <a href="${home}" data-err="home" style="display:inline-flex;align-items:center;min-height:40px;padding:8px 16px;border-radius:999px;border:1px solid rgba(17,24,39,.16);color:#1f2329;text-decoration:none">回首页</a>
+      <button type="button" data-err="dismiss" style="min-height:40px;padding:8px 16px;border-radius:999px;border:1px solid rgba(17,24,39,.16);background:transparent;color:#4e5969;font:inherit;cursor:pointer">先关掉</button>
+    </div>`;
+  wrap.addEventListener('click', (e) => {
+    const act = tgt(e).closest?.('[data-err]')?.dataset.err;
+    if (act === 'reload') location.reload();
+    else if (act === 'dismiss') { wrap.remove(); errorBanner = null; }
+  });
+  document.body.appendChild(wrap);
+  errorBanner = wrap;
+  return wrap;
+}
+
 /** 复制文本：优先 Clipboard API，失败回退到 execCommand，再失败就让用户手动复制 */
 export async function copyText(text) {
   try {

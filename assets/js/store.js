@@ -5,10 +5,17 @@
  * 跨设备同步属于 adapters.js 里的扩展点，未配置时页面会如实显示「未配置」。
  */
 
+import { MODES } from './core/queue.js';
+import { isSafeSlug } from './core/util.js';
+
 const KEY = 'zx.music.v1';
+const BROKEN_KEY = 'zx.music.v1.broken';
 const THEME_KEY = 'zx.music.theme';
 const LAYOUT_KEY = 'zx.music.layout';
 const RECENT_LIMIT = 50;
+
+const VIEWS = ['list', 'grid', 'vinyl'];
+const STAGES = ['cover', 'vinyl', 'lyrics'];
 
 /** 三套外观。cloud 是首次访问的默认值，系统深色偏好不参与决策。 */
 export const THEMES = ['cloud', 'forest', 'midnight'];
@@ -44,6 +51,83 @@ const DEFAULTS = {
   updatedAt: 0
 };
 
+/**
+ * 逐字段校验 + 就地回退。
+ *
+ * 原则：**只替换坏掉的字段**，有效数据（收藏、最近播放、队列…）一律保留。
+ * 之前是 `{...DEFAULTS, ...parsed}` 全盘照收，任何一个字段形状不对
+ * 都可能在后续渲染里抛异常，而且刷新会再次读到同一份坏数据。
+ *
+ * @param {any} raw 解析出来的对象
+ * @param {string[]} repaired 收集被修过的字段名，便于给用户一个温和提示
+ */
+export function sanitizeState(raw, repaired = []) {
+  const out = { ...DEFAULTS };
+  const fix = (field) => { repaired.push(field); };
+  const num = (v, min, max, fallback, field) => {
+    if (typeof v === 'number' && Number.isFinite(v) && v >= min && v <= max) return v;
+    if (v !== undefined) fix(field);
+    return fallback;
+  };
+  const bool = (v, fallback, field) => {
+    if (typeof v === 'boolean') return v;
+    if (v !== undefined) fix(field);
+    return fallback;
+  };
+  const pick = (v, allowed, fallback, field) => {
+    if (allowed.includes(v)) return v;
+    if (v !== undefined) fix(field);
+    return fallback;
+  };
+
+  out.version = num(raw.version, 1, 99, 1, 'version');
+  out.position = num(raw.position, 0, 24 * 3600, 0, 'position');
+  out.volume = num(raw.volume, 0, 1, 1, 'volume');
+  out.updatedAt = num(raw.updatedAt, 0, Number.MAX_SAFE_INTEGER, 0, 'updatedAt');
+  out.muted = bool(raw.muted, false, 'muted');
+  out.audioSession = bool(raw.audioSession, false, 'audioSession');
+  out.viewLocked = bool(raw.viewLocked, false, 'viewLocked');
+  out.stageLocked = bool(raw.stageLocked, false, 'stageLocked');
+  out.mode = pick(raw.mode, MODES, 'order', 'mode');
+  out.view = pick(raw.view, VIEWS, 'list', 'view');
+  out.stage = pick(raw.stage, STAGES, 'cover', 'stage');
+  out.theme = normalizeTheme(raw.theme);
+  out.layout = normalizeLayout(raw.layout);
+
+  // 队列：形状不对就只丢队列，不动收藏
+  if (raw.queue == null) out.queue = null;
+  else if (typeof raw.queue === 'object' && !Array.isArray(raw.queue) && Array.isArray(raw.queue.items)) {
+    const items = raw.queue.items.filter((it) => it && typeof it === 'object' && isSafeSlug(it.slug));
+    if (items.length !== raw.queue.items.length) fix('queue.items');
+    out.queue = {
+      items: items.map((it) => ({ id: typeof it.id === 'string' ? it.id : undefined, slug: it.slug })),
+      cursor: Number.isInteger(raw.queue.cursor) ? raw.queue.cursor : -1,
+      mode: MODES.includes(raw.queue.mode) ? raw.queue.mode : out.mode,
+      history: Array.isArray(raw.queue.history) ? raw.queue.history.filter((x) => typeof x === 'string') : [],
+      bag: Array.isArray(raw.queue.bag) ? raw.queue.bag.filter((x) => typeof x === 'string') : []
+    };
+  } else { fix('queue'); out.queue = null; }
+
+  // 收藏：逐条过滤，保留合法的 slug
+  if (Array.isArray(raw.favorites)) {
+    const good = raw.favorites.filter((s) => isSafeSlug(s));
+    if (good.length !== raw.favorites.length) fix('favorites');
+    out.favorites = [...new Set(good)];
+  } else if (raw.favorites !== undefined) { fix('favorites'); }
+
+  // 最近播放：逐条过滤，坏条目不会让 pushRecent 里的 r.slug 抛异常
+  if (Array.isArray(raw.recent)) {
+    const good = raw.recent.filter((r) => r && typeof r === 'object' && isSafeSlug(r.slug));
+    if (good.length !== raw.recent.length) fix('recent');
+    out.recent = good.slice(0, RECENT_LIMIT).map((r) => ({
+      slug: r.slug,
+      at: typeof r.at === 'number' && Number.isFinite(r.at) ? r.at : 0
+    }));
+  } else if (raw.recent !== undefined) { fix('recent'); }
+
+  return out;
+}
+
 export class Store {
   constructor(storage) {
     // 某些环境（隐私模式 / 被策略禁用）连读取 localStorage 都会抛异常，必须整体兜住
@@ -59,20 +143,26 @@ export class Store {
   }
 
   read() {
+    this.repaired = [];
     if (!this.available) return this.data;
+    let raw = null;
     try {
-      const raw = this.storage.getItem(KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (parsed && typeof parsed === 'object') {
-          this.data = { ...DEFAULTS, ...parsed };
-          if (!Array.isArray(this.data.favorites)) this.data.favorites = [];
-          if (!Array.isArray(this.data.recent)) this.data.recent = [];
-        }
-      }
+      raw = this.storage.getItem(KEY);
     } catch {
-      this.available = false; // 隐私模式 / 配额耗尽：静默降级为内存态
+      this.available = false; // 连读都不行（隐私模式 / 被策略禁用）：降级为内存态
+      return this.data;
     }
+    if (!raw) return this.data;
+
+    let parsed = null;
+    try { parsed = JSON.parse(raw); } catch { parsed = null; }
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+      // 整块读不出来：留一份原文备份，不要静默销毁；本次用默认值继续跑
+      this.repaired.push('json');
+      try { this.storage.setItem(BROKEN_KEY, raw); } catch { /* ignore */ }
+      return this.data;
+    }
+    this.data = sanitizeState(parsed, this.repaired);
     return this.data;
   }
 

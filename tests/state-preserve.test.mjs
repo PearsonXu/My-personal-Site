@@ -125,6 +125,7 @@ test('state · 非法 / 旧版存储值启动时回退或迁移', async () => {
 test('state · 用户手动选过展示方式后，切主题不再覆盖它', async () => {
   const { window, app } = await makeApp('/songs/');
   click(window, window.document.querySelector('[data-act="set-view"][data-view="vinyl"]'));
+  await wait(); // 点击分发经过错误边界的微任务
   assert.equal(app.store.data.viewLocked, true);
   app.appearance.setTheme('cloud', { announce: false });
   assert.equal(app.library.view, 'vinyl', '用户的选择被主题预设覆盖了');

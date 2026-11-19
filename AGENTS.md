@@ -52,6 +52,13 @@
 13. **控件图标一律用 `core/icons.js` 的内联 SVG**，禁止 Emoji / Unicode 字符 / 图标字体。
     主按钮同时渲染播放与暂停两个 SVG，靠 `data-state` 切 display，**不要用 JS 换 innerHTML**。
     hover 不做缩放（会让几何尺寸漂移）。详见 `docs/PLAYER-CONTROLS.md`。
+14. **`#page-root` 之外的任何链接都必须在启动时绝对化**（`absolutizeChromeLinks`）。
+    外壳不随路由替换，相对 href 会被 pushState 后的新深度重新解析 → 指向不存在的路径 → 白屏。
+    详见 `docs/INCIDENT-BLANK-PAGE.md`。
+15. **404.html 必须零外部依赖、内联样式**。它会被挂在任意深度的 URL 上，
+    任何相对路径的 CSS/JS 都会 404，退化成没样式没脚本的白屏。
+16. **持久化状态必须逐字段校验**（`sanitizeState`）。坏字段单独回退，
+    有效收藏 / 最近播放 / 队列一律保留；禁止用「清空全部数据」当作修复手段。
 
 ## 常用命令
 

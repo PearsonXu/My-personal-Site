@@ -52,7 +52,8 @@ npm run dev          # 含 DEMO 合成音的构建 + 本地服务器（真的支
 | `npm run serve` | 本地服务器，支持 Range / 206 |
 | `npm run typecheck` | `tsc --noEmit`（checkJs） |
 | `npm test` | 单元 + jsdom 集成测试（含三主题 × 桌面/手机状态保留） |
-| `npm run browser:check` | **真实 Chrome** 验收：六组合截图 + 完整功能清单 + 布局健康检查 |
+| `npm run browser:check` | **真实 Chrome** 验收：六组合截图 + 完整功能清单 + 布局健康检查 + 白屏回归 |
+| `npm run probe:regression` | 白屏故障专项取证：跨深度导航、旧数据 / 坏数据用户、404 页自洽 |
 | `npm run verify:live` | 对**正式域名**做 HTTP 复验（域名 / 路由 / 资源 / 播放器 / 空状态） |
 | `npm run browser:live` | 用**真实 Chrome** 复验正式域名上的播放器与三套外观 |
 | `npm run check:assets -- --dist dist` | 产物完整性 |
@@ -102,6 +103,7 @@ npm run dev          # 含 DEMO 合成音的构建 + 本地服务器（真的支
 | [`docs/MOBILE-BACKGROUND.md`](docs/MOBILE-BACKGROUND.md) | 移动端与后台播放实现与边界 |
 | [`docs/THEMES.md`](docs/THEMES.md) | 三套外观、布局三档、默认与记忆、切换保状态 |
 | [`docs/PLAYER-CONTROLS.md`](docs/PLAYER-CONTROLS.md) | 播放器控制区：SVG 图标系统、尺寸、间距、交互态 |
+| [`docs/INCIDENT-BLANK-PAGE.md`](docs/INCIDENT-BLANK-PAGE.md) | 白屏故障报告：根因、证据、修复与用户恢复办法 |
 | [`docs/FEATURES.md`](docs/FEATURES.md) | 功能清单 → 对应验证位置 |
 | [`docs/BROWSER-RESULTS.md`](docs/BROWSER-RESULTS.md) | 真实 Chrome 逐项验收结果（自动生成，195 项） |
 | [`docs/LIVE-VERIFICATION.md`](docs/LIVE-VERIFICATION.md) | 正式域名 HTTP 复验（自动生成） |
