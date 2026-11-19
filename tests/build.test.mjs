@@ -5,6 +5,7 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { resolveMedia } from '../assets/js/core/paths.js';
+import { loadContent } from '../tools/lib/content.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
@@ -118,13 +119,18 @@ test('build · Pages 必需文件齐全', () => {
   assert.match(read('sitemap.xml'), /<loc>https:\/\/www\.xuzhaoqing\.com\/songs\//);
 });
 
-test('build · 生产构建排除 DEMO，并给出空状态而不是假内容', () => {
+test('build · 生产构建排除 DEMO，只含真实内容（无歌时给空状态）', () => {
   const manifest = build(false);
   assert.equal(manifest.mode, 'production');
-  assert.equal(manifest.counts.songs, 0);
+  const realSongs = loadContent(ROOT, { includeDemo: false }).songs;
+  assert.equal(manifest.counts.songs, realSongs.length);
   assert.ok(!exists('songs/demo-night-ferry/index.html'));
   const home = read('index.html');
-  assert.match(home, /第一首歌，正在路上/);
+  if (realSongs.length === 0) {
+    assert.match(home, /第一首歌，正在路上/);
+  } else {
+    for (const s of realSongs) assert.ok(exists(`songs/${s.slug}/index.html`), `缺少真实歌曲页 songs/${s.slug}/`);
+  }
   assert.ok(!home.includes('DEMO'), '生产页面不应出现 DEMO 标记');
 });
 

@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { loadContent } from '../tools/lib/content.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
@@ -72,13 +73,20 @@ test('首页 · 「最近分享」标题与说明，留白已收紧', () => {
   assert.match(CSS(), /\.sec--near \{ padding-top:var\(--sp5\)/);
 });
 
-test('首页 · 没歌时去掉占位方框改单栏，不出现虚构歌曲', () => {
+test('首页 · 占位方框已去除，单栏/推荐卡片随真实曲库切换', () => {
   build(false);
   const html = read('index.html');
+  const realSongs = loadContent(ROOT, { includeDemo: false }).songs;
   assert.ok(!html.includes('hero__placeholder'), '仍有虚线占位方框');
   assert.ok(!html.includes('hero__art'), '仍有空白视觉区');
-  assert.match(html, /hero__in--single/, '没有回退单栏');
-  assert.ok(!html.includes('hero__pick'), '空曲库不应有推荐卡片');
+  if (realSongs.length === 0) {
+    assert.match(html, /hero__in--single/, '没有回退单栏');
+    assert.ok(!html.includes('hero__pick'), '空曲库不应有推荐卡片');
+  } else {
+    assert.ok(!html.includes('hero__in--single'), '有歌时不应单栏');
+    assert.ok(html.includes('hero__pick'), '有歌却没有推荐卡片');
+    assert.ok(html.includes(`data-act="play-song" data-slug="${realSongs[0].slug}"`), '推荐卡片没有播放入口');
+  }
 });
 
 test('首页 · 有歌时用真实封面做推荐卡片，含歌名与播放入口', () => {
@@ -92,17 +100,28 @@ test('首页 · 有歌时用真实封面做推荐卡片，含歌名与播放入�
   assert.ok(html.includes(`href="./songs/${first.slug}/"`), '没有单曲页链接');
   assert.ok(fs.existsSync(path.join(DIST, first.cover)), '封面文件不存在');
 });
-test('空状态 · 文案温和，隐藏无意义的视图切换与播放入口', () => {
+test('空状态 · 文案温和；有歌时不显示空状态且搜索照常', () => {
   build(false);
+  const realSongs = loadContent(ROOT, { includeDemo: false }).songs;
   for (const file of ['index.html', 'songs/index.html']) {
     const html = read(file);
-    assert.match(html, /第一首歌，正在路上。/, `${file} 缺空状态标题`);
-    assert.match(html, /小屋慢慢布置，音乐也会陆续到来。/, `${file} 缺空状态说明`);
-    assert.ok(!html.includes('data-act="set-view"'), `${file} 空状态仍有视图切换`);
-    assert.ok(!html.includes('data-act="play-all"'), `${file} 空状态仍有播放入口`);
-    assert.ok(!html.includes('data-act="queue-all"'), `${file} 空状态仍有加入队列`);
+    if (realSongs.length === 0) {
+      assert.match(html, /第一首歌，正在路上。/, `${file} 缺空状态标题`);
+      assert.match(html, /小屋慢慢布置，音乐也会陆续到来。/, `${file} 缺空状态说明`);
+      assert.ok(!html.includes('data-act="set-view"'), `${file} 空状态仍有视图切换`);
+      assert.ok(!html.includes('data-act="play-all"'), `${file} 空状态仍有播放入口`);
+      assert.ok(!html.includes('data-act="queue-all"'), `${file} 空状态仍有加入队列`);
+    } else {
+      assert.ok(!html.includes('第一首歌，正在路上'), `${file} 有歌却显示空状态`);
+    }
   }
-  assert.ok(!read('songs/index.html').includes('id="libSearch"'), '空曲库仍显示搜索框');
+  const lib = read('songs/index.html');
+  if (realSongs.length === 0) {
+    assert.ok(!lib.includes('id="libSearch"'), '空曲库仍显示搜索框');
+  } else {
+    assert.match(lib, /id="libSearch"/, '有歌却没有搜索框');
+    assert.match(lib, /data-act="play-all"/, '有歌却没有播放入口');
+  }
 });
 
 test('有歌时 · 视图切换与搜索照常在（不是被误删）', () => {

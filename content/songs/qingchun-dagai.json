@@ -1,0 +1,29 @@
+{
+  "slug": "qingchun-dagai",
+  "title": "青春大概",
+  "artist": "金石竹青",
+  "composer": "徐鸣",
+  "lyricist": "彭錞",
+  "album": null,
+  "tags": [
+    "翻唱"
+  ],
+  "date": "2026-11-19",
+  "duration": 242.784,
+  "cover": "auto",
+  "audio": {
+    "src": "audio/qingchun-dagai.mp3",
+    "mime": "audio/mpeg",
+    "master": null
+  },
+  "lyrics": null,
+  "instrumental": false,
+  "demo": false,
+  "about": "《青春大概》翻唱版：彭錞作词，徐鸣作曲并原唱，金石竹青演唱。这是音乐小屋的第一首正式上传歌曲，之后会陆续放下更多歌与手记。",
+  "credits": [
+    "作词：彭錞",
+    "作曲：徐鸣",
+    "原唱：徐鸣",
+    "演唱：金石竹青"
+  ]
+}

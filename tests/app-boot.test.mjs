@@ -10,6 +10,7 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
+import { loadContent } from '../tools/lib/content.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
@@ -62,7 +63,7 @@ const wait = (ms = 40) => new Promise((r) => setTimeout(r, ms));
 test('app · 启动后目录、播放器、UI 全部就位', async () => {
   const { window, app, errors } = await makeApp('/');
   assert.ok(app, 'boot 应返回 app');
-  assert.equal(app.catalog.songs.length, 2);
+  assert.equal(app.catalog.songs.length, loadContent(ROOT, { includeDemo: true }).songs.length);
   assert.equal(app.player.state, 'idle');
   assert.equal(window.document.querySelectorAll('audio').length, 1);
   assert.deepEqual(errors, []);
