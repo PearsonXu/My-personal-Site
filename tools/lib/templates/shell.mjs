@@ -41,8 +41,10 @@ function head({ site, base, meta, kind, slug, extraHead = '' }) {
     `<meta property="og:description" content="${attr(meta.ogDescription || desc)}">`,
     `<meta property="og:url" content="${attr(canonical)}">`,
     `<meta property="og:image" content="${attr(ogImage)}">`,
-    '<meta property="og:image:width" content="1200">',
-    '<meta property="og:image:height" content="630">',
+    // 只有构建期生成的 OG 图才是确定的 1200×630；站长自供封面尺寸未知，不谎报宽高
+    ...(!meta.image || meta.image.startsWith('assets/img/og/')
+      ? ['<meta property="og:image:width" content="1200">', '<meta property="og:image:height" content="630">']
+      : []),
     `<meta property="og:locale" content="${attr(site.locale || 'zh_CN')}">`,
     '<meta name="twitter:card" content="summary_large_image">',
     `<meta name="twitter:title" content="${attr(meta.ogTitle || title)}">`,

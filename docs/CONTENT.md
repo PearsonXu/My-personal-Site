@@ -43,6 +43,7 @@ npm run new:song -- "夜渡" --audio ~/Music/night-ferry.mp3
 
 - `cover: "auto"` → 构建期按 slug 生成确定性抽象封面（PNG，含 1200×630 的 OG 图）。
   想用自己的图：把文件放进 `assets/img/`，然后写 `"cover": "my-cover.jpg"`。
+  自供封面时 OG 图直接指向原图（不再另生成 1200×630），`og:image:width/height` 省略不谎报。
 - `instrumental: true` → 页面显示「纯音乐」空状态，不做歌词高亮。
 - `lyrics: null` → 显示「暂无歌词」。
 - `demo: true` → **只在 `--demo` 构建里出现**，页面带 DEMO 标记。

@@ -226,8 +226,9 @@ async function main() {
     assert(og && og.startsWith(`${BASE}/`), `og:image=${og}`);
     const img = await fetch(og, { method: 'HEAD' });
     assert(img.status === 200, `og:image HTTP ${img.status}`);
-    assert(/image\/png/.test(img.headers.get('content-type') || ''), 'og:image 不是位图');
-    return `canonical=${canonical} · og:image 200 image/png`;
+    const ctype = img.headers.get('content-type') || '';
+    assert(/image\/(png|jpeg|webp)/.test(ctype), `og:image 不是位图：${ctype}`);
+    return `canonical=${canonical} · og:image 200 ${ctype.split(';')[0]}`;
   });
 
   await check('分享元数据', '手记深链接直达 + 刷新 + 独立元数据', async () => {

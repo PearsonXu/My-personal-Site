@@ -1,5 +1,5 @@
 {
-  "at": "2026-11-19T18:57:21.766Z",
+  "at": "2026-11-19T19:32:37.258Z",
   "chrome": "headless Google Chrome (puppeteer-core)",
   "bases": [
     "http://localhost:8393 (dist --demo)"

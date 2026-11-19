@@ -35,6 +35,21 @@ const MEDIA_ERRORS = {
   4: '音源不可用（地址错误、404、或服务器不支持该格式）'
 };
 
+/**
+ * Media Session 封面：MIME 按扩展名如实声明。
+ * 尺寸只有构建期生成的方形封面（assets/img/covers/*.png，600×600）是确定的；
+ * 站长自供原图尺寸未知，不谎报 sizes。
+ */
+function mediaArtwork(src, coverPath) {
+  const p = String(coverPath || '');
+  const art = { src };
+  if (/\.jpe?g$/i.test(p)) art.type = 'image/jpeg';
+  else if (/\.webp$/i.test(p)) art.type = 'image/webp';
+  else if (/\.png$/i.test(p)) art.type = 'image/png';
+  if (/^assets\/img\/covers\/[^/]+\.png$/i.test(p)) art.sizes = '600x600';
+  return art;
+}
+
 export class Player {
   /** @param {any} options */
   constructor({ audio, catalog, store, resolve, resolveAudio, fetchText }) {
@@ -660,7 +675,7 @@ export class Player {
         title: song.title,
         artist: song.artist,
         album: song.albumTitle || '',
-        artwork: [{ src: abs(song.cover), sizes: '600x600', type: 'image/png' }]
+        artwork: [mediaArtwork(abs(song.cover), song.cover)]
       });
       ms.playbackState = this.audio.paused ? 'paused' : 'playing';
     } catch { /* 某些浏览器对 artwork 挑剔，忽略即可 */ }

@@ -43,7 +43,9 @@ test('build · 每首歌有独立标题 / 简介 / 规范链接 / 封面元数�
     titles.add(title);
     canonicals.add(canonical);
     assert.equal(canonical, `https://www.xuzhaoqing.com/songs/${s.slug}/`);
-    assert.ok(ogImage.startsWith('https://www.xuzhaoqing.com/assets/img/og/'));
+    assert.ok(ogImage.startsWith('https://www.xuzhaoqing.com/assets/img/'), `og:image 必须是站内绝对地址：${ogImage}`);
+    assert.ok(exists(ogImage.replace('https://www.xuzhaoqing.com/', '')), `og:image 指向的文件必须真实存在：${ogImage}`);
+    assert.match(ogImage, /\.(png|jpe?g|webp)$/i, 'og:image 必须是位图（微信/OG 不吃 SVG）');
     assert.ok(desc.length > 10);
     assert.match(html, /property="og:type" content="music\.song"/);
     assert.match(html, /application\/ld\+json/);

@@ -5,7 +5,7 @@
 1. **每首歌一个真实独立路径**：`https://www.xuzhaoqing.com/songs/<slug>/`。
    分享出去点开就是那首歌，不是首页，也不需要登录。
 2. **每页独立的初始 HTML 元数据**：`<title>`、`meta description`、`link rel=canonical`、
-   `og:title / og:description / og:url / og:image`（1200×630 PNG）、`music:duration` 等，
+   `og:title / og:description / og:url / og:image`（生成图为 1200×630 PNG；站长自供封面指向原图，不谎报宽高）、`music:duration` 等，
    全部在**构建期**写进 HTML，不依赖 JS 执行。
 3. **明显的播放按钮**：单曲页主按钮就是「▶ 播放这首歌」。
 4. **复制链接 + 二维码**：二维码在构建期生成 SVG，内联进页面，
