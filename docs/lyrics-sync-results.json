@@ -1,19 +1,19 @@
 {
-  "at": "2026-11-20T03:33:25.421Z",
+  "at": "2026-11-20T04:11:48.315Z",
   "chrome": "headless Google Chrome (puppeteer-core)",
   "bases": [
     "http://localhost:8391 (dist)",
     "https://www.xuzhaoqing.com"
   ],
-  "pass": 39,
-  "fail": 2,
+  "pass": 41,
+  "fail": 0,
   "reproducedOnOldBuild": 0,
   "checks": [
     {
       "group": "local",
       "name": "首句高亮按时落地",
       "ok": true,
-      "detail": "t=19.72 idx=0"
+      "detail": "t=19.63 idx=0"
     },
     {
       "group": "local",
@@ -73,7 +73,7 @@
       "group": "local",
       "name": "暂停恢复后按 currentTime 定位",
       "ok": true,
-      "detail": "t=41.64"
+      "detail": "t=41.66"
     },
     {
       "group": "local",
@@ -85,13 +85,13 @@
       "group": "local",
       "name": "慢网缓冲后按 currentTime 重新同步",
       "ok": true,
-      "detail": "缓冲期 state=playing，恢复后 t=47.26"
+      "detail": "缓冲期 state=playing，恢复后 t=47.29"
     },
     {
       "group": "local",
       "name": "恢复进度+慢网落地：高亮立即在正确行",
       "ok": true,
-      "detail": "t=71.56 idx=10 active=10（旧构建在此冻住=根因复现）"
+      "detail": "t=71.55 idx=10 active=10（旧构建在此冻住=根因复现）"
     },
     {
       "group": "local",
@@ -103,7 +103,7 @@
       "group": "local",
       "name": "播放结束状态诚实（队列播完=paused）",
       "ok": true,
-      "detail": "state=paused"
+      "detail": "state=paused queue={\"n\":1,\"cursor\":0,\"slugs\":[\"qingchun-dagai\"]}"
     },
     {
       "group": "local",
@@ -127,7 +127,7 @@
       "group": "local",
       "name": "手机首句高亮按时落地",
       "ok": true,
-      "detail": "t=19.75 idx=0"
+      "detail": "t=19.76 idx=0"
     },
     {
       "group": "local",
@@ -151,7 +151,7 @@
       "group": "live",
       "name": "首句高亮按时落地",
       "ok": true,
-      "detail": "t=19.82 idx=0"
+      "detail": "t=19.67 idx=0"
     },
     {
       "group": "live",
@@ -169,7 +169,7 @@
       "group": "live",
       "name": "当前行保持在容器中部附近",
       "ok": true,
-      "detail": "Δ=84px"
+      "detail": "Δ=0px"
     },
     {
       "group": "live",
@@ -187,13 +187,13 @@
       "group": "live",
       "name": "手动滚动期间不自动拽回",
       "ok": true,
-      "detail": "scrollTop 160→160"
+      "detail": "scrollTop 262→262"
     },
     {
       "group": "live",
       "name": "点击回到当前歌词恢复跟随并居中",
       "ok": true,
-      "detail": "scrollTop=0"
+      "detail": "scrollTop=152"
     },
     {
       "group": "live",
@@ -211,7 +211,7 @@
       "group": "live",
       "name": "暂停恢复后按 currentTime 定位",
       "ok": true,
-      "detail": "t=41.65"
+      "detail": "t=41.66"
     },
     {
       "group": "live",
@@ -223,25 +223,25 @@
       "group": "live",
       "name": "慢网缓冲后按 currentTime 重新同步",
       "ok": true,
-      "detail": "缓冲期 state=playing，恢复后 t=47.28"
+      "detail": "缓冲期 state=playing，恢复后 t=47.30"
     },
     {
       "group": "live",
       "name": "恢复进度+慢网落地：高亮立即在正确行",
-      "ok": false,
-      "detail": "t=0.00 idx=-1 active=null（旧构建在此冻住=根因复现）"
+      "ok": true,
+      "detail": "t=71.25 idx=10 active=10（旧构建在此冻住=根因复现）"
     },
     {
       "group": "live",
       "name": "reduced-motion 瞬时定位（150ms 内完成滚动）",
-      "ok": false,
-      "detail": "scrollTop 0→0"
+      "ok": true,
+      "detail": "scrollTop 499→1046"
     },
     {
       "group": "live",
       "name": "播放结束状态诚实（队列播完=paused）",
       "ok": true,
-      "detail": "state=paused"
+      "detail": "state=paused queue={\"n\":1,\"cursor\":0,\"slugs\":[\"qingchun-dagai\"]}"
     },
     {
       "group": "live",

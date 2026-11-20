@@ -1,5 +1,5 @@
 {
-  "at": "2026-11-20T03:30:56.562Z",
+  "at": "2026-11-20T04:17:51.336Z",
   "chrome": "headless Google Chrome (puppeteer-core)",
   "bases": [
     "http://localhost:8394 (dist --demo)"
@@ -2396,5 +2396,23 @@
     "iOS Safari 真机（无设备）：地址栏展开/收起以视口高度变化模拟，非真机 Safari",
     "微信内浏览器真机（无设备 / 账号）",
     "线上部署复测需在 push 部署后重跑：node tools/probe-mobile-layout.mjs --base=https://www.xuzhaoqing.com"
+  ],
+  "alsoRun": [
+    {
+      "at": "2026-11-20T03:56:17.776Z",
+      "bases": [
+        "https://www.xuzhaoqing.com"
+      ],
+      "pass": 396,
+      "fail": 0
+    },
+    {
+      "at": "2026-11-20T03:30:56.562Z",
+      "bases": [
+        "http://localhost:8394 (dist --demo)"
+      ],
+      "pass": 396,
+      "fail": 0
+    }
   ]
 }

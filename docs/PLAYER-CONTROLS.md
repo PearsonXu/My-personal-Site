@@ -153,7 +153,7 @@ hover 转 `var(--acc)`。**没有任何单独硬编码的颜色**：
   上下 padding 含 `--safe-t / --safe-b`；`overscroll-behavior:contain` 防滚动链带整页。
 - **首尾居中留白在滚动容器内部**：`LyricsUI._updatePad()` 按**容器自身** `clientHeight`
   算 `padding = (容器高 - 行高) / 2` 写在 `#plLyrics` 的 padding 上（随内容滚动，
-  不把歌名 / 控件推远）；居中计算 likewise 只用容器高度，不用屏幕高度。
+  不把歌名 / 控件推远）；居中计算同样只用容器高度，不用屏幕高度。
   `ResizeObserver` 监听容器：视口变化 / 工具栏展开收起 / 字号切换 / 歌词重渲染后
   下一帧重算留白并重新定位当前行（留白变化产生的 scroll 事件打程序化标记，不误暂停跟随）。
 - 验收：`tools/probe-mobile-layout.mjs`（6 视口 × 纯享/设置 × 三字号 + 视口收缩/恢复 + 横屏封面），
@@ -197,23 +197,28 @@ hover 转 `var(--acc)`。**没有任何单独硬编码的颜色**：
 - 控制区特写截图：`docs/screenshots/controls-{theme}-{viewport}-{bar,full}.png`
 - 面板轮（「词」三态循环 + 字号工具栏 + 逐曲校准 + 简介移除 + 骨架间距）：`tests/player-panels.test.mjs`（16 项）+
   `tools/probe-player-panels.mjs` 真实 Chrome 桌面 1440×900 / 移动 390×844，
-  本地 DEMO **83/83**；截图 `docs/screenshots/panels-{local,live}-*.png`
+  本地 DEMO 与线上生产各 **83/83**；截图 `docs/screenshots/panels-{local,live}-*.png`
   （含纯享态 `-pure.png`：无工具栏、歌词拿满高度），
   报告 `docs/player-panels-results.json`（`alsoRun` 保留另一目标的上一次摘要）
 - **布局矩阵轮（本轮新增）**：`tools/probe-mobile-layout.mjs` 真实 Chrome
   6 视口（390×844 / 360×640 / 412×915 / 320×568 / 844×390 横屏 auto / 844×390 横屏手动手机）
   × 纯享 / 设置 × 字号 s/m/l + 视口收缩 70px 再恢复（模拟 Safari 地址栏）+ 横屏封面态，
-  本地 DEMO **396/396**；每态取证四段间距规格、纵向无重叠、控件与状态行完整在视口内、
+  本地 DEMO 与线上生产各 **396/396**；每态取证四段间距规格、纵向无重叠、控件与状态行完整在视口内、
   当前行居中于歌词容器、首尾留白在滚动容器内部、无横向溢出；
   截图 `docs/screenshots/layout-{local,live}-<视口>-{pure,settings-s/m/l,cover}.png`，
   报告 `docs/player-mobile-layout-results.json`
-- 三态轮复测：`probe-regression` 138/0、`probe-lyrics-sync` local+live 41/41、
+- 复测：`probe-regression` 138/0、`probe-lyrics-sync` local+live **41/41**、
   `npm run browser:check` **215/215**（六组合 + 自动适配 + 手动布局 + 横竖屏）、
-  `verify-live` 18 PASS · 1 N/A · 0 FAIL（2026-11-19，部署 commit 81dc7c3 后；
-  线上 4 首真实歌曲，「另一首歌」为纯文本歌词的《去年夏天》，覆盖无时间轴时校准禁用仍如实）
+  `npm test` 214/214、typecheck 0、生产构建 5 首真实歌曲 0 DEMO + `check-assets` 全过、
+  `verify-live` **18 PASS · 1 N/A · 0 FAIL**（2026-11-20，部署 a89c4d8 后；
+  线上 5 首真实歌曲，「另一首歌」《去年夏天》已接同步 LRC，逐曲校准可用分支同样覆盖）
 - browser-check **旧断言**按现行设计更新（非站点回归）：简介移除后迷你条可见子键计数
   手机 1 / 平板带 6 / 桌面 7；专辑 / 歌单按钮先滚到视口中部再点，避开固定迷你条覆盖区
   （与 probe-player-panels 的 playRow 同一做法）
+- probe-lyrics-sync 三处**探针自身**修正（非站点回归）：C8 不再盲点首页第一个播放键
+  （新增无歌词新歌《偏向》会占据首键）改显式点《青春大概》；C10 验「队列播完=paused」前
+  先把整库队列截到当前曲（首页行点击建整库队列，播完进下一首是诚实行为）；
+  新增 response≥400 监听把资源 404 计入控制台错误（部署切换瞬间的暂态 404 曾误报，复跑已干净）
 - 修过的三个真实布局故障（都有探针守着）：① 歌词容器 content-box 时内部留白 padding
   叠在 flex 分配高度之外 → 工具栏出现时歌词溢出压到歌名（改 border-box + min-height:0）；
   ② 留白按容器自身 clientHeight 算会形成反馈环（内容被钳 0 后 ResizeObserver 不再触发）

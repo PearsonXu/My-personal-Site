@@ -1,5 +1,5 @@
 {
-  "at": "2026-11-20T03:28:04.873Z",
+  "at": "2026-11-20T04:14:59.255Z",
   "chrome": "headless Google Chrome (puppeteer-core)",
   "bases": [
     "http://localhost:8393 (dist --demo)"
@@ -245,7 +245,7 @@
       "group": "local",
       "name": "切歌后歌词更新为当前曲",
       "ok": true,
-      "detail": "纯文本歌词 · 没有时间轴，不做逐句高亮还有什么等待还有什么"
+      "detail": "暂无歌词"
     },
     {
       "group": "local",
@@ -491,7 +491,7 @@
       "group": "local",
       "name": "手机切歌后歌词更新为当前曲",
       "ok": true,
-      "detail": "纯文本歌词 · 没有时间轴，不做逐句高亮还有什么等待还有什么"
+      "detail": "暂无歌词"
     },
     {
       "group": "local",
@@ -510,5 +510,23 @@
     "iOS Safari 真机（无设备）",
     "微信内浏览器真机（无设备 / 账号）",
     "线上部署复测需在 push 部署后重跑：node tools/probe-player-panels.mjs --base=https://www.xuzhaoqing.com"
+  ],
+  "alsoRun": [
+    {
+      "at": "2026-11-20T03:53:24.383Z",
+      "bases": [
+        "https://www.xuzhaoqing.com"
+      ],
+      "pass": 83,
+      "fail": 0
+    },
+    {
+      "at": "2026-11-20T03:28:04.873Z",
+      "bases": [
+        "http://localhost:8393 (dist --demo)"
+      ],
+      "pass": 83,
+      "fail": 0
+    }
   ]
 }

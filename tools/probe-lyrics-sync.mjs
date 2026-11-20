@@ -85,6 +85,8 @@ async function run(browser, base, label, { multi }) {
   const errors = [];
   page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
   page.on('pageerror', (e) => errors.push(String(e)));
+  // 资源 404 也算控制台错误（如实记录 URL，便于定位缺资源的内容债）
+  page.on('response', (r) => { if (r.status() >= 400) errors.push(`${r.status()} ${r.url()}`); });
   const cdp = await page.createCDPSession();
   await cdp.send('Network.enable');
   const net = (down, latency = 0) => cdp.send('Network.emulateNetworkConditions', {
@@ -203,7 +205,10 @@ async function run(browser, base, label, { multi }) {
   await sleep(800);
   await playBtn(page);
   await net(40 * 1024, 400);
-  await page.click('[data-act="play-song"]');
+  // 首页第一个播放键可能是无歌词的新歌（如《偏向》）：C8/C9 需要带时间轴歌词，显式点青春大概
+  await page.evaluate(() => document.querySelector('[data-act="play-song"][data-slug="qingchun-dagai"]')?.scrollIntoView({ block: 'center' }));
+  await sleep(300);
+  await page.click('[data-act="play-song"][data-slug="qingchun-dagai"]');
   await page.evaluate(() => window.__music.ui.expand('lyrics'));
   await waitUntil(page, (x) => x.lines.length > 0 && x.t > 60, 20000);
   await sleep(1000);
@@ -228,10 +233,13 @@ async function run(browser, base, label, { multi }) {
     s = await snap(page);
     check(label, '切歌：歌词与暂停状态随新歌重置', s.slug === 'demo-night-ferry' && s.backHidden === true, `slug=${s.slug}`);
   }
+  // 首页行点击会建「整库队列」：播完一首自然进下一首（诚实行为）。
+  // 要验「队列播完=paused」先把队列截到当前曲，制造真正的播完边界。
+  await page.evaluate(() => { const p = window.__music.player; p.queue.items = [p.currentItem]; p.queue.cursor = 0; });
   await page.evaluate(() => { const p = window.__music.player; p.seek(p.duration - 0.8); });
   await sleep(3000);
   s = await snap(page);
-  check(label, '播放结束状态诚实（队列播完=paused）', s.state === 'paused', `state=${s.state}`);
+  check(label, '播放结束状态诚实（队列播完=paused）', s.state === 'paused', `state=${s.state} queue=${JSON.stringify(await page.evaluate(() => { const q = window.__music.player.queue; return { n: q.items.length, cursor: q.cursor, slugs: q.items.map((i) => i.slug) }; }))}`);
   await page.evaluate(() => { const p = window.__music.player; p.seek(0); p.play(); });
   await sleep(1000);
   s = await snap(page);
