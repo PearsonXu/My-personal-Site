@@ -17,13 +17,13 @@
   ],
   "date": "2026-11-20",
   "duration": 276.864,
-  "cover": "auto",
+  "cover": "tanyunxi.jpg",
   "audio": {
     "src": "audio/tanyunxi.mp3",
     "mime": "audio/mpeg",
     "master": null
   },
-  "lyrics": null,
+  "lyrics": "tanyunxi.lrc",
   "instrumental": false,
   "demo": false,
   "about": "《叹云兮》翻唱版：郭德紫毅作词，SHIMA作曲，鞠婧祎原唱，金石竹青演唱。",
