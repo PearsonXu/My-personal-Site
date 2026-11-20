@@ -80,14 +80,18 @@ hover 转 `var(--acc)`。**没有任何单独硬编码的颜色**：
 - **键盘焦点**：`:focus-visible` 2px `var(--acc)` 描边 + 2px offset
 - **禁用**：`opacity:.35`、`cursor:not-allowed`，主按钮转为中性灰
 
-## 歌词与简介入口：常驻文字按钮「词」「简介」
+## 歌词入口：常驻文字按钮「词」
 
-歌词与简介入口都不是图标，而是**文字按钮**（`pbtn--text pbtn--lyrics` / `pbtn--text pbtn--about`）：
+歌词入口不是图标，而是**文字按钮**（`pbtn--text pbtn--lyrics`）：
 
-- **位置**：迷你条 `.pl__extra` + 展开页 `.pl__fullbtns`，两个按钮并排。
-  手机迷你条拆成两行：第一行 封面 / 标题 / 三主控，第二行右对齐「词」「简介」
-  （`layout-mobile.css`，`--pl-h:124px`）——两个 44×44 文字键加三主控在 320px 宽也放不下一行。
-  操作区只保留这两个键，**不进「更多」菜单**。
+- **位置**：迷你条 `.pl__extra` + 展开页 `.pl__fullbtns`。
+  手机迷你条拆成两行：第一行 封面 / 标题 / 三主控，第二行右对齐「词」
+  （`layout-mobile.css`，`--pl-h:124px`）——44×44 文字键加三主控在 320px 宽也放不下一行。
+  操作区只保留这个键，**不进「更多」菜单**。
+  **「简介」按钮与面板已整体移除**（含 `ui/song-info-ui.js`、`toggle-about`、`about` 舞台）：
+  展示模式只在 `cover / vinyl / lyrics` 三舞台循环；旧存储里的 `stage:'about'`
+  由 `sanitizeState` 逐字段回退 `cover`，不连累收藏 / 队列 / 逐曲校准。
+  歌曲署名 / 版本信息仍在单曲页与 catalog 元数据里，只是不再占播放器面板。
 - **外观**：圆角 12px、`var(--line-2)` 边框 + `var(--panel-2)` 浅底、正文色文字，三套主题都有对比度。
   展开态由 `aria-expanded="true"` 驱动：`var(--acc)` 主题红底 + `var(--on-acc)` 文字。
 - **点击区**：沿用 `--pbtn-size`，桌面 / 手机都是 **44×44**。
@@ -103,12 +107,9 @@ hover 转 `var(--acc)`。**没有任何单独硬编码的颜色**：
   刷新 / 收起后第一击永远回纯享。字号偏好（按浏览器）与校准偏移（按歌曲）各自持久化，
   关面板不重置；切歌不沿用上一首校准。`aria-label` 描述下一次点击：
   显示歌词 / 显示歌词设置 / 收起歌词；`aria-controls` 指向 `plLyrics`。
-- **「简介」互斥**：`data-act="toggle-about"` —— 同一时刻只有一个舞台
-  （`cover / vinyl / lyrics / about`），看歌词（纯享或设置）时点「简介」直接切换，不会叠两层；
-  从简介点「词」回纯享。`aria-controls` 指向 `plAbout`。
 - **无歌词**：按钮永远可点；面板显示空状态，同时 toast「暂无歌词」。
-- **文字按钮例外**：AGENTS 规则 13 要求控件用内联 SVG；「词」「简介」是**文字标签**而非图标字符，
-  是仅有的 `pbtn--text` 例外，`tests/icons.test.mjs` 对它们仍要求 aria-label + 可见文字，
+- **文字按钮例外**：AGENTS 规则 13 要求控件用内联 SVG；「词」是**文字标签**而非图标字符，
+  是仅有的 `pbtn--text` 例外，`tests/icons.test.mjs` 对它仍要求 aria-label + 可见文字，
   Emoji / Unicode 图形字符禁令不变。
 
 ### 歌词面板顶部工具栏（字号 + 校准，仅设置态显示）
@@ -131,18 +132,32 @@ hover 转 `var(--acc)`。**没有任何单独硬编码的颜色**：
     互不影响；归零删除条目；刷新后恢复。无时间轴歌词 / 未加载 / 读取失败时控件禁用（仍可见）。
   - LRC 文件里的 `[offset:]` 解析（`core/lrc.js`）不变，两者叠加生效。
 
-### 简介面板（`#plAbout`，舞台 `about`）
+### 全屏播放页纵向骨架（移动端重点）
 
-`ui/song-info-ui.js` 按当前歌曲渲染，`track` 事件驱动重渲染 → 切歌不残留上一首信息：
+`#plFull` 是 `position:fixed; inset:0` 的纵向 flex：**顶部导航 `.pl__fullhead` →
+可伸缩舞台 `.pl__stage` → 歌名/作者 `.pl__fullmeta` → 进度 `.pl__fullseek` →
+控件 `.pl__fullbtns` → 状态行 `.pl__state`**。
 
-- 行：歌曲名称（标题）、原唱 `originalArtist`、作词 `lyricist`、作曲 `composer`、
-  本站版本 `versionNote`（demo 无说明时如实标「DEMO 测试音」）、版本制作 `versionBy`、
-  生成工具 `tools[]`（**单独一行**，SUNO 等绝不混进原唱 / 词曲署名）、其他署名 `credits[]`、歌曲介绍 `about`。
-- **缺失字段隐藏**，不编造署名、不展示空标签；全部资料缺失时显示「歌曲资料待补充」。
-- 元数据在 `content/songs/*.json` 填写，`tools/new-song.mjs` 提供
-  `--original-artist / --version-note / --version-by / --tools` 旗标；catalog 携带这些字段供播放器使用。
-- 验收：`tests/player-panels.test.mjs` + `node tools/probe-player-panels.mjs`
-  （结果 `docs/player-panels-results.json`，截图 `docs/screenshots/panels-*.png`）。
+- **舞台吃满剩余高度**：`.pl__stage { flex:1; min-height:0; margin:0 auto 22px; }`，
+  **不设 max-height**（旧 `max-height:62vh` / 歌词 `max-height:min(52vh,460px)` 会在歌词结束后
+  留下大块空白）；歌词包装 `.pl__lyricswrap` 与定位盒 `.pl__lyricsbox` 都 `flex:1`，
+  高度全部交给 `#plLyrics` 滚动容器。封面 / 黑胶在舞台内垂直居中，`max-height:100%` 防越界。
+- **间距显式声明，不用余量分配**：`p` 的默认 1em margin 清零（旧空白的另一来源）。
+  歌词区底→歌名 22（手机 20）· 歌名→作者 6 · 作者→进度 22（手机 20）· 时间→按钮 18（手机 16）。
+  不用 `justify-content:space-between` / 纵向 auto margin 分配余量，也不靠负 margin 修补。
+- **矮屏 / 横屏压缩**：`@media (max-height:700px)` 与 `(max-height:520px)` 压缩块间距、
+  字号与工具栏按钮高度（横屏 36px）、隐藏校准提示文案、封面缩到 `min(56vh,240px)`。
+  选择器带 `#plFull ` 前缀提高优先级——合成 `layout.css` 带 `html[data-layout]` 作用域前缀，
+  优先级更高，会盖掉压缩规则。
+- **动态视口与安全区**：`height:100vh; height:100dvh;` 跟随 Safari 地址栏展开/收起；
+  上下 padding 含 `--safe-t / --safe-b`；`overscroll-behavior:contain` 防滚动链带整页。
+- **首尾居中留白在滚动容器内部**：`LyricsUI._updatePad()` 按**容器自身** `clientHeight`
+  算 `padding = (容器高 - 行高) / 2` 写在 `#plLyrics` 的 padding 上（随内容滚动，
+  不把歌名 / 控件推远）；居中计算 likewise 只用容器高度，不用屏幕高度。
+  `ResizeObserver` 监听容器：视口变化 / 工具栏展开收起 / 字号切换 / 歌词重渲染后
+  下一帧重算留白并重新定位当前行（留白变化产生的 scroll 事件打程序化标记，不误暂停跟随）。
+- 验收：`tools/probe-mobile-layout.mjs`（6 视口 × 纯享/设置 × 三字号 + 视口收缩/恢复 + 横屏封面），
+  结果 `docs/player-mobile-layout-results.json`，截图 `docs/screenshots/layout-*.png`。
 
 ## 歌词自动跟随与「回到当前歌词」
 
@@ -180,23 +195,38 @@ hover 转 `var(--acc)`。**没有任何单独硬编码的颜色**：
   - **播放/暂停图标原位切换：不跳位、不断音**（按钮与图形四值位移 < 0.6px，
     音源不变、进度不倒退）
 - 控制区特写截图：`docs/screenshots/controls-{theme}-{viewport}-{bar,full}.png`
-- 面板轮（「词」三态循环 + 字号工具栏 + 逐曲校准 + 简介）：`tests/player-panels.test.mjs`（18 项）+
+- 面板轮（「词」三态循环 + 字号工具栏 + 逐曲校准 + 简介移除 + 骨架间距）：`tests/player-panels.test.mjs`（16 项）+
   `tools/probe-player-panels.mjs` 真实 Chrome 桌面 1440×900 / 移动 390×844，
-  本地 DEMO 与线上生产各 **63/63**；截图 `docs/screenshots/panels-{local,live}-*.png`
+  本地 DEMO **83/83**；截图 `docs/screenshots/panels-{local,live}-*.png`
   （含纯享态 `-pure.png`：无工具栏、歌词拿满高度），
   报告 `docs/player-panels-results.json`（`alsoRun` 保留另一目标的上一次摘要）
+- **布局矩阵轮（本轮新增）**：`tools/probe-mobile-layout.mjs` 真实 Chrome
+  6 视口（390×844 / 360×640 / 412×915 / 320×568 / 844×390 横屏 auto / 844×390 横屏手动手机）
+  × 纯享 / 设置 × 字号 s/m/l + 视口收缩 70px 再恢复（模拟 Safari 地址栏）+ 横屏封面态，
+  本地 DEMO **396/396**；每态取证四段间距规格、纵向无重叠、控件与状态行完整在视口内、
+  当前行居中于歌词容器、首尾留白在滚动容器内部、无横向溢出；
+  截图 `docs/screenshots/layout-{local,live}-<视口>-{pure,settings-s/m/l,cover}.png`，
+  报告 `docs/player-mobile-layout-results.json`
 - 三态轮复测：`probe-regression` 138/0、`probe-lyrics-sync` local+live 41/41、
   `npm run browser:check` **215/215**（六组合 + 自动适配 + 手动布局 + 横竖屏）、
   `verify-live` 18 PASS · 1 N/A · 0 FAIL（2026-11-19，部署 commit 81dc7c3 后；
   线上 4 首真实歌曲，「另一首歌」为纯文本歌词的《去年夏天》，覆盖无时间轴时校准禁用仍如实）
-- browser-check 两处**旧断言**按现行设计更新（非站点回归）：手机迷你条操作区常驻但只留
-  「词」「简介」→ 改按可见子键计数（手机 2 / 平板带 7 / 桌面 8）；专辑 / 歌单按钮先滚到
-  视口中部再点，避开固定迷你条覆盖区（与 probe-player-panels 的 playRow 同一做法）
-- **NOT_RUN**：iOS Safari 真机、微信内浏览器真机（无设备 / 账号）；
-  「全部资料缺失 → 歌曲资料待补充」分支仅单元覆盖，未真机目视
+- browser-check **旧断言**按现行设计更新（非站点回归）：简介移除后迷你条可见子键计数
+  手机 1 / 平板带 6 / 桌面 7；专辑 / 歌单按钮先滚到视口中部再点，避开固定迷你条覆盖区
+  （与 probe-player-panels 的 playRow 同一做法）
+- 修过的三个真实布局故障（都有探针守着）：① 歌词容器 content-box 时内部留白 padding
+  叠在 flex 分配高度之外 → 工具栏出现时歌词溢出压到歌名（改 border-box + min-height:0）；
+  ② 留白按容器自身 clientHeight 算会形成反馈环（内容被钳 0 后 ResizeObserver 不再触发）
+  → 改按父级 `.pl__lyricsbox` 的 flex 高度算；③ 合成 layout.css 带 `html[data-layout]`
+  作用域前缀，矮屏压缩规则必须用 `#plFull ` 前缀才压得过
+- **NOT_RUN**：iOS Safari 真机、微信内浏览器真机（无设备 / 账号）——地址栏展开/收起
+  以视口高度 ±70px 模拟，非真机 Safari；320×568 设置态歌词区仅约 55px（一行可见），
+  无重叠、控件完整，属极小屏如实降级而非故障
 
 > 图标轮只改图标、尺寸、间距与交互样式；面板轮新增字号偏好（按浏览器持久化）、
 > 校准偏移（按歌曲持久化）与简介舞台，Media Session 封面 MIME 改为按扩展名如实声明。
 > 三态轮把「词」改为 隐藏→纯享→设置→隐藏 循环：工具栏仅设置态独立占位显示，
 > 设置态按钮加小齿轮标记；三态本身不持久化（刷新 / 收起后首击回纯享）。
+> 布局轮重排全屏纵向骨架（舞台吃满剩余高度、间距显式、矮屏/横屏压缩、dvh + 安全区、
+> 首尾留白进滚动容器），并按此前要求整体移除「简介」按钮与面板（舞台仅 cover/vinyl/lyrics）。
 > 走带 / 快捷键 / 竞态令牌 / 媒体事件驱动状态机均未改动。

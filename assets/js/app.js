@@ -14,7 +14,6 @@ import { Router } from './router.js';
 import { Adapters } from './adapters.js';
 import { PlayerUI } from './ui/player-ui.js';
 import { LyricsUI, bindPageLyrics } from './ui/lyrics-ui.js';
-import { SongInfoUI } from './ui/song-info-ui.js';
 import { QueueUI } from './ui/queue-ui.js';
 import { LibraryUI } from './ui/library-ui.js';
 import { ShareUI } from './ui/share-ui.js';
@@ -147,12 +146,9 @@ async function boot({ base = BASE } = {}) {
   const ui = new PlayerUI(player, { resolve });
   player.ui = ui;
   const lyrics = new LyricsUI(player);
-  const songInfo = new SongInfoUI(player);
-  // 重新打开歌词面板（「词」按钮 / 展示模式切换 / 键盘 L）时立即回到当前行并恢复自动跟随；
-  // 打开简介面板时按当前歌曲重渲染，避免残留上一首的信息
+  // 重新打开歌词面板（「词」按钮 / 展示模式切换 / 键盘 L）时立即回到当前行并恢复自动跟随
   ui.onStageChange = (stage) => {
     if (stage === 'lyrics') lyrics.refollow();
-    if (stage === 'about') songInfo.render(player.currentSong);
   };
   const queueUI = new QueueUI(player);
   const library = new LibraryUI(player, { catalog, searchIndex, resolve, link });
@@ -165,7 +161,7 @@ async function boot({ base = BASE } = {}) {
   player.bindMediaSession();
   if (store.data.audioSession) player.setAudioSession(true);
 
-  const app = { base, site, catalog, store, player, adapters, ui, lyrics, songInfo, queueUI, library, share, status, me, appearance, resolve, resolveAudio, link };
+  const app = { base, site, catalog, store, player, adapters, ui, lyrics, queueUI, library, share, status, me, appearance, resolve, resolveAudio, link };
   window.__music = app; // 便于真机调试与自动化验收
 
   /* ── 路由 ─────────────────────────────────────────── */
@@ -341,7 +337,6 @@ async function handleClick(e, app) {
     case 'lyric-offset': player.adjustLyricOffset(Number(btn.dataset.delta) || 0); break;
     case 'lyric-offset-reset': player.setLyricOffset(0); break;
     case 'lyric-font': lyrics.setFont(btn.dataset.size); break;
-    case 'toggle-about': ui.toggleAbout(); break;
     case 'open-queue': queueUI.open(); break;
     case 'open-share': await share.open(btn.dataset.kind, slug); break;
     case 'cycle-view': ui.cycleStage(); break;

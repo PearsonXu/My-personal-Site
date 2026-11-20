@@ -42,8 +42,8 @@
 .hero__pick__cover img { width:72px; height:72px; }
 .aboutgrid { grid-template-columns:1fr; }
 
-/* 迷你播放器：第一行 封面/标题/三主控，第二行 常驻文字按钮「词」「简介」。
-   两个 44×44 文字按钮 + 三主控在 320px 宽也放不下一行 → 拆两行，绝不横向溢出 */
+/* 迷你播放器：第一行 封面/标题/三主控，第二行 常驻文字按钮「词」。
+   44×44 文字按钮 + 三主控在 320px 宽也放不下一行 → 拆两行，绝不横向溢出 */
 .pl__bar { grid-template-columns:auto minmax(0,1fr) auto; grid-template-rows:auto auto; gap:4px var(--sp2); padding:8px var(--sp4) 16px; }
 .pl__extra { grid-column:1/-1; grid-row:2; justify-content:flex-end; gap:4px; }
 .pl__art img { width:44px; height:44px; }
@@ -53,15 +53,18 @@
 .pl__seekwrap .range { height:12px; }
 .pl__seekwrap .range::-webkit-slider-runnable-track { height:2px; }
 .pl__seekwrap .range::-webkit-slider-thumb { width:9px; height:9px; margin-top:-3.5px; }
-/* 迷你条操作区只保留常驻的文字按钮「词」「简介」，其余功能键仍在展开页 */
+/* 迷你条操作区只保留常驻的文字按钮「词」，其余功能键仍在展开页 */
 .pl__extra { display:flex; }
-.pl__extra > :not(.pbtn--lyrics):not(.pbtn--about) { display:none; }
-.pl__state { position:absolute; left:var(--sp4); right:var(--sp4); bottom:-1.2em; font-size:.6rem; }
+.pl__extra > :not(.pbtn--lyrics) { display:none; }
+.pl__bar .pl__state { position:absolute; left:var(--sp4); right:var(--sp4); bottom:-1.2em; font-size:.6rem; }
 .pl__fullbtns { gap:8px; }
-.pl__stage { margin:var(--sp4) auto; }
+/* 全屏播放页：舞台吃满剩余高度，块间距按移动端规格（歌词→歌名 20 / 作者→进度 20 / 时间→按钮 16） */
+.pl__stage { margin:0 auto 20px; }
+.pl__fullhead { margin-bottom:10px; }
+.pl__fullseek { margin-top:20px; }
+.pl__fullbtns { margin-top:16px; }
 .pl__toolbar { gap:var(--sp2); padding:var(--sp2); }
 .pl__calib__hint { font-size:.62rem; }
-.pl__about__row { grid-template-columns:4.6em minmax(0,1fr); }
 .pl__bigart { width:min(78vw,300px); }
 .pl__full { padding-left:var(--sp4); padding-right:var(--sp4); }
 

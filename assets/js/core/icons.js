@@ -78,7 +78,7 @@ export const MODE_ICON = {
 };
 
 /** 播放页舞台 → 图标名 */
-export const STAGE_ICON = { cover: 'cover', vinyl: 'disc', lyrics: 'lyrics', about: 'info' };
+export const STAGE_ICON = { cover: 'cover', vinyl: 'disc', lyrics: 'lyrics' };
 
 export const ICON_NAMES = Object.keys(PATHS);
 

@@ -151,9 +151,6 @@ function player({ base }) {
   // 三态循环按钮：off 普通 / pure 主题高亮 / settings 高亮 + 小齿轮（CSS 按 data-mode 切齿轮显隐）
   const lyricsBtn = (id) =>
     `<button class="pbtn pbtn--text pbtn--lyrics" type="button" data-act="toggle-lyrics" id="${id}" data-mode="off" aria-label="显示歌词" title="显示歌词" aria-expanded="false" aria-controls="plLyrics">词<span class="pbtn__gear" aria-hidden="true">${icon('gear', { size: 12 })}</span></button>`;
-  // 简介入口：与「词」并排的文字按钮，互斥展开；内容随切歌更新（ui/song-info-ui.js）
-  const aboutBtn = (id) =>
-    `<button class="pbtn pbtn--text pbtn--about" type="button" data-act="toggle-about" id="${id}" aria-label="显示简介" title="显示简介" aria-expanded="false" aria-controls="plAbout">简介</button>`;
   return `<div id="player-root" class="pl" data-state="idle" data-expanded="false">
   <div class="pl__bar" role="region" aria-label="播放器">
     <button class="pl__art" type="button" data-act="expand" aria-label="展开播放页">
@@ -176,7 +173,6 @@ function player({ base }) {
       ${btn('cycle-mode', '播放模式：顺序播放', 'mode-order', ' id="plMode"', 22)}
       ${btn('toggle-fav', '收藏当前歌曲', 'heart', ' id="plFav"', 22)}
       ${lyricsBtn('plLyricsBtn')}
-      ${aboutBtn('plAboutBtn')}
       ${btn('open-queue', '播放队列', 'queue', ' id="plQueueBtn"', 22)}
       ${btn('open-share', '分享当前歌曲', 'share', '', 22)}
       <div class="pl__vol" id="plVolWrap">
@@ -219,7 +215,6 @@ function player({ base }) {
           <button class="lrc-back" type="button" id="plLyricsBack" hidden>回到当前歌词</button>
         </div>
       </div>
-      <div class="pl__about" id="plAbout" aria-label="歌曲简介"><p class="pl__about__empty">歌曲资料待补充</p></div>
     </div>
     <div class="pl__fullmeta">
       <p class="pl__fullsong" id="plFullTitle">还没有在播放</p>
@@ -236,7 +231,6 @@ function player({ base }) {
       ${btn('next', '下一首', 'next')}
       ${btn('open-queue', '播放队列', 'queue', '', 22)}
       ${lyricsBtn('plLyricsBtnFull')}
-      ${aboutBtn('plAboutBtnFull')}
     </div>
     <p class="pl__state" id="plStateFull" role="status" aria-live="polite"></p>
   </section>

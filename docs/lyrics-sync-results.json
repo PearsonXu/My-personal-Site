@@ -1,19 +1,19 @@
 {
-  "at": "2026-11-20T02:20:28.670Z",
+  "at": "2026-11-20T03:33:25.421Z",
   "chrome": "headless Google Chrome (puppeteer-core)",
   "bases": [
     "http://localhost:8391 (dist)",
     "https://www.xuzhaoqing.com"
   ],
-  "pass": 41,
-  "fail": 0,
+  "pass": 39,
+  "fail": 2,
   "reproducedOnOldBuild": 0,
   "checks": [
     {
       "group": "local",
       "name": "首句高亮按时落地",
       "ok": true,
-      "detail": "t=19.67 idx=0"
+      "detail": "t=19.72 idx=0"
     },
     {
       "group": "local",
@@ -31,7 +31,7 @@
       "group": "local",
       "name": "当前行保持在容器中部附近",
       "ok": true,
-      "detail": "Δ=84px"
+      "detail": "Δ=0px"
     },
     {
       "group": "local",
@@ -49,13 +49,13 @@
       "group": "local",
       "name": "手动滚动期间不自动拽回",
       "ok": true,
-      "detail": "scrollTop 160→160"
+      "detail": "scrollTop 262→262"
     },
     {
       "group": "local",
       "name": "点击回到当前歌词恢复跟随并居中",
       "ok": true,
-      "detail": "scrollTop=0"
+      "detail": "scrollTop=152"
     },
     {
       "group": "local",
@@ -73,7 +73,7 @@
       "group": "local",
       "name": "暂停恢复后按 currentTime 定位",
       "ok": true,
-      "detail": "t=41.65"
+      "detail": "t=41.64"
     },
     {
       "group": "local",
@@ -85,19 +85,19 @@
       "group": "local",
       "name": "慢网缓冲后按 currentTime 重新同步",
       "ok": true,
-      "detail": "缓冲期 state=playing，恢复后 t=47.29"
+      "detail": "缓冲期 state=playing，恢复后 t=47.26"
     },
     {
       "group": "local",
       "name": "恢复进度+慢网落地：高亮立即在正确行",
       "ok": true,
-      "detail": "t=71.57 idx=10 active=10（旧构建在此冻住=根因复现）"
+      "detail": "t=71.56 idx=10 active=10（旧构建在此冻住=根因复现）"
     },
     {
       "group": "local",
       "name": "reduced-motion 瞬时定位（150ms 内完成滚动）",
       "ok": true,
-      "detail": "scrollTop 314→861"
+      "detail": "scrollTop 499→1046"
     },
     {
       "group": "local",
@@ -109,7 +109,7 @@
       "group": "local",
       "name": "重播按 currentTime 重新定位（首句前/首句）",
       "ok": true,
-      "detail": "t=0.94 idx=-1 active=null"
+      "detail": "t=0.95 idx=-1 active=null"
     },
     {
       "group": "local",
@@ -145,13 +145,13 @@
       "group": "local",
       "name": "手机点按回到当前歌词恢复跟随",
       "ok": true,
-      "detail": "scrollTop=0"
+      "detail": "scrollTop=3"
     },
     {
       "group": "live",
       "name": "首句高亮按时落地",
       "ok": true,
-      "detail": "t=19.68 idx=0"
+      "detail": "t=19.82 idx=0"
     },
     {
       "group": "live",
@@ -228,14 +228,14 @@
     {
       "group": "live",
       "name": "恢复进度+慢网落地：高亮立即在正确行",
-      "ok": true,
-      "detail": "t=71.26 idx=10 active=10（旧构建在此冻住=根因复现）"
+      "ok": false,
+      "detail": "t=0.00 idx=-1 active=null（旧构建在此冻住=根因复现）"
     },
     {
       "group": "live",
       "name": "reduced-motion 瞬时定位（150ms 内完成滚动）",
-      "ok": true,
-      "detail": "scrollTop 314→861"
+      "ok": false,
+      "detail": "scrollTop 0→0"
     },
     {
       "group": "live",
@@ -247,7 +247,7 @@
       "group": "live",
       "name": "重播按 currentTime 重新定位（首句前/首句）",
       "ok": true,
-      "detail": "t=0.96 idx=-1 active=null"
+      "detail": "t=0.94 idx=-1 active=null"
     },
     {
       "group": "live",

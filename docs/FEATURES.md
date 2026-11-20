@@ -94,6 +94,9 @@
 | 点击跳转 | `LyricsUI` / `bindPageLyrics` | `app-boot` + B: 同上 |
 | 纯文本 / 无歌词 / 纯音乐 | `lyricsState` | `core` + B:「纯音乐 / 无歌词空状态」 |
 | 全屏歌词舞台（「词」三态：隐藏/纯享/设置） | `.pl__stage[data-stage=lyrics]` + `data-tools` | 六组合 lyrics 截图 + 按钮可点断言 + panels 探针三态循环 |
+| 全屏纵向骨架（舞台吃满剩余高度 / 间距显式 / 矮屏横屏压缩 / dvh + 安全区） | `.pl__full` flex 骨架 + `@media (max-height:…)` | `probe-mobile-layout` 6 视口 × 三态 × 三字号 + 视口收缩恢复 |
+| 首尾居中留白在滚动容器内部 | `LyricsUI._updatePad` + ResizeObserver | panels / mobile-layout 探针「留白在容器内部」「当前行容器内居中」 |
+| 「简介」入口与面板已移除（舞台仅 cover/vinyl/lyrics） | shell / `PlayerUI` / `sanitizeState` 回退 | `player-panels` 整机 + 两探针「简介已移除」 |
 
 ## 切换与导航保状态
 

@@ -89,7 +89,7 @@ test('lyrics-entry · 「词」按钮样式：边框浅底、展开态主题红�
 test('lyrics-entry · 移动端迷你条仍显示「词」，其余功能键留在展开页', () => {
   const mobile = read('assets/css/layout-mobile.css');
   assert.match(mobile, /\.pl__extra \{ display:flex; \}/);
-  assert.match(mobile, /\.pl__extra > :not\(\.pbtn--lyrics\):not\(\.pbtn--about\) \{ display:none; \}/);
+  assert.match(mobile, /\.pl__extra > :not\(\.pbtn--lyrics\) \{ display:none; \}/);
   assert.match(mobile, /\.pl__bar \{ grid-template-columns:auto minmax\(0,1fr\) auto; grid-template-rows:auto auto;/);
 });
 

@@ -1,0 +1,2400 @@
+{
+  "at": "2026-11-20T03:30:56.562Z",
+  "chrome": "headless Google Chrome (puppeteer-core)",
+  "bases": [
+    "http://localhost:8394 (dist --demo)"
+  ],
+  "viewports": [
+    "390x844",
+    "360x640",
+    "412x915",
+    "320x568",
+    "844x390",
+    "844x390 layout=mobile"
+  ],
+  "pass": 396,
+  "fail": 0,
+  "checks": [
+    {
+      "group": "local/phone-390x844",
+      "name": "起播",
+      "ok": true,
+      "detail": "qingchun-dagai"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "纯享 歌词→歌名 20px",
+      "ok": true,
+      "detail": "20.0px"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "纯享 歌名→作者 6px",
+      "ok": true,
+      "detail": "6.0px"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "纯享 作者→进度 20px",
+      "ok": true,
+      "detail": "20.0px"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "纯享 时间→按钮 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "纯享 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=56 lyrics=[66,590] title.t=610 btns.b=801"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "纯享 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=801 state.b=824 winH=844"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "纯享 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=524 下限=295 toolbar=false"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "纯享 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.3px"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "纯享 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=238/238 scrollH=2070 clientH=524"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "纯享 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-s 歌词→歌名 20px",
+      "ok": true,
+      "detail": "20.0px"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-s 歌名→作者 6px",
+      "ok": true,
+      "detail": "6.0px"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-s 作者→进度 20px",
+      "ok": true,
+      "detail": "20.0px"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-s 时间→按钮 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-s 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=56 lyrics=[265,590] title.t=610 btns.b=801"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-s 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=801 state.b=824 winH=844"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-s 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=325 下限=48 toolbar=true"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-s 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.1px"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-s 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=139/139 scrollH=1748 clientH=325"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-s 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-s 工具栏不遮歌词且按钮够大",
+      "ok": true,
+      "detail": "toolbar.b=257 lyrics.t=265"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-m 歌词→歌名 20px",
+      "ok": true,
+      "detail": "20.0px"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-m 歌名→作者 6px",
+      "ok": true,
+      "detail": "6.0px"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-m 作者→进度 20px",
+      "ok": true,
+      "detail": "20.0px"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-m 时间→按钮 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-m 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=56 lyrics=[265,590] title.t=610 btns.b=801"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-m 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=801 state.b=824 winH=844"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-m 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=325 下限=48 toolbar=true"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-m 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.1px"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-m 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=137/137 scrollH=1868 clientH=325"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-m 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-m 工具栏不遮歌词且按钮够大",
+      "ok": true,
+      "detail": "toolbar.b=257 lyrics.t=265"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-l 歌词→歌名 20px",
+      "ok": true,
+      "detail": "20.0px"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-l 歌名→作者 6px",
+      "ok": true,
+      "detail": "6.0px"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-l 作者→进度 20px",
+      "ok": true,
+      "detail": "20.0px"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-l 时间→按钮 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-l 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=56 lyrics=[265,590] title.t=610 btns.b=801"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-l 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=801 state.b=824 winH=844"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-l 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=325 下限=48 toolbar=true"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-l 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.5px"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-l 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=134/134 scrollH=2041 clientH=325"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-l 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "设置-l 工具栏不遮歌词且按钮够大",
+      "ok": true,
+      "detail": "toolbar.b=257 lyrics.t=265"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "视口收缩 歌词→歌名 20px",
+      "ok": true,
+      "detail": "20.0px"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "视口收缩 歌名→作者 6px",
+      "ok": true,
+      "detail": "6.0px"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "视口收缩 作者→进度 20px",
+      "ok": true,
+      "detail": "20.0px"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "视口收缩 时间→按钮 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "视口收缩 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=56 lyrics=[265,520] title.t=540 btns.b=731"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "视口收缩 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=731 state.b=754 winH=774"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "视口收缩 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=255 下限=48 toolbar=true"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "视口收缩 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.5px"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "视口收缩 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=99/99 scrollH=1971 clientH=255"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "视口收缩 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "视口恢复 歌词→歌名 20px",
+      "ok": true,
+      "detail": "20.0px"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "视口恢复 歌名→作者 6px",
+      "ok": true,
+      "detail": "6.0px"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "视口恢复 作者→进度 20px",
+      "ok": true,
+      "detail": "20.0px"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "视口恢复 时间→按钮 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "视口恢复 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=56 lyrics=[265,590] title.t=610 btns.b=801"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "视口恢复 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=801 state.b=824 winH=844"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "视口恢复 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=325 下限=48 toolbar=true"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "视口恢复 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.5px"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "视口恢复 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=134/134 scrollH=2041 clientH=325"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "视口恢复 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "封面态封面不越界不推远控件",
+      "ok": true,
+      "detail": "bigart=[178,478] title.t=610 winH=844"
+    },
+    {
+      "group": "local/phone-390x844",
+      "name": "无页面 JS 错误",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "起播",
+      "ok": true,
+      "detail": "qingchun-dagai"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "纯享 歌词→歌名 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "纯享 歌名→作者 4px",
+      "ok": true,
+      "detail": "4.0px"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "纯享 作者→进度 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "纯享 时间→按钮 12px",
+      "ok": true,
+      "detail": "12.0px"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "纯享 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=56 lyrics=[64,407] title.t=423 btns.b=601"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "纯享 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=601 state.b=620 winH=640"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "纯享 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=343 下限=224 toolbar=false"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "纯享 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.1px"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "纯享 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=148/148 scrollH=1890 clientH=343"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "纯享 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-s 歌词→歌名 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-s 歌名→作者 4px",
+      "ok": true,
+      "detail": "4.0px"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-s 作者→进度 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-s 时间→按钮 12px",
+      "ok": true,
+      "detail": "12.0px"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-s 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=56 lyrics=[263,407] title.t=423 btns.b=601"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-s 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=601 state.b=620 winH=640"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-s 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=144 下限=48 toolbar=true"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-s 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.6px"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-s 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=49/49 scrollH=1568 clientH=144"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-s 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-s 工具栏不遮歌词且按钮够大",
+      "ok": true,
+      "detail": "toolbar.b=255 lyrics.t=263"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-m 歌词→歌名 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-m 歌名→作者 4px",
+      "ok": true,
+      "detail": "4.0px"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-m 作者→进度 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-m 时间→按钮 12px",
+      "ok": true,
+      "detail": "12.0px"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-m 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=56 lyrics=[263,407] title.t=423 btns.b=601"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-m 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=601 state.b=620 winH=640"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-m 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=144 下限=48 toolbar=true"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-m 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.4px"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-m 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=47/47 scrollH=1688 clientH=144"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-m 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-m 工具栏不遮歌词且按钮够大",
+      "ok": true,
+      "detail": "toolbar.b=255 lyrics.t=263"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-l 歌词→歌名 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-l 歌名→作者 4px",
+      "ok": true,
+      "detail": "4.0px"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-l 作者→进度 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-l 时间→按钮 12px",
+      "ok": true,
+      "detail": "12.0px"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-l 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=56 lyrics=[263,407] title.t=423 btns.b=601"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-l 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=601 state.b=620 winH=640"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-l 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=144 下限=48 toolbar=true"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-l 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.1px"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-l 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=43/43 scrollH=1859 clientH=144"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-l 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "设置-l 工具栏不遮歌词且按钮够大",
+      "ok": true,
+      "detail": "toolbar.b=255 lyrics.t=263"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "视口收缩 歌词→歌名 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "视口收缩 歌名→作者 4px",
+      "ok": true,
+      "detail": "4.0px"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "视口收缩 作者→进度 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "视口收缩 时间→按钮 12px",
+      "ok": true,
+      "detail": "12.0px"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "视口收缩 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=56 lyrics=[263,337] title.t=353 btns.b=531"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "视口收缩 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=531 state.b=550 winH=570"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "视口收缩 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=74 下限=48 toolbar=true"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "视口收缩 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.1px"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "视口收缩 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=8/8 scrollH=1789 clientH=74"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "视口收缩 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "视口恢复 歌词→歌名 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "视口恢复 歌名→作者 4px",
+      "ok": true,
+      "detail": "4.0px"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "视口恢复 作者→进度 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "视口恢复 时间→按钮 12px",
+      "ok": true,
+      "detail": "12.0px"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "视口恢复 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=56 lyrics=[263,407] title.t=423 btns.b=601"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "视口恢复 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=601 state.b=620 winH=640"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "视口恢复 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=144 下限=48 toolbar=true"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "视口恢复 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.1px"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "视口恢复 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=43/43 scrollH=1859 clientH=144"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "视口恢复 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "封面态封面不越界不推远控件",
+      "ok": true,
+      "detail": "bigart=[95,376] title.t=423 winH=640"
+    },
+    {
+      "group": "local/small-360x640",
+      "name": "无页面 JS 错误",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "起播",
+      "ok": true,
+      "detail": "qingchun-dagai"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "纯享 歌词→歌名 20px",
+      "ok": true,
+      "detail": "20.0px"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "纯享 歌名→作者 6px",
+      "ok": true,
+      "detail": "6.0px"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "纯享 作者→进度 20px",
+      "ok": true,
+      "detail": "20.0px"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "纯享 时间→按钮 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "纯享 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=56 lyrics=[66,661] title.t=681 btns.b=872"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "纯享 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=872 state.b=895 winH=915"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "纯享 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=595 下限=320 toolbar=false"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "纯享 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.2px"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "纯享 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=274/274 scrollH=2142 clientH=595"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "纯享 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-s 歌词→歌名 20px",
+      "ok": true,
+      "detail": "20.0px"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-s 歌名→作者 6px",
+      "ok": true,
+      "detail": "6.0px"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-s 作者→进度 20px",
+      "ok": true,
+      "detail": "20.0px"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-s 时间→按钮 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-s 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=56 lyrics=[213,661] title.t=681 btns.b=872"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-s 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=872 state.b=895 winH=915"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-s 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=448 下限=48 toolbar=true"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-s 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.6px"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-s 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=201/201 scrollH=1872 clientH=448"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-s 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-s 工具栏不遮歌词且按钮够大",
+      "ok": true,
+      "detail": "toolbar.b=205 lyrics.t=213"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-m 歌词→歌名 20px",
+      "ok": true,
+      "detail": "20.0px"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-m 歌名→作者 6px",
+      "ok": true,
+      "detail": "6.0px"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-m 作者→进度 20px",
+      "ok": true,
+      "detail": "20.0px"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-m 时间→按钮 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-m 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=56 lyrics=[213,661] title.t=681 btns.b=872"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-m 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=872 state.b=895 winH=915"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-m 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=448 下限=48 toolbar=true"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-m 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.4px"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-m 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=199/199 scrollH=1992 clientH=448"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-m 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-m 工具栏不遮歌词且按钮够大",
+      "ok": true,
+      "detail": "toolbar.b=205 lyrics.t=213"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-l 歌词→歌名 20px",
+      "ok": true,
+      "detail": "20.0px"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-l 歌名→作者 6px",
+      "ok": true,
+      "detail": "6.0px"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-l 作者→进度 20px",
+      "ok": true,
+      "detail": "20.0px"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-l 时间→按钮 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-l 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=56 lyrics=[213,661] title.t=681 btns.b=872"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-l 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=872 state.b=895 winH=915"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-l 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=448 下限=48 toolbar=true"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-l 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.0px"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-l 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=195/195 scrollH=2163 clientH=448"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-l 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "设置-l 工具栏不遮歌词且按钮够大",
+      "ok": true,
+      "detail": "toolbar.b=205 lyrics.t=213"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "视口收缩 歌词→歌名 20px",
+      "ok": true,
+      "detail": "20.0px"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "视口收缩 歌名→作者 6px",
+      "ok": true,
+      "detail": "6.0px"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "视口收缩 作者→进度 20px",
+      "ok": true,
+      "detail": "20.0px"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "视口收缩 时间→按钮 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "视口收缩 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=56 lyrics=[213,591] title.t=611 btns.b=802"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "视口收缩 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=802 state.b=825 winH=845"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "视口收缩 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=378 下限=48 toolbar=true"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "视口收缩 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.0px"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "视口收缩 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=160/160 scrollH=2093 clientH=378"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "视口收缩 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "视口恢复 歌词→歌名 20px",
+      "ok": true,
+      "detail": "20.0px"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "视口恢复 歌名→作者 6px",
+      "ok": true,
+      "detail": "6.0px"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "视口恢复 作者→进度 20px",
+      "ok": true,
+      "detail": "20.0px"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "视口恢复 时间→按钮 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "视口恢复 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=56 lyrics=[213,661] title.t=681 btns.b=872"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "视口恢复 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=872 state.b=895 winH=915"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "视口恢复 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=448 下限=48 toolbar=true"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "视口恢复 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.0px"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "视口恢复 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=195/195 scrollH=2163 clientH=448"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "视口恢复 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "封面态封面不越界不推远控件",
+      "ok": true,
+      "detail": "bigart=[213,513] title.t=681 winH=915"
+    },
+    {
+      "group": "local/large-412x915",
+      "name": "无页面 JS 错误",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "起播",
+      "ok": true,
+      "detail": "qingchun-dagai"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "纯享 歌词→歌名 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "纯享 歌名→作者 4px",
+      "ok": true,
+      "detail": "4.0px"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "纯享 作者→进度 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "纯享 时间→按钮 12px",
+      "ok": true,
+      "detail": "12.0px"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "纯享 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=56 lyrics=[64,335] title.t=351 btns.b=529"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "纯享 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=529 state.b=548 winH=568"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "纯享 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=271 下限=199 toolbar=false"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "纯享 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.1px"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "纯享 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=112/112 scrollH=1818 clientH=271"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "纯享 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-s 歌词→歌名 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-s 歌名→作者 4px",
+      "ok": true,
+      "detail": "4.0px"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-s 作者→进度 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-s 时间→按钮 12px",
+      "ok": true,
+      "detail": "12.0px"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-s 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=56 lyrics=[280,335] title.t=351 btns.b=529"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-s 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=529 state.b=548 winH=568"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-s 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=55 下限=48 toolbar=true"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-s 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.2px"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-s 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=8/8 scrollH=1486 clientH=55"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-s 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-s 工具栏不遮歌词且按钮够大",
+      "ok": true,
+      "detail": "toolbar.b=272 lyrics.t=280"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-m 歌词→歌名 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-m 歌名→作者 4px",
+      "ok": true,
+      "detail": "4.0px"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-m 作者→进度 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-m 时间→按钮 12px",
+      "ok": true,
+      "detail": "12.0px"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-m 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=56 lyrics=[280,335] title.t=351 btns.b=529"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-m 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=529 state.b=548 winH=568"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-m 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=55 下限=48 toolbar=true"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-m 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.0px"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-m 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=8/8 scrollH=1610 clientH=55"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-m 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-m 工具栏不遮歌词且按钮够大",
+      "ok": true,
+      "detail": "toolbar.b=272 lyrics.t=280"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-l 歌词→歌名 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-l 歌名→作者 4px",
+      "ok": true,
+      "detail": "4.0px"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-l 作者→进度 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-l 时间→按钮 12px",
+      "ok": true,
+      "detail": "12.0px"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-l 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=56 lyrics=[280,335] title.t=351 btns.b=529"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-l 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=529 state.b=548 winH=568"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-l 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=55 下限=48 toolbar=true"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-l 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.4px"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-l 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=8/8 scrollH=1789 clientH=55"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-l 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "设置-l 工具栏不遮歌词且按钮够大",
+      "ok": true,
+      "detail": "toolbar.b=272 lyrics.t=280"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "视口收缩 歌词→歌名 10px",
+      "ok": true,
+      "detail": "10.0px"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "视口收缩 歌名→作者 2px",
+      "ok": true,
+      "detail": "2.0px"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "视口收缩 作者→进度 10px",
+      "ok": true,
+      "detail": "10.0px"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "视口收缩 时间→按钮 8px",
+      "ok": true,
+      "detail": "8.0px"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "视口收缩 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=50 lyrics=[194,312] title.t=322 btns.b=471"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "视口收缩 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=471 state.b=488 winH=498"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "视口收缩 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=118 下限=24 toolbar=true"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "视口收缩 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.2px"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "视口收缩 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=30/30 scrollH=1833 clientH=118"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "视口收缩 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "视口恢复 歌词→歌名 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "视口恢复 歌名→作者 4px",
+      "ok": true,
+      "detail": "4.0px"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "视口恢复 作者→进度 16px",
+      "ok": true,
+      "detail": "16.0px"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "视口恢复 时间→按钮 12px",
+      "ok": true,
+      "detail": "12.0px"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "视口恢复 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=56 lyrics=[280,335] title.t=351 btns.b=529"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "视口恢复 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=529 state.b=548 winH=568"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "视口恢复 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=55 下限=48 toolbar=true"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "视口恢复 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.4px"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "视口恢复 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=8/8 scrollH=1789 clientH=55"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "视口恢复 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "封面态封面不越界不推远控件",
+      "ok": true,
+      "detail": "bigart=[75,324] title.t=351 winH=568"
+    },
+    {
+      "group": "local/tiny-320x568",
+      "name": "无页面 JS 错误",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "起播",
+      "ok": true,
+      "detail": "qingchun-dagai"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "纯享 歌词→歌名 10px",
+      "ok": true,
+      "detail": "10.0px"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "纯享 歌名→作者 2px",
+      "ok": true,
+      "detail": "2.0px"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "纯享 作者→进度 10px",
+      "ok": true,
+      "detail": "10.0px"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "纯享 时间→按钮 8px",
+      "ok": true,
+      "detail": "8.0px"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "纯享 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=50 lyrics=[56,204] title.t=214 btns.b=363"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "纯享 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=363 state.b=380 winH=390"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "纯享 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=148 下限=24 toolbar=false"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "纯享 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.6px"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "纯享 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=50/50 scrollH=1694 clientH=148"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "纯享 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-s 歌词→歌名 10px",
+      "ok": true,
+      "detail": "10.0px"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-s 歌名→作者 2px",
+      "ok": true,
+      "detail": "2.0px"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-s 作者→进度 10px",
+      "ok": true,
+      "detail": "10.0px"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-s 时间→按钮 8px",
+      "ok": true,
+      "detail": "8.0px"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-s 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=50 lyrics=[106,204] title.t=214 btns.b=363"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-s 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=363 state.b=380 winH=390"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-s 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=98 下限=24 toolbar=true"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-s 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.7px"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-s 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=26/26 scrollH=1522 clientH=98"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-s 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-s 工具栏不遮歌词且按钮够大",
+      "ok": true,
+      "detail": "toolbar.b=102 lyrics.t=106"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-m 歌词→歌名 10px",
+      "ok": true,
+      "detail": "10.0px"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-m 歌名→作者 2px",
+      "ok": true,
+      "detail": "2.0px"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-m 作者→进度 10px",
+      "ok": true,
+      "detail": "10.0px"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-m 时间→按钮 8px",
+      "ok": true,
+      "detail": "8.0px"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-m 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=50 lyrics=[106,204] title.t=214 btns.b=363"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-m 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=363 state.b=380 winH=390"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-m 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=98 下限=24 toolbar=true"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-m 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.6px"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-m 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=24/24 scrollH=1642 clientH=98"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-m 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-m 工具栏不遮歌词且按钮够大",
+      "ok": true,
+      "detail": "toolbar.b=102 lyrics.t=106"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-l 歌词→歌名 10px",
+      "ok": true,
+      "detail": "10.0px"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-l 歌名→作者 2px",
+      "ok": true,
+      "detail": "2.0px"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-l 作者→进度 10px",
+      "ok": true,
+      "detail": "10.0px"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-l 时间→按钮 8px",
+      "ok": true,
+      "detail": "8.0px"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-l 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=50 lyrics=[106,204] title.t=214 btns.b=363"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-l 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=363 state.b=380 winH=390"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-l 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=98 下限=24 toolbar=true"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-l 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.2px"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-l 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=20/20 scrollH=1813 clientH=98"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-l 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "设置-l 工具栏不遮歌词且按钮够大",
+      "ok": true,
+      "detail": "toolbar.b=102 lyrics.t=106"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "视口收缩 歌词→歌名 10px",
+      "ok": true,
+      "detail": "10.0px"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "视口收缩 歌名→作者 2px",
+      "ok": true,
+      "detail": "2.0px"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "视口收缩 作者→进度 10px",
+      "ok": true,
+      "detail": "10.0px"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "视口收缩 时间→按钮 8px",
+      "ok": true,
+      "detail": "8.0px"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "视口收缩 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=50 lyrics=[106,134] title.t=144 btns.b=293"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "视口收缩 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=293 state.b=310 winH=320"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "视口收缩 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=28 下限=24 toolbar=true"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "视口收缩 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.2px"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "视口收缩 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=8/8 scrollH=1789 clientH=28"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "视口收缩 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "视口恢复 歌词→歌名 10px",
+      "ok": true,
+      "detail": "10.0px"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "视口恢复 歌名→作者 2px",
+      "ok": true,
+      "detail": "2.0px"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "视口恢复 作者→进度 10px",
+      "ok": true,
+      "detail": "10.0px"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "视口恢复 时间→按钮 8px",
+      "ok": true,
+      "detail": "8.0px"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "视口恢复 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=50 lyrics=[106,204] title.t=214 btns.b=363"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "视口恢复 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=363 state.b=380 winH=390"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "视口恢复 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=98 下限=24 toolbar=true"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "视口恢复 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.2px"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "视口恢复 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=20/20 scrollH=1813 clientH=98"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "视口恢复 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "封面态封面不越界不推远控件",
+      "ok": true,
+      "detail": "bigart=[56,204] title.t=214 winH=390"
+    },
+    {
+      "group": "local/land-844x390",
+      "name": "无页面 JS 错误",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "起播",
+      "ok": true,
+      "detail": "qingchun-dagai"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "纯享 歌词→歌名 10px",
+      "ok": true,
+      "detail": "10.0px"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "纯享 歌名→作者 2px",
+      "ok": true,
+      "detail": "2.0px"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "纯享 作者→进度 10px",
+      "ok": true,
+      "detail": "10.0px"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "纯享 时间→按钮 8px",
+      "ok": true,
+      "detail": "8.0px"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "纯享 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=50 lyrics=[56,204] title.t=214 btns.b=363"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "纯享 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=363 state.b=380 winH=390"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "纯享 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=148 下限=24 toolbar=false"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "纯享 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.6px"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "纯享 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=50/50 scrollH=1694 clientH=148"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "纯享 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-s 歌词→歌名 10px",
+      "ok": true,
+      "detail": "10.0px"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-s 歌名→作者 2px",
+      "ok": true,
+      "detail": "2.0px"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-s 作者→进度 10px",
+      "ok": true,
+      "detail": "10.0px"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-s 时间→按钮 8px",
+      "ok": true,
+      "detail": "8.0px"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-s 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=50 lyrics=[106,204] title.t=214 btns.b=363"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-s 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=363 state.b=380 winH=390"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-s 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=98 下限=24 toolbar=true"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-s 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.7px"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-s 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=26/26 scrollH=1522 clientH=98"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-s 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-s 工具栏不遮歌词且按钮够大",
+      "ok": true,
+      "detail": "toolbar.b=102 lyrics.t=106"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-m 歌词→歌名 10px",
+      "ok": true,
+      "detail": "10.0px"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-m 歌名→作者 2px",
+      "ok": true,
+      "detail": "2.0px"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-m 作者→进度 10px",
+      "ok": true,
+      "detail": "10.0px"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-m 时间→按钮 8px",
+      "ok": true,
+      "detail": "8.0px"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-m 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=50 lyrics=[106,204] title.t=214 btns.b=363"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-m 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=363 state.b=380 winH=390"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-m 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=98 下限=24 toolbar=true"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-m 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.6px"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-m 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=24/24 scrollH=1642 clientH=98"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-m 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-m 工具栏不遮歌词且按钮够大",
+      "ok": true,
+      "detail": "toolbar.b=102 lyrics.t=106"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-l 歌词→歌名 10px",
+      "ok": true,
+      "detail": "10.0px"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-l 歌名→作者 2px",
+      "ok": true,
+      "detail": "2.0px"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-l 作者→进度 10px",
+      "ok": true,
+      "detail": "10.0px"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-l 时间→按钮 8px",
+      "ok": true,
+      "detail": "8.0px"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-l 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=50 lyrics=[106,204] title.t=214 btns.b=363"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-l 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=363 state.b=380 winH=390"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-l 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=98 下限=24 toolbar=true"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-l 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.2px"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-l 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=20/20 scrollH=1813 clientH=98"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-l 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "设置-l 工具栏不遮歌词且按钮够大",
+      "ok": true,
+      "detail": "toolbar.b=102 lyrics.t=106"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "视口收缩 歌词→歌名 10px",
+      "ok": true,
+      "detail": "10.0px"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "视口收缩 歌名→作者 2px",
+      "ok": true,
+      "detail": "2.0px"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "视口收缩 作者→进度 10px",
+      "ok": true,
+      "detail": "10.0px"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "视口收缩 时间→按钮 8px",
+      "ok": true,
+      "detail": "8.0px"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "视口收缩 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=50 lyrics=[106,134] title.t=144 btns.b=293"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "视口收缩 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=293 state.b=310 winH=320"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "视口收缩 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=28 下限=24 toolbar=true"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "视口收缩 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.2px"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "视口收缩 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=8/8 scrollH=1789 clientH=28"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "视口收缩 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "视口恢复 歌词→歌名 10px",
+      "ok": true,
+      "detail": "10.0px"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "视口恢复 歌名→作者 2px",
+      "ok": true,
+      "detail": "2.0px"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "视口恢复 作者→进度 10px",
+      "ok": true,
+      "detail": "10.0px"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "视口恢复 时间→按钮 8px",
+      "ok": true,
+      "detail": "8.0px"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "视口恢复 纵向顺序无重叠",
+      "ok": true,
+      "detail": "head.b=50 lyrics=[106,204] title.t=214 btns.b=363"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "视口恢复 控件与状态行完整在视口内",
+      "ok": true,
+      "detail": "btns.b=363 state.b=380 winH=390"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "视口恢复 歌词区吃满剩余高度",
+      "ok": true,
+      "detail": "lyrics.h=98 下限=24 toolbar=true"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "视口恢复 当前行居中于歌词容器",
+      "ok": true,
+      "detail": "Δ=0.2px"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "视口恢复 首尾留白在滚动容器内部",
+      "ok": true,
+      "detail": "pad=20/20 scrollH=1813 clientH=98"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "视口恢复 无横向溢出",
+      "ok": true,
+      "detail": "doc=0"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "封面态封面不越界不推远控件",
+      "ok": true,
+      "detail": "bigart=[56,204] title.t=214 winH=390"
+    },
+    {
+      "group": "local/land-mobile-844x390",
+      "name": "无页面 JS 错误",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "notRun": [
+    "iOS Safari 真机（无设备）：地址栏展开/收起以视口高度变化模拟，非真机 Safari",
+    "微信内浏览器真机（无设备 / 账号）",
+    "线上部署复测需在 push 部署后重跑：node tools/probe-mobile-layout.mjs --base=https://www.xuzhaoqing.com"
+  ]
+}

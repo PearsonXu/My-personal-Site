@@ -50,12 +50,6 @@
 .pbtn__gear { display:none; align-items:center; justify-content:center; }
 .pbtn--lyrics[data-mode="settings"] .pbtn__gear { display:inline-flex; }
 
-/* 简介文字按钮「简介」：与「词」同一视觉语言，互斥展开（同一时刻只有一个面板） */
-.pbtn--about { border-color:var(--line-2); background:var(--panel-2); color:var(--text); font-family:var(--font-d); font-size:.82rem; font-weight:600; line-height:1; }
-.pbtn--about:hover:not(:disabled) { border-color:var(--acc); color:var(--acc); background:rgba(var(--acc-rgb),.08); }
-.pbtn--about[aria-expanded="true"],
-.pbtn--about[aria-expanded="true"]:hover:not(:disabled) { background:var(--acc); border-color:transparent; color:var(--on-acc); }
-
 /* 主按钮：圆形，播放/暂停原位切换。颜色全部走主题变量 */
 .pbtn--play {
   width:var(--play-size); height:var(--play-size); border-radius:50%;
@@ -101,13 +95,16 @@
 .pl[data-state="error"] .pl__state { color:var(--bad); }
 .pl[data-state="blocked"] .pl__state { color:var(--warn); }
 .pl[data-state="playing"] .pl__title { color:var(--text); }
-/* ── 全屏播放页 ─────────────────────────────────────── */
-.pl__full { position:fixed; inset:0; z-index:180; display:flex; flex-direction:column; padding:calc(var(--safe-t) + 12px) var(--sp5) calc(var(--safe-b) + 20px); background:linear-gradient(180deg,var(--bg-1),var(--bg)); overflow-y:auto; }
+/* ── 全屏播放页 ───────────────────────────────────────
+   纵向骨架：顶部导航 → 可伸缩舞台（歌词内部独立滚动）→ 歌名/作者 → 进度 → 控件。
+   舞台 flex:1 吃满剩余高度；其余块按内容占位，间距用显式 margin，不用余量分配。
+   100dvh 跟随 Safari 地址栏展开/收起；底部 padding 含安全区。 */
+.pl__full { position:fixed; inset:0; z-index:180; display:flex; flex-direction:column; height:100vh; height:100dvh; padding:calc(var(--safe-t) + 12px) var(--sp5) calc(var(--safe-b) + 20px); background:linear-gradient(180deg,var(--bg-1),var(--bg)); overflow-y:auto; overscroll-behavior:contain; }
 .pl__full[hidden] { display:none; }
-.pl__fullhead { display:flex; align-items:center; gap:var(--sp3); max-width:760px; width:100%; margin-inline:auto; }
+.pl__fullhead { flex:0 0 auto; display:flex; align-items:center; gap:var(--sp3); max-width:760px; width:100%; margin:0 auto 12px; }
 .pl__fulltitle { flex:1; text-align:center; font-family:var(--font-m); font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; color:var(--mute); }
-.pl__stage { flex:1; display:flex; align-items:center; justify-content:center; max-width:760px; width:100%; margin:var(--sp5) auto; min-height:0; }
-.pl__bigart { position:relative; width:min(72vw,340px); aspect-ratio:1; }
+.pl__stage { flex:1; display:flex; align-items:center; justify-content:center; max-width:760px; width:100%; margin:0 auto 22px; min-height:0; }
+.pl__bigart { position:relative; width:min(72vw,340px); max-height:100%; aspect-ratio:1; }
 .pl__bigart img { width:100%; height:100%; object-fit:cover; border-radius:var(--r-lg); border:1px solid var(--line-2); box-shadow:var(--shadow); }
 .pl__hole { display:none; }
 .pl__stage[data-stage="vinyl"] .pl__bigart img { border-radius:50%; animation:spin 12s linear infinite; }
@@ -116,8 +113,6 @@
 .pl[data-state="idle"] .pl__stage[data-stage="vinyl"] .pl__bigart img { animation-play-state:paused; }
 .pl__stage[data-stage="lyrics"] { flex-direction:column; gap:var(--sp2); }
 .pl__stage[data-stage="lyrics"] .pl__bigart { display:none; }
-.pl__stage[data-stage="about"] { flex-direction:column; gap:var(--sp2); }
-.pl__stage[data-stage="about"] .pl__bigart { display:none; }
 /* 歌词舞台 = 歌词滚动区（纯享）或 顶部工具栏 + 歌词滚动区（设置）。
    工具栏只在设置态（data-tools="true"）显示，独立占一行、不随歌词滚动、不覆盖歌词/歌名/按钮；
    纯享态 display:none 完全让出空间，歌词区拿满高度。 */
@@ -131,13 +126,14 @@
 .pl__font__btn:hover { color:var(--acc); border-color:var(--acc); }
 .pl__font__btn:focus-visible { outline:2px solid var(--acc); outline-offset:2px; }
 .pl__font__btn[aria-pressed="true"] { background:var(--acc); border-color:transparent; color:var(--on-acc); }
-.pl__lyrics { --lrc-scale:1; display:none; width:100%; max-height:min(52vh,460px); overflow-y:auto; -webkit-overflow-scrolling:touch; padding:var(--sp5) var(--sp3); text-align:center; scroll-behavior:smooth; -webkit-mask-image:linear-gradient(180deg,transparent,#000 12%,#000 88%,transparent); mask-image:linear-gradient(180deg,transparent,#000 12%,#000 88%,transparent); }
+/* border-box 关键：flex 分配的高度含内部留白 padding，否则工具栏出现时留白会叠在分配高度之外溢出 */
+.pl__lyrics { --lrc-scale:1; display:none; box-sizing:border-box; min-height:0; width:100%; max-height:none; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:var(--sp5) var(--sp3); text-align:center; scroll-behavior:smooth; -webkit-mask-image:linear-gradient(180deg,transparent,#000 12%,#000 88%,transparent); mask-image:linear-gradient(180deg,transparent,#000 12%,#000 88%,transparent); }
 /* 字号三档只缩放歌词文字（含高亮行），不影响其他 UI 与时间轴 */
 .pl__lyrics[data-font="s"] { --lrc-scale:.86; }
 .pl__lyrics[data-font="l"] { --lrc-scale:1.2; }
 .pl__stage[data-stage="lyrics"] .pl__lyrics { display:block; }
 /* 歌词容器 + 「回到当前歌词」浮按钮的定位盒：按钮绝对贴在容器下缘，不占滚动内容 */
-.pl__lyricsbox { position:relative; width:100%; min-height:0; display:flex; flex-direction:column; }
+.pl__lyricsbox { position:relative; width:100%; min-height:0; flex:1; display:flex; flex-direction:column; }
 .pl__lyricsbox .pl__lyrics { flex:1; }
 .lrc-back { position:absolute; left:50%; bottom:14px; transform:translateX(-50%); z-index:2; min-height:44px; padding:8px 18px; border-radius:999px; border:1px solid var(--line-2); background:var(--panel-2); color:var(--text); font-size:.82rem; font-weight:600; box-shadow:0 4px 16px rgba(0,0,0,.14); cursor:pointer; }
 .lrc-back:hover { border-color:var(--acc); color:var(--acc); }
@@ -157,22 +153,46 @@
 .pl__calib__val { min-width:3.6em; text-align:center; font-family:var(--font-m); font-size:.78rem; color:var(--text); }
 .pl__calib__hint { flex-basis:100%; text-align:center; font-family:var(--font-m); font-size:.66rem; color:var(--mute); }
 
-/* 简介面板：署名 / 版本信息 / 介绍；缺失字段不渲染，全缺时「歌曲资料待补充」 */
-.pl__about { display:none; width:100%; max-width:760px; margin:0 auto; max-height:min(52vh,460px); overflow-y:auto; -webkit-overflow-scrolling:touch; padding:var(--sp4) var(--sp3); text-align:left; box-sizing:border-box; }
-.pl__stage[data-stage="about"] .pl__about { display:block; }
-.pl__about__title { margin:0 0 var(--sp3); font-size:1.2rem; font-weight:600; }
-.pl__about__row { display:grid; grid-template-columns:5.5em minmax(0,1fr); gap:var(--sp2); padding:7px 0; border-bottom:1px dashed var(--line-2); }
-.pl__about__k { font-family:var(--font-m); font-size:.72rem; letter-spacing:.06em; color:var(--mute); padding-top:2px; }
-.pl__about__v { font-size:.9rem; color:var(--text); overflow-wrap:anywhere; }
-.pl__about__credit { margin:var(--sp2) 0 0; font-size:.8rem; color:var(--dim); }
-.pl__about__intro { margin:var(--sp3) 0 0; font-size:.9rem; line-height:1.75; color:var(--dim); overflow-wrap:anywhere; }
-.pl__about__empty { margin:var(--sp4) 0; text-align:center; color:var(--mute); font-size:.9rem; }
-.pl__fullmeta { max-width:760px; width:100%; margin-inline:auto; text-align:center; }
-.pl__fullsong { font-family:var(--font-d); font-size:1.3rem; }
-.pl__fullartist { color:var(--dim); font-size:.9rem; }
-.pl__fullseek { max-width:760px; width:100%; margin:var(--sp4) auto 0; }
-.pl__fullbtns { display:flex; align-items:center; justify-content:center; gap:12px; max-width:760px; width:100%; margin:var(--sp4) auto 0; }
-.pl__full .pl__state { text-align:center; margin-top:var(--sp3); }
+/* 歌名/作者/进度/控件：flex:0 0 auto 按内容占位，间距显式声明（p 的默认 margin 清零，
+   否则 1em 上下边距会在歌词与歌名之间堆出大块空白）。
+   歌词区底→歌名 22（舞台 margin-bottom）· 歌名→作者 6 · 作者→进度 22 · 时间→按钮 18 */
+.pl__fullmeta { flex:0 0 auto; max-width:760px; width:100%; margin:0 auto; text-align:center; }
+.pl__fullsong { margin:0; font-family:var(--font-d); font-size:1.3rem; line-height:1.3; }
+.pl__fullartist { margin:6px 0 0; color:var(--dim); font-size:.9rem; line-height:1.4; }
+.pl__fullseek { flex:0 0 auto; max-width:760px; width:100%; margin:22px auto 0; }
+.pl__fullbtns { flex:0 0 auto; display:flex; align-items:center; justify-content:center; gap:12px; max-width:760px; width:100%; margin:18px auto 0; }
+.pl__full .pl__state { flex:0 0 auto; text-align:center; margin-top:10px; }
+
+/* 矮屏（≤700px 高）压缩块间距，保证控件完整可见。
+   #plFull 前缀提高优先级：合成 layout.css 带 html[data-layout] 作用域前缀，
+   优先级高于 .pl 前缀，会盖掉这里的压缩。 */
+@media (max-height:700px) {
+  #plFull .pl__fullhead { margin-bottom:8px; }
+  #plFull .pl__stage { margin-bottom:16px; }
+  #plFull .pl__fullsong { font-size:1.15rem; }
+  #plFull .pl__fullartist { margin-top:4px; }
+  #plFull .pl__fullseek { margin-top:16px; }
+  #plFull .pl__fullbtns { margin-top:12px; }
+  #plFull .pl__state { margin-top:6px; }
+}
+/* 横屏手机（≤520px 高）：进一步压缩，封面缩到视口高度内，工具栏单行化、隐藏校准提示文案。
+   舞台 min-height:0：极矮屏（如横屏再收地址栏）宁可歌词区变矮也不把歌名/控件推出视口。 */
+@media (max-height:520px) {
+  #plFull { --play-size:44px; padding-top:calc(var(--safe-t) + 6px); padding-bottom:calc(var(--safe-b) + 10px); }
+  #plFull .pl__fullhead { margin-bottom:6px; }
+  #plFull .pl__stage { margin-bottom:10px; min-height:0; }
+  #plFull .pl__bigart { width:min(56vh,240px); }
+  #plFull .pl__fullsong { font-size:1rem; }
+  #plFull .pl__fullartist { margin-top:2px; font-size:.8rem; }
+  #plFull .pl__fullseek { margin-top:10px; }
+  #plFull .pl__fullbtns { margin-top:8px; gap:8px; }
+  #plFull .pl__state { margin-top:4px; }
+  #plFull .pl__toolbar { flex-wrap:nowrap; padding:4px; gap:var(--sp2); }
+  #plFull .pl__lyricswrap { gap:4px; }
+  #plFull .pl__calib__hint { display:none; }
+  #plFull .pl__calib__btn { min-height:36px; }
+  #plFull .pl__font__btn { min-height:36px; }
+}
 
 /* 迷你条 / 全屏播放页的窄屏规则同样搬到 layout-*.css，由构建期合成，
    这样「手动选手机布局」在宽屏上也能得到完全相同的播放器形态。 */

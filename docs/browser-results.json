@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-11-20T02:11:41.729Z",
+  "ranAt": "2026-11-20T03:41:09.152Z",
   "browser": "Chrome/157.0.8103.79",
   "total": 215,
   "passed": 215,
@@ -75,13 +75,13 @@
       "group": "cloud × desktop",
       "name": "播放：真实 MP3 解码并推进时间",
       "ok": true,
-      "detail": "15.14s → 16.40s，duration=36.05s，buffered=36.0s"
+      "detail": "15.15s → 16.43s，duration=36.05s，buffered=36.0s"
     },
     {
       "group": "cloud × desktop",
       "name": "暂停 / 继续",
       "ok": true,
-      "detail": "暂停于 16.42s 后恢复"
+      "detail": "暂停于 16.45s 后恢复"
     },
     {
       "group": "cloud × desktop",
@@ -93,13 +93,13 @@
       "group": "cloud × desktop",
       "name": "播放/暂停图标原位切换：不跳位、不断音",
       "ok": true,
-      "detail": "按钮与图形位置零位移，音源不变，16.49s → 16.54s"
+      "detail": "按钮与图形位置零位移，音源不变，16.50s → 16.56s"
     },
     {
       "group": "cloud × desktop",
       "name": "拖动进度条",
       "ok": true,
-      "detail": "seek → 18.47s"
+      "detail": "seek → 18.46s"
     },
     {
       "group": "cloud × desktop",
@@ -183,7 +183,7 @@
       "group": "cloud × desktop",
       "name": "刷新后恢复队列与进度，且不自动出声",
       "ok": true,
-      "detail": "恢复 2 首，进度 11.26s，保持暂停"
+      "detail": "恢复 2 首，进度 11.27s，保持暂停"
     },
     {
       "group": "cloud × desktop",
@@ -273,13 +273,13 @@
       "group": "cloud × mobile",
       "name": "播放：真实 MP3 解码并推进时间",
       "ok": true,
-      "detail": "15.23s → 16.50s，duration=36.05s，buffered=36.0s"
+      "detail": "15.20s → 16.46s，duration=36.05s，buffered=36.0s"
     },
     {
       "group": "cloud × mobile",
       "name": "暂停 / 继续",
       "ok": true,
-      "detail": "暂停于 16.51s 后恢复"
+      "detail": "暂停于 16.47s 后恢复"
     },
     {
       "group": "cloud × mobile",
@@ -291,7 +291,7 @@
       "group": "cloud × mobile",
       "name": "播放/暂停图标原位切换：不跳位、不断音",
       "ok": true,
-      "detail": "按钮与图形位置零位移，音源不变，16.56s → 16.60s"
+      "detail": "按钮与图形位置零位移，音源不变，16.54s → 16.58s"
     },
     {
       "group": "cloud × mobile",
@@ -375,7 +375,7 @@
       "group": "cloud × mobile",
       "name": "刷新后恢复队列与进度，且不自动出声",
       "ok": true,
-      "detail": "恢复 2 首，进度 11.26s，保持暂停"
+      "detail": "恢复 2 首，进度 11.25s，保持暂停"
     },
     {
       "group": "cloud × mobile",
@@ -393,7 +393,7 @@
       "group": "cloud × mobile",
       "name": "站内导航不断歌（真实浏览器）",
       "ok": true,
-      "detail": "0.01s → 0.87s，同一 audio 实例"
+      "detail": "0.01s → 0.88s，同一 audio 实例"
     },
     {
       "group": "cloud × mobile",
@@ -465,13 +465,13 @@
       "group": "forest × desktop",
       "name": "播放：真实 MP3 解码并推进时间",
       "ok": true,
-      "detail": "15.08s → 16.37s，duration=36.05s，buffered=36.0s"
+      "detail": "15.22s → 16.49s，duration=36.05s，buffered=36.0s"
     },
     {
       "group": "forest × desktop",
       "name": "暂停 / 继续",
       "ok": true,
-      "detail": "暂停于 16.38s 后恢复"
+      "detail": "暂停于 16.51s 后恢复"
     },
     {
       "group": "forest × desktop",
@@ -483,7 +483,7 @@
       "group": "forest × desktop",
       "name": "播放/暂停图标原位切换：不跳位、不断音",
       "ok": true,
-      "detail": "按钮与图形位置零位移，音源不变，16.45s → 16.48s"
+      "detail": "按钮与图形位置零位移，音源不变，16.56s → 16.62s"
     },
     {
       "group": "forest × desktop",
@@ -573,7 +573,7 @@
       "group": "forest × desktop",
       "name": "刷新后恢复队列与进度，且不自动出声",
       "ok": true,
-      "detail": "恢复 2 首，进度 11.26s，保持暂停"
+      "detail": "恢复 2 首，进度 11.25s，保持暂停"
     },
     {
       "group": "forest × desktop",
@@ -591,7 +591,7 @@
       "group": "forest × desktop",
       "name": "站内导航不断歌（真实浏览器）",
       "ok": true,
-      "detail": "0.01s → 0.87s，同一 audio 实例"
+      "detail": "0.01s → 0.88s，同一 audio 实例"
     },
     {
       "group": "forest × desktop",
@@ -663,13 +663,13 @@
       "group": "forest × mobile",
       "name": "播放：真实 MP3 解码并推进时间",
       "ok": true,
-      "detail": "17.22s → 18.48s，duration=36.05s，buffered=36.0s"
+      "detail": "17.21s → 18.49s，duration=36.05s，buffered=36.0s"
     },
     {
       "group": "forest × mobile",
       "name": "暂停 / 继续",
       "ok": true,
-      "detail": "暂停于 18.49s 后恢复"
+      "detail": "暂停于 18.51s 后恢复"
     },
     {
       "group": "forest × mobile",
@@ -681,13 +681,13 @@
       "group": "forest × mobile",
       "name": "播放/暂停图标原位切换：不跳位、不断音",
       "ok": true,
-      "detail": "按钮与图形位置零位移，音源不变，18.56s → 18.61s"
+      "detail": "按钮与图形位置零位移，音源不变，18.57s → 18.61s"
     },
     {
       "group": "forest × mobile",
       "name": "拖动进度条",
       "ok": true,
-      "detail": "seek → 18.45s"
+      "detail": "seek → 18.47s"
     },
     {
       "group": "forest × mobile",
@@ -735,7 +735,7 @@
       "group": "forest × mobile",
       "name": "LRC 同步高亮与点击跳转",
       "ok": true,
-      "detail": "13s → 第 4 行；点击第 7 行 → 19.6s"
+      "detail": "13s → 第 4 行；点击第 7 行 → 19.5s"
     },
     {
       "group": "forest × mobile",
@@ -783,7 +783,7 @@
       "group": "forest × mobile",
       "name": "站内导航不断歌（真实浏览器）",
       "ok": true,
-      "detail": "0.01s → 0.87s，同一 audio 实例"
+      "detail": "0.01s → 0.88s，同一 audio 实例"
     },
     {
       "group": "forest × mobile",
@@ -855,13 +855,13 @@
       "group": "midnight × desktop",
       "name": "播放：真实 MP3 解码并推进时间",
       "ok": true,
-      "detail": "15.15s → 16.42s，duration=36.05s，buffered=36.0s"
+      "detail": "15.18s → 16.45s，duration=36.05s，buffered=36.0s"
     },
     {
       "group": "midnight × desktop",
       "name": "暂停 / 继续",
       "ok": true,
-      "detail": "暂停于 16.43s 后恢复"
+      "detail": "暂停于 16.47s 后恢复"
     },
     {
       "group": "midnight × desktop",
@@ -873,13 +873,13 @@
       "group": "midnight × desktop",
       "name": "播放/暂停图标原位切换：不跳位、不断音",
       "ok": true,
-      "detail": "按钮与图形位置零位移，音源不变，16.49s → 16.56s"
+      "detail": "按钮与图形位置零位移，音源不变，16.53s → 16.59s"
     },
     {
       "group": "midnight × desktop",
       "name": "拖动进度条",
       "ok": true,
-      "detail": "seek → 18.45s"
+      "detail": "seek → 18.46s"
     },
     {
       "group": "midnight × desktop",
@@ -963,7 +963,7 @@
       "group": "midnight × desktop",
       "name": "刷新后恢复队列与进度，且不自动出声",
       "ok": true,
-      "detail": "恢复 2 首，进度 11.27s，保持暂停"
+      "detail": "恢复 2 首，进度 11.26s，保持暂停"
     },
     {
       "group": "midnight × desktop",
@@ -1053,13 +1053,13 @@
       "group": "midnight × mobile",
       "name": "播放：真实 MP3 解码并推进时间",
       "ok": true,
-      "detail": "17.22s → 18.49s，duration=36.05s，buffered=36.0s"
+      "detail": "15.27s → 16.54s，duration=36.05s，buffered=36.0s"
     },
     {
       "group": "midnight × mobile",
       "name": "暂停 / 继续",
       "ok": true,
-      "detail": "暂停于 18.50s 后恢复"
+      "detail": "暂停于 16.55s 后恢复"
     },
     {
       "group": "midnight × mobile",
@@ -1071,7 +1071,7 @@
       "group": "midnight × mobile",
       "name": "播放/暂停图标原位切换：不跳位、不断音",
       "ok": true,
-      "detail": "按钮与图形位置零位移，音源不变，18.55s → 18.58s"
+      "detail": "按钮与图形位置零位移，音源不变，16.61s → 16.67s"
     },
     {
       "group": "midnight × mobile",
@@ -1125,7 +1125,7 @@
       "group": "midnight × mobile",
       "name": "LRC 同步高亮与点击跳转",
       "ok": true,
-      "detail": "13s → 第 4 行；点击第 7 行 → 19.6s"
+      "detail": "13s → 第 4 行；点击第 7 行 → 19.5s"
     },
     {
       "group": "midnight × mobile",
@@ -1155,7 +1155,7 @@
       "group": "midnight × mobile",
       "name": "刷新后恢复队列与进度，且不自动出声",
       "ok": true,
-      "detail": "恢复 2 首，进度 11.26s，保持暂停"
+      "detail": "恢复 2 首，进度 11.27s，保持暂停"
     },
     {
       "group": "midnight × mobile",
@@ -1173,7 +1173,7 @@
       "group": "midnight × mobile",
       "name": "站内导航不断歌（真实浏览器）",
       "ok": true,
-      "detail": "0.01s → 0.88s，同一 audio 实例"
+      "detail": "0.01s → 0.87s，同一 audio 实例"
     },
     {
       "group": "midnight × mobile",
@@ -1239,31 +1239,31 @@
       "group": "自动适配",
       "name": "窄屏 360×740：形态正确且无溢出",
       "ok": true,
-      "detail": "汉堡=true 操作键=2 溢出=0px"
+      "detail": "汉堡=true 操作键=1 溢出=0px"
     },
     {
       "group": "自动适配",
       "name": "平板 768×1024：形态正确且无溢出",
       "ok": true,
-      "detail": "汉堡=false 操作键=7 溢出=0px"
+      "detail": "汉堡=false 操作键=6 溢出=0px"
     },
     {
       "group": "自动适配",
       "name": "宽屏 1920×1080：形态正确且无溢出",
       "ok": true,
-      "detail": "汉堡=false 操作键=8 溢出=0px"
+      "detail": "汉堡=false 操作键=7 溢出=0px"
     },
     {
       "group": "手动布局",
       "name": "宽屏 1440 选「手机」：确实变成手机形态",
       "ok": true,
-      "detail": "汉堡=true 操作键=2 blur=0px"
+      "detail": "汉堡=true 操作键=1 blur=0px"
     },
     {
       "group": "手动布局",
       "name": "窄屏 390 选「桌面」：保持桌面结构且不溢出",
       "ok": true,
-      "detail": "汉堡=false 操作键=8 溢出=0px"
+      "detail": "汉堡=false 操作键=7 溢出=0px"
     },
     {
       "group": "手动布局 · 窄屏桌面",

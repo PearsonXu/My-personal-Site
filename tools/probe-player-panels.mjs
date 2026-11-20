@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * tools/probe-player-panels.mjs — 真实 Chrome 的歌词工具栏 / 简介面板验收。
+ * tools/probe-player-panels.mjs — 真实 Chrome 的歌词工具栏 / 全屏骨架验收。
  *
  * 用法：
  *   node tools/probe-player-panels.mjs                 # DEMO 构建 + 本地服务器
@@ -8,8 +8,9 @@
  *
  * 取证项：「词」三态循环（隐藏→纯享→设置→隐藏）、纯享无工具栏但同步/高亮/跟随保留、
  * 设置态工具栏在歌词顶部且不遮挡歌词、字号三档立即生效且只改歌词文字、字号偏好刷新恢复、
- * 校准逐曲保存（切歌不串 / 回原曲恢复 / 刷新恢复）、词与简介互斥、简介随切歌更新、
- * 跨页播放后面板仍在、44×44 点击区、移动端换行不溢出、连点一次只推进一态。
+ * 校准逐曲保存（切歌不串 / 回原曲恢复 / 刷新恢复）、简介入口已移除、切歌更新歌词、
+ * 跨页播放后面板仍在、44×44 点击区、移动端换行不溢出、连点一次只推进一态、
+ * 全屏骨架间距（歌词→歌名 / 歌名→作者 / 作者→进度 / 时间→按钮）与当前行容器内居中。
  * 结果写 docs/player-panels-results.json；截图 docs/screenshots/panels-*.png。
  * 真机 iOS Safari / 微信内浏览器无法在此自动化 → 报告里标 NOT_RUN，不冒充已测。
  */
@@ -54,14 +55,25 @@ const snap = (page) => page.evaluate(() => {
     font: box?.dataset.font,
     lineSize: line ? parseFloat(getComputedStyle(line).fontSize) : 0,
     readout: document.getElementById('plCalibVal')?.textContent,
-    toolbar: r(toolbar), lyrics: r(box), about: r(document.getElementById('plAbout')),
+    toolbar: r(toolbar), lyrics: r(box),
     toolbarOverflow: toolbar ? toolbar.scrollWidth - toolbar.clientWidth : 0,
     docOverflow: document.documentElement.scrollWidth - window.innerWidth,
-    aboutText: document.getElementById('plAbout')?.textContent || '',
     lyricsAria: document.getElementById('plLyricsBtn')?.getAttribute('aria-expanded'),
-    aboutAria: document.getElementById('plAboutBtn')?.getAttribute('aria-expanded'),
     pressed: [...document.querySelectorAll('[data-act="lyric-font"]')].map((b) => `${b.getAttribute('data-size')}:${b.getAttribute('aria-pressed')}`),
-    sizes: ['#plLyricsBtn', '#plAboutBtn', '.pl__font__btn', '.pl__calib__btn'].map((s) => { const q = r(document.querySelector(s)); return q ? Math.min(q.w, q.h) : 0; }),
+    sizes: ['#plLyricsBtn', '.pl__font__btn', '.pl__calib__btn'].map((s) => { const q = r(document.querySelector(s)); return q ? Math.min(q.w, q.h) : 0; }),
+    geo: (() => {
+      const q = (sel) => { const el = document.querySelector(sel); if (!el) return null; const b = el.getBoundingClientRect(); return { t: b.top, b: b.bottom, l: b.left, r: b.right, h: b.height }; };
+      const act = box?.querySelector('.lrc__line.is-active');
+      const ab = act?.getBoundingClientRect();
+      return {
+        lyrics: q('#plLyrics'), title: q('#plFullTitle'), artist: q('#plFullArtist'),
+        seek: q('#plSeekFull'), times: q('.pl__fullseek .pl__times'), btns: q('.pl__fullbtns'),
+        state: q('#plStateFull'), head: q('.pl__fullhead'), full: q('#plFull'),
+        active: ab ? { t: ab.top, b: ab.bottom } : null,
+        padTop: box ? parseFloat(getComputedStyle(box).paddingTop) : 0,
+        scrollH: box ? box.scrollHeight : 0, clientH: box ? box.clientHeight : 0
+      };
+    })(),
     bar: r(document.querySelector('.pl__bar')),
     winH: window.innerHeight, winW: window.innerWidth
   };
@@ -75,17 +87,31 @@ async function waitUntil(page, pred, timeout = 15000) {
     await sleep(250);
   }
 }
-// 「词」「简介」在迷你条与展开页各有一个实例；展开页会盖住迷你条，
+// 「词」在迷你条与展开页各有一个实例；展开页会盖住迷你条，
 // 所以始终点**当前可见**的那个（顺带验证两处按钮接线一致）。
-const visibleSel = async (page, kind) => {
+const visibleSel = async (page) => {
   const expanded = await page.evaluate(() => document.getElementById('player-root')?.dataset.expanded === 'true');
-  if (kind === 'lyrics') return expanded ? '#plLyricsBtnFull' : '#plLyricsBtn';
-  return expanded ? '#plAboutBtnFull' : '#plAboutBtn';
+  return expanded ? '#plLyricsBtnFull' : '#plLyricsBtn';
 };
-const clickLyrics = async (page) => page.click(await visibleSel(page, 'lyrics'));
-const tapLyrics = async (page) => page.tap(await visibleSel(page, 'lyrics'));
-const clickAbout = async (page) => page.click(await visibleSel(page, 'about'));
-const tapAbout = async (page) => page.tap(await visibleSel(page, 'about'));
+const clickLyrics = async (page) => page.click(await visibleSel(page));
+const tapLyrics = async (page) => page.tap(await visibleSel(page));
+/** 全屏骨架取证：块间距规格 + 控件完整可见 + 当前行在歌词容器内居中 + 留白在滚动容器内部 */
+async function layoutChecks(page, label, s, tag) {
+  const g = s.geo;
+  const gap = (a, b) => (a && b ? b.t - a.b : NaN);
+  const f = (v) => (Number.isFinite(v) ? `${v.toFixed(1)}px` : 'missing');
+  check(label, `${tag} 歌词→歌名 20–24px`, gap(g.lyrics, g.title) >= 19 && gap(g.lyrics, g.title) <= 25, f(gap(g.lyrics, g.title)));
+  check(label, `${tag} 歌名→作者 6–8px`, gap(g.title, g.artist) >= 5 && gap(g.title, g.artist) <= 9, f(gap(g.title, g.artist)));
+  check(label, `${tag} 作者→进度 20–24px`, gap(g.artist, g.seek) >= 19 && gap(g.artist, g.seek) <= 25, f(gap(g.artist, g.seek)));
+  check(label, `${tag} 时间→按钮 16–20px`, gap(g.times, g.btns) >= 15 && gap(g.times, g.btns) <= 21, f(gap(g.times, g.btns)));
+  check(label, `${tag} 控件与状态行完整在视口内`, !!g.btns && !!g.state && g.btns.b <= s.winH + 1 && g.state.b <= s.winH + 1 && g.btns.t >= 0, `btns.b=${g.btns?.b.toFixed(0)} state.b=${g.state?.b.toFixed(0)} winH=${s.winH}`);
+  check(label, `${tag} 歌词区吃满剩余高度（无大块空白）`, !!g.lyrics && !!g.title && gap(g.lyrics, g.title) <= 25 && g.lyrics.h > s.winH * 0.35, `lyrics.h=${g.lyrics?.h.toFixed(0)} winH=${s.winH}`);
+  if (g.active && g.lyrics) {
+    const dc = Math.abs((g.active.t + g.active.b) / 2 - (g.lyrics.t + g.lyrics.b) / 2);
+    check(label, `${tag} 当前行居中于歌词容器（非整屏）`, dc <= 30, `Δ=${dc.toFixed(1)}px`);
+  }
+  check(label, `${tag} 首尾留白在滚动容器内部`, g.padTop >= 8 && g.scrollH > g.clientH, `pad=${g.padTop} scrollH=${g.scrollH} clientH=${g.clientH}`);
+}
 const playRow = async (page, slug) => {
   // 全屏播放页会盖住列表：先收起（真实收起按钮），再点列表里的歌
   if (await page.evaluate(() => document.getElementById('player-root')?.dataset.expanded === 'true')) {
@@ -116,6 +142,7 @@ async function runDesktop(browser, base, label, other) {
   check(label, '纯享：同步高亮与自动跟随保留', s.idx >= 0 && s.activeI === String(s.idx), `idx=${s.idx} active=${s.activeI}`);
   await sleep(450);
   await page.screenshot({ path: shots(`panels-${label}-desktop-pure.png`) });
+  await layoutChecks(page, label, await snap(page), '桌面纯享');
   // 第二击 → 设置：工具栏独立占位出现，不覆盖歌词
   await clickLyrics(page);
   s = await waitUntil(page, (x) => x.tools === 'true' && x.toolbarVisible);
@@ -123,6 +150,8 @@ async function runDesktop(browser, base, label, other) {
   check(label, '设置：按钮高亮 + 小齿轮', s.mode === 'settings' && s.modeFull === 'settings' && s.gear !== 'none' && s.lyricsAria === 'true', `mode=${s.mode} gear=${s.gear}`);
   check(label, '校准组在工具栏内', await page.evaluate(() => !!document.querySelector('.pl__toolbar .pl__calib')));
   check(label, '字号默认中且选中态清晰', s.font === 'm' && s.pressed.join(',') === 's:false,m:true,l:false', s.pressed.join(','));
+  await sleep(600);
+  await layoutChecks(page, label, await snap(page), '桌面设置');
   const mSize = s.lineSize;
   const timesBefore = s.times.join(',');
   await page.click('[data-act="lyric-font"][data-size="l"]');
@@ -190,25 +219,23 @@ async function runDesktop(browser, base, label, other) {
   await clickLyrics(page); // 第三击 → 隐藏
   s = await waitUntil(page, (x) => x.stage === 'cover');
   check(label, '跨页后第三击仍回隐藏', s.mode === 'off' && !s.toolbarVisible, `mode=${s.mode}`);
-  // 简介
-  await clickAbout(page);
-  s = await waitUntil(page, (x) => x.stage === 'about');
-  check(label, '简介与词互斥', s.lyricsAria === 'false' && s.aboutAria === 'true');
-  for (const want of ['青春大概', '原唱', '徐鸣', '作词', '彭錞', '作曲', '本站版本', '翻唱版本', '演唱：金石竹青']) {
-    check(label, `简介含「${want}」`, s.aboutText.includes(want));
-  }
-  check(label, '无生成工具资料时不显示空标签', !s.aboutText.includes('生成工具'));
-  await page.screenshot({ path: shots(`panels-${label}-desktop-about.png`) });
+  // 简介入口已整体移除：DOM 里不应再有任何简介按钮 / 面板
+  check(label, '简介按钮与面板已移除', await page.evaluate(() => !document.getElementById('plAboutBtn') && !document.getElementById('plAboutBtnFull') && !document.getElementById('plAbout')));
+  // 切歌：歌词面板保持并换为当前曲
+  await clickLyrics(page);
+  s = await waitUntil(page, (x) => x.stage === 'lyrics');
+  const beforeText = await page.evaluate(() => document.getElementById('plLyrics').textContent);
   s = await playRow(page, other.slug);
-  check(label, '切歌后简介同步更新', s.aboutText.includes(other.title) && !s.aboutText.includes('徐鸣'), s.aboutText.slice(0, 40));
-  check(label, '切歌不关掉简介面板', s.stage === 'about');
+  const afterText = await page.evaluate(() => document.getElementById('plLyrics').textContent);
+  check(label, '切歌后歌词更新为当前曲', afterText !== beforeText && s.slug === other.slug, afterText.slice(0, 30));
+  check(label, '切歌不关掉歌词面板', s.stage === 'lyrics');
   // 跨页
   await page.evaluate(() => document.querySelector('.nav__ul .nav__a')?.scrollIntoView({ block: 'center' }));
   await sleep(300);
   await page.click('.nav__ul .nav__a');
   await sleep(900);
   s = await snap(page);
-  check(label, '跨页后面板与播放仍在', s.stage === 'about' && s.state === 'playing' && s.aboutText.includes(other.title), `stage=${s.stage} state=${s.state}`);
+  check(label, '跨页后歌词面板与播放仍在', s.stage === 'lyrics' && s.state === 'playing', `stage=${s.stage} state=${s.state}`);
   // 刷新恢复
   await page.goto(`${base}/songs/`, { waitUntil: 'domcontentloaded' });
   await sleep(700);
@@ -242,9 +269,9 @@ async function runMobile(browser, base, label, other) {
   let s = await snap(page);
   check(label, '手机字号默认中', s.font === 'm' && s.pressed.join(',') === 's:false,m:true,l:false', s.pressed.join(','));
   check(label, '手机校准默认 0', s.offset === 0 && s.readout === '0.0s', `offset=${s.offset} readout=${s.readout}`);
-  check(label, '手机迷你条「词」「简介」常驻可见', await page.evaluate(() => {
+  check(label, '手机迷你条「词」常驻可见', await page.evaluate(() => {
     const ok = (id) => { const b = document.getElementById(id); if (!b) return false; const r = b.getBoundingClientRect(); return r.width >= 44 && r.height >= 44 && r.right <= window.innerWidth && r.bottom <= window.innerHeight; };
-    return ok('plLyricsBtn') && ok('plAboutBtn');
+    return ok('plLyricsBtn') && !document.getElementById('plAboutBtn');
   }));
   check(label, '手机迷你条不横向溢出', s.docOverflow <= 0 && s.bar.r <= s.winW + 1, `doc=${s.docOverflow} bar.right=${s.bar?.r.toFixed(0)}`);
   await page.screenshot({ path: shots(`panels-${label}-mobile-bar.png`) });
@@ -254,8 +281,10 @@ async function runMobile(browser, base, label, other) {
   s = await waitUntil(page, (x) => x.stage === 'lyrics' && x.lineSize > 0);
   check(label, '手机纯享：工具栏隐藏、歌词拿满高度', !s.toolbarVisible && s.toolbar.h === 0 && s.lyrics.h > 200 && s.docOverflow <= 0, `lyrics.h=${s.lyrics?.h.toFixed(0)} doc=${s.docOverflow}`);
   check(label, '手机纯享按钮高亮无齿轮', s.mode === 'pure' && s.gear === 'none', `mode=${s.mode} gear=${s.gear}`);
+  s = await waitUntil(page, (x) => x.idx >= 0, 26000);
   await sleep(450);
   await page.screenshot({ path: shots(`panels-${label}-mobile-pure.png`) });
+  await layoutChecks(page, label, await snap(page), '手机纯享');
   await tapLyrics(page);
   s = await waitUntil(page, (x) => x.tools === 'true' && x.toolbarVisible);
   check(label, '手机设置态齿轮可见', s.mode === 'settings' && s.gear !== 'none', `mode=${s.mode}`);
@@ -271,6 +300,8 @@ async function runMobile(browser, base, label, other) {
   check(label, '手机校准可用且读数更新', s.readout === '+0.5s', s.readout);
   await sleep(450);
   await page.screenshot({ path: shots(`panels-${label}-mobile-toolbar.png`) });
+  await sleep(600);
+  await layoutChecks(page, label, await snap(page), '手机设置');
   await tapLyrics(page); // 第三击 → 隐藏
   s = await waitUntil(page, (x) => x.stage === 'cover');
   check(label, '手机第三击收起歌词与工具栏', s.mode === 'off' && !s.toolbarVisible && s.docOverflow <= 0, `mode=${s.mode} doc=${s.docOverflow}`);
@@ -279,14 +310,11 @@ async function runMobile(browser, base, label, other) {
   await tapLyrics(page);
   s = await waitUntil(page, (x) => x.mode === 'off' && x.stage === 'cover');
   check(label, '手机连续三击循环一圈', s.mode === 'off' && s.stage === 'cover' && !s.toolbarVisible, `mode=${s.mode}`);
-  await tapAbout(page);
-  s = await waitUntil(page, (x) => x.stage === 'about');
-  check(label, '手机简介与词互斥', s.lyricsAria === 'false' && s.aboutAria === 'true');
-  check(label, '手机简介不溢出不越界', s.docOverflow <= 0 && s.about.r <= s.winW + 1 && s.about.b <= s.winH + 1, `doc=${s.docOverflow} about.right=${s.about?.r.toFixed(0)}`);
-  check(label, '手机简介含原作署名与版本说明', s.aboutText.includes('徐鸣') && s.aboutText.includes('翻唱版本'));
-  await page.screenshot({ path: shots(`panels-${label}-mobile-about.png`) });
+  check(label, '手机简介入口已移除', await page.evaluate(() => !document.getElementById('plAboutBtn') && !document.getElementById('plAboutBtnFull') && !document.getElementById('plAbout')));
+  const prevText = await page.evaluate(() => document.getElementById('plLyrics').textContent);
   ps = await playRow(page, other.slug);
-  check(label, '手机切歌后简介更新为当前曲', ps.aboutText.includes(other.title) && !ps.aboutText.includes('徐鸣'), ps.aboutText.slice(0, 40));
+  const nowText = await page.evaluate(() => document.getElementById('plLyrics').textContent);
+  check(label, '手机切歌后歌词更新为当前曲', ps.slug === other.slug && nowText !== prevText, nowText.slice(0, 30));
   check(label, '手机切歌不断播放', ps.state === 'playing');
   check(label, '手机无页面 JS 错误', errors.length === 0, errors.slice(0, 2).join(' | '));
   await page.close();
@@ -308,7 +336,7 @@ try {
   // 「另一首歌」从真实 catalog 取：本地 DEMO 构建与线上生产构建曲目不同，不能写死 slug
   const catalog = await (await fetch(`${localBase}/assets/data/catalog.json`)).json();
   const other = catalog.songs.find((s) => s.slug !== 'qingchun-dagai');
-  if (!other) throw new Error('曲库至少需要两首歌（青春大概 + 另一首）才能验逐曲校准与切歌简介');
+  if (!other) throw new Error('曲库至少需要两首歌（青春大概 + 另一首）才能验逐曲校准与切歌歌词');
   const label = baseArg ? 'live' : 'local';
   await runDesktop(browser, localBase, label, other);
   await runMobile(browser, localBase, label, other);
@@ -327,7 +355,6 @@ const report = {
   notRun: [
     'iOS Safari 真机（无设备）',
     '微信内浏览器真机（无设备 / 账号）',
-    '「全部资料缺失 → 歌曲资料待补充」的真机目视：现有内容均含部分资料，该分支由 tests/player-panels.test.mjs 单元覆盖',
     ...(baseArg ? [] : ['线上部署复测需在 push 部署后重跑：node tools/probe-player-panels.mjs --base=https://www.xuzhaoqing.com'])
   ]
 };

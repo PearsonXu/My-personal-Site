@@ -9,7 +9,7 @@ import { MODE_ICON, STAGE_ICON, icon } from '../core/icons.js';
 import { setText, setSvg, paintRange, toast } from './common.js';
 import { byId, qsa } from './dom.js';
 
-const STAGES = ['cover', 'vinyl', 'lyrics', 'about'];
+const STAGES = ['cover', 'vinyl', 'lyrics'];
 
 export class PlayerUI {
   constructor(player, { resolve }) {
@@ -216,23 +216,10 @@ export class PlayerUI {
     return 'pure';
   }
 
-  /**
-   * 简介「简介」按钮：与「词」互斥 —— 同一时刻只有一个面板展开。
-   * 展开且正在看简介时再点 → 收起回封面；否则展开简介（若正看歌词则直接切换）。
-   * @returns {boolean} 点击后简介面板是否处于展开状态
-   */
-  toggleAbout() {
-    const expanded = this.root?.dataset.expanded === 'true';
-    if (expanded && this.stage === 'about') { this.setStage('cover'); return false; }
-    this.expand('about');
-    return true;
-  }
-
-  /** 迷你条与展开页的「词」「简介」按钮状态同步。
-   *  「词」：data-mode=off/pure/settings —— off 普通样式；pure/settings 由 aria-expanded 驱动主题红底；
+  /** 迷你条与展开页的「词」按钮状态同步。
+   *  data-mode=off/pure/settings —— off 普通样式；pure/settings 由 aria-expanded 驱动主题红底；
    *  settings 额外露出小齿轮（CSS .pbtn__gear）。aria-label 描述下一次点击的动作。 */
   _syncPanelButtons() {
-    const expanded = this.root?.dataset.expanded === 'true';
     const mode = this.lyricsMode;
     const lyricsLabel = mode === 'settings' ? '收起歌词' : mode === 'pure' ? '显示歌词设置' : '显示歌词';
     for (const id of ['plLyricsBtn', 'plLyricsBtnFull']) {
@@ -242,15 +229,6 @@ export class PlayerUI {
       btn.setAttribute('aria-expanded', String(mode !== 'off'));
       btn.setAttribute('aria-label', lyricsLabel);
       btn.setAttribute('title', lyricsLabel);
-    }
-    const aboutOn = expanded && this.stage === 'about';
-    for (const id of ['plAboutBtn', 'plAboutBtnFull']) {
-      const btn = byId(id);
-      if (!btn) continue;
-      const label = aboutOn ? '收起简介' : '显示简介';
-      btn.setAttribute('aria-expanded', String(aboutOn));
-      btn.setAttribute('aria-label', label);
-      btn.setAttribute('title', label);
     }
   }
 

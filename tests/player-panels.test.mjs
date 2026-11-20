@@ -1,13 +1,12 @@
 /**
- * tests/player-panels.test.mjs — 歌词工具栏（字号 + 校准）与「简介」面板的回归。
+ * tests/player-panels.test.mjs — 歌词工具栏（字号 + 校准）与全屏播放页骨架的回归。
  *
  * 覆盖：
- *  1. 构建产物：工具栏在歌词面板顶部、字号三档默认中、校准在工具栏内、「简介」按钮常驻两处；
- *  2. CSS：字号只缩放歌词文字、简介面板只随 about 舞台显示、选中态清晰；
+ *  1. 构建产物：工具栏在歌词面板顶部、字号三档默认中、校准在工具栏内、简介入口已移除；
+ *  2. CSS：字号只缩放歌词文字、选中态清晰、舞台吃满剩余高度 / 歌词不限高 / 间距显式 / 矮屏压缩；
  *  3. store：逐曲偏移逐字段校验、字号偏好持久化；
  *  4. Player：偏移按歌曲保存 / 切歌互不影响 / 刷新恢复；
- *  5. SongInfoUI：缺失隐藏、全缺待补充、生成工具单独标注、不编造署名；
- *  6. jsdom 整机：字号立即生效 + 刷新恢复、校准逐曲、词/简介互斥、切歌更新简介、audio 不动。
+ *  5. jsdom 整机：字号立即生效 + 刷新恢复、校准逐曲、三舞台循环、切歌更新歌词、audio 不动。
  */
 
 import test from 'node:test';
@@ -18,7 +17,6 @@ import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
 import { Player } from '../assets/js/player.js';
 import { Store, sanitizeState, normalizeLrcFont } from '../assets/js/store.js';
-import { SongInfoUI } from '../assets/js/ui/song-info-ui.js';
 import { FakeAudio, MemoryStorage, makeCatalog } from './helpers/fake-audio.mjs';
 import { buildDemo, makeApp, click, wait } from './helpers/dom-app.mjs';
 
@@ -31,7 +29,7 @@ const readDist = (p) => fs.readFileSync(path.join(ROOT, 'dist', p), 'utf8');
 test('panels · 工具栏在歌词面板顶部：字号三档默认中 + 校准组在内', () => {
   buildDemo();
   const html = readDist('index.html');
-  const wrap = /<div class="pl__lyricswrap">([\s\S]*?)<div class="pl__about"/.exec(html);
+  const wrap = /<div class="pl__lyricswrap">([\s\S]*?)<div class="pl__fullmeta"/.exec(html);
   assert.ok(wrap, '缺歌词舞台包装（工具栏 + 歌词滚动区）');
   const toolbarAt = wrap[1].indexOf('<div class="pl__toolbar">');
   const boxAt = wrap[1].indexOf('<div class="pl__lyricsbox">');
@@ -51,24 +49,16 @@ test('panels · 工具栏在歌词面板顶部：字号三档默认中 + 校准�
   assert.ok(!/<div class="pl__calib"/.test(html.replace(wrap[0], '')), '校准组不应再出现在工具栏之外');
 });
 
-test('panels · 「简介」文字按钮常驻迷你条与展开页，aria 完整', () => {
+test('panels · 「简介」按钮与面板已整体移除，迷你条文字键只留「词」', () => {
   buildDemo();
   const html = readDist('index.html');
-  const extra = /<div class="pl__extra">([\s\S]*?)<\/div>\s*<p class="pl__state"/.exec(html);
-  assert.ok(extra && /id="plAboutBtn"/.test(extra[1]), '「简介」不在迷你条操作区');
-  const fullbtns = /<div class="pl__fullbtns"[^>]*>([\s\S]*?)<\/div>/.exec(html);
-  assert.ok(fullbtns && /id="plAboutBtnFull"/.test(fullbtns[1]), '「简介」不在展开页主控区');
-  for (const id of ['plAboutBtn', 'plAboutBtnFull']) {
-    const btn = new RegExp(`<button[^>]*id="${id}"[^>]*>([\\s\\S]*?)</button>`).exec(html);
-    assert.ok(btn, `缺 #${id}`);
-    assert.equal(btn[1].trim(), '简介');
-    assert.match(btn[0], /data-act="toggle-about"/);
-    assert.match(btn[0], /aria-label="显示简介"/);
-    assert.match(btn[0], /aria-expanded="false"/);
-    assert.match(btn[0], /aria-controls="plAbout"/);
-    assert.match(btn[0], /pbtn--text pbtn--about/);
+  for (const gone of ['plAboutBtn', 'plAboutBtnFull', 'id="plAbout"', 'toggle-about', 'pbtn--about', 'pl__about']) {
+    assert.ok(!html.includes(gone), `简介残留：${gone}`);
   }
-  assert.match(html, /id="plAbout"[^>]*><p class="pl__about__empty">歌曲资料待补充<\/p>/, '简介面板自带静态空状态');
+  const extra = /<div class="pl__extra">([\s\S]*?)<\/div>\s*<p class="pl__state"/.exec(html);
+  assert.ok(extra && /id="plLyricsBtn"/.test(extra[1]), '「词」不在迷你条操作区');
+  const fullbtns = /<div class="pl__fullbtns"[^>]*>([\s\S]*?)<\/div>/.exec(html);
+  assert.ok(fullbtns && /id="plLyricsBtnFull"/.test(fullbtns[1]), '「词」不在展开页主控区');
 });
 
 test('panels · catalog 携带简介所需元数据', () => {
@@ -85,20 +75,36 @@ test('panels · catalog 携带简介所需元数据', () => {
 
 /* ── 2. CSS ─────────────────────────────────────────── */
 
-test('panels · 字号只缩放歌词文字，选中态清晰；简介面板只随 about 舞台显示', () => {
+test('panels · 字号只缩放歌词文字，选中态清晰；全屏骨架吃满高度且间距显式', () => {
   const css = read('assets/css/player.css');
   assert.match(css, /\.pl__lyrics\[data-font="s"\] \{ --lrc-scale:\.86; \}/);
   assert.match(css, /\.pl__lyrics\[data-font="l"\] \{ --lrc-scale:1\.2; \}/);
   assert.match(css, /\.pl__lyrics \.lrc__line \{[^}]*font-size:calc\(1\.02rem \* var\(--lrc-scale,1\)\)/);
   assert.match(css, /\.pl__lyrics \.lrc__line\.is-active \{[^}]*font-size:calc\(1\.14rem \* var\(--lrc-scale,1\)\)/);
   assert.match(css, /\.pl__font__btn\[aria-pressed="true"\] \{ background:var\(--acc\);/);
-  assert.match(css, /\.pl__about \{ display:none;/);
-  assert.match(css, /\.pl__stage\[data-stage="about"\] \.pl__about \{ display:block; \}/);
-  assert.match(css, /\.pbtn--about\[aria-expanded="true"\],/);
   // 工具栏允许换行，不产生横向溢出；默认隐藏，仅设置态（data-tools）显示
   assert.match(css, /\.pl__toolbar \{ display:none; flex-wrap:wrap;/);
   assert.match(css, /\.pl__stage\[data-stage="lyrics"\]\[data-tools="true"\] \.pl__toolbar \{ display:flex; \}/);
   assert.match(css, /\.pl__calib \{ display:flex;[^}]*flex-wrap:wrap;/);
+  // 骨架：舞台 flex:1 吃满剩余高度（无 max-height / 无纵向 auto margin），歌词容器不限高，
+  // 歌名/作者 p 的默认 margin 清零，块间距显式；100dvh + 矮屏 / 横屏压缩
+  assert.match(css, /\.pl__full \{[^}]*height:100dvh;/);
+  assert.match(css, /\.pl__stage \{ flex:1;[^}]*margin:0 auto 22px; min-height:0; \}/);
+  assert.match(css, /\.pl__lyricsbox \{[^}]*flex:1;/);
+  assert.match(css, /\.pl__lyrics \{[^}]*max-height:none;/);
+  assert.match(css, /\.pl__lyrics \{[^}]*box-sizing:border-box;/, '留白 padding 必须计入 flex 分配高度');
+  assert.match(css, /\.pl__fullsong \{ margin:0;/);
+  assert.match(css, /\.pl__fullartist \{ margin:6px 0 0;/);
+  assert.match(css, /\.pl__fullseek \{[^}]*margin:22px auto 0; \}/);
+  assert.match(css, /\.pl__fullbtns \{[^}]*margin:18px auto 0; \}/);
+  assert.match(css, /@media \(max-height:700px\)/);
+  assert.match(css, /@media \(max-height:520px\)/);
+  assert.ok(!/\.pl__about/.test(css), '简介样式应已移除');
+  const mobile = read('assets/css/layout-mobile.css');
+  assert.match(mobile, /\.pl__stage \{ margin:0 auto 20px; \}/);
+  assert.match(mobile, /\.pl__fullseek \{ margin-top:20px; \}/);
+  assert.match(mobile, /\.pl__fullbtns \{ margin-top:16px; \}/);
+  assert.match(mobile, /\.pl__extra > :not\(\.pbtn--lyrics\) \{ display:none; \}/);
 });
 /* ── 3. store ───────────────────────────────────────── */
 
@@ -171,50 +177,7 @@ test('panels · 刷新恢复：新 Player 读同一存储即拿回该曲偏移',
   assert.equal(second.player.lyrics.lines[1].time, 3.5);
 });
 
-/* ── 5. SongInfoUI ──────────────────────────────────── */
-
-function infoUI() {
-  const dom = new JSDOM('<div id="plAbout"></div>');
-  const prev = globalThis.document;
-  globalThis.document = dom.window.document;
-  const ui = new SongInfoUI({ on() {}, currentSong: null });
-  return { ui, el: dom.window.document.getElementById('plAbout'), restore: () => { globalThis.document = prev; } };
-}
-
-test('panels · 简介：原作署名与版本信息分行，缺失隐藏，全缺待补充', () => {
-  const { ui, el, restore } = infoUI();
-  ui.render({
-    slug: 'x', title: '某歌', originalArtist: '原唱者', lyricist: '词作者', composer: '曲作者',
-    versionNote: '翻唱版本', versionBy: '演唱：站长', tools: ['SUNO'], about: '一段介绍', credits: []
-  });
-  const text = el.textContent;
-  for (const want of ['某歌', '原唱', '原唱者', '作词', '词作者', '作曲', '曲作者', '本站版本', '翻唱版本', '版本制作', '演唱：站长', '生成工具', 'SUNO', '一段介绍']) {
-    assert.ok(text.includes(want), `缺 ${want}`);
-  }
-  const toolRow = [...el.querySelectorAll('.pl__about__row')].find((r) => r.textContent.includes('生成工具'));
-  assert.ok(toolRow && toolRow.textContent.includes('SUNO'));
-  assert.ok(!toolRow.textContent.includes('原唱'), '生成工具不得混进原唱行');
-  ui.render({ slug: 'y', title: '空歌', credits: [] });
-  assert.match(el.textContent, /歌曲资料待补充/);
-  assert.ok(!el.querySelector('.pl__about__row'), '全缺时不应有空标签行');
-  ui.render({ slug: 'z', title: '部分', lyricist: '只有词', credits: [] });
-  assert.ok(el.textContent.includes('只有词'));
-  assert.ok(!el.textContent.includes('原唱'), '缺失字段必须隐藏');
-  assert.ok(!el.textContent.includes('歌曲资料待补充'));
-  ui.render(null);
-  assert.match(el.textContent, /歌曲资料待补充/);
-  restore();
-});
-
-test('panels · 简介：DEMO 如实标注，署名不编造，HTML 转义', () => {
-  const { ui, el, restore } = infoUI();
-  ui.render({ slug: 'd', title: '<img src=x onerror=alert(1)>', demo: true, credits: [] });
-  assert.match(el.textContent, /DEMO 测试音/);
-  assert.ok(!el.querySelector('img'), '标题必须转义');
-  assert.ok(!el.textContent.includes('原唱'), 'demo 不编造原唱');
-  restore();
-});
-/* ── 6. jsdom 整机 ──────────────────────────────────── */
+/* ── 5. jsdom 整机 ──────────────────────────────────── */
 
 test('panels · 整机：字号立即生效、只改歌词、刷新后恢复', async () => {
   const { window, app, audio } = await makeApp('/songs/demo-night-ferry/');
@@ -272,35 +235,19 @@ test('panels · 整机：校准逐曲保存，切歌不串，读数与存储一�
   assert.equal(saved.lyricOffsets['demo-paper-boat'], undefined);
 });
 
-test('panels · 整机：词 / 简介互斥展开，aria 同步，audio 不动', async () => {
+test('panels · 整机：简介入口已移除，展示模式只在 cover/vinyl/lyrics 三舞台循环', async () => {
   const { window, app, audio } = await makeApp('/songs/demo-night-ferry/');
   const doc = window.document;
   click(window, doc.querySelector('[data-act="play-song"]'));
   await wait();
+  assert.equal(doc.getElementById('plAboutBtn'), null);
+  assert.equal(doc.getElementById('plAboutBtnFull'), null);
+  assert.equal(doc.getElementById('plAbout'), null);
   const stage = doc.getElementById('plStage');
-  const lyricsBtn = doc.getElementById('plLyricsBtn');
-  const aboutBtn = doc.getElementById('plAboutBtn');
-  click(window, lyricsBtn);
-  await wait();
-  assert.equal(stage.dataset.stage, 'lyrics');
-  assert.equal(lyricsBtn.dataset.mode, 'pure');
-  click(window, aboutBtn);
-  await wait();
-  assert.equal(stage.dataset.stage, 'about', '简介应取代歌词（互斥）');
-  assert.equal(lyricsBtn.getAttribute('aria-expanded'), 'false');
-  assert.equal(lyricsBtn.dataset.mode, 'off');
-  assert.equal(aboutBtn.getAttribute('aria-expanded'), 'true');
-  assert.equal(aboutBtn.getAttribute('aria-label'), '收起简介');
-  assert.equal(doc.getElementById('plAboutBtnFull').getAttribute('aria-expanded'), 'true');
-  click(window, aboutBtn);
-  await wait();
-  assert.equal(stage.dataset.stage, 'cover');
-  assert.equal(aboutBtn.getAttribute('aria-expanded'), 'false');
-  click(window, doc.getElementById('plLyricsBtnFull'));
-  await wait();
-  assert.equal(stage.dataset.stage, 'lyrics');
-  assert.equal(doc.getElementById('plLyricsBtnFull').dataset.mode, 'pure', '从简介切回歌词应回到纯享');
-  assert.equal(aboutBtn.getAttribute('aria-expanded'), 'false');
+  const view = doc.querySelector('[data-act="cycle-view"]');
+  const seen = [stage.dataset.stage];
+  for (let i = 0; i < 3; i++) { click(window, view); await wait(); seen.push(stage.dataset.stage); }
+  assert.deepEqual(seen, ['cover', 'vinyl', 'lyrics', 'cover'], '展示模式应三舞台循环，不再含 about');
   assert.equal(app.player.state, 'playing');
   assert.equal(doc.getElementById('zx-audio'), audio);
 });
@@ -374,35 +321,33 @@ test('panels · 整机：刷新后首击回纯享（三态不持久化），字�
   assert.equal(app.ui.lyricsMode, 'settings');
 });
 
-test('panels · 整机：简介随切歌更新，不残留上一首；跨页后仍在', async () => {
+test('panels · 整机：歌词面板随切歌更新，不残留上一首；跨页后仍在', async () => {
   const { window, app } = await makeApp('/songs/');
   const doc = window.document;
   click(window, doc.querySelector('[data-act="play-song"][data-slug="demo-night-ferry"]'));
   await wait();
-  click(window, doc.getElementById('plAboutBtn'));
+  click(window, doc.getElementById('plLyricsBtn'));
   await wait();
-  const about = doc.getElementById('plAbout');
-  assert.match(about.textContent, /确认播放与歌词正常/);
+  const box = doc.getElementById('plLyrics');
+  const first = box.textContent;
+  assert.ok(first.length > 0, '歌词应已渲染');
   click(window, doc.querySelector('[data-act="play-song"][data-slug="demo-paper-boat"]'));
   await wait();
-  assert.match(about.textContent, /确认纯音乐的显示/);
-  assert.ok(!about.textContent.includes('确认播放与歌词正常'), '不得残留上一首信息');
-  assert.equal(doc.getElementById('plStage').dataset.stage, 'about', '切歌不应关掉简介面板');
+  assert.equal(doc.getElementById('plStage').dataset.stage, 'lyrics', '切歌不应关掉歌词面板');
+  assert.notEqual(box.textContent, first, '歌词应换为当前曲');
   click(window, doc.querySelector('.nav__ul .nav__a')); // 首页（href 启动时已绝对化）
   await wait(120);
-  assert.equal(doc.getElementById('plStage').dataset.stage, 'about');
-  assert.match(doc.getElementById('plAbout').textContent, /确认纯音乐的显示/);
+  assert.equal(doc.getElementById('plStage').dataset.stage, 'lyrics');
   assert.equal(app.player.state, 'playing');
 });
 
-test('panels · 整机：刷新恢复逐曲偏移与简介舞台', async () => {
-  // stageLocked:true 与真实点击「简介」后的存储一致（未锁定的舞台会被外观预设接管）
+test('panels · 整机：旧存储的 about 舞台逐字段回退 cover，逐曲偏移仍恢复', async () => {
+  // stageLocked:true 与真实点击舞台后的存储一致（未锁定的舞台会被外观预设接管）
   const state = JSON.stringify({ version: 1, stage: 'about', stageLocked: true, lyricOffsets: { 'demo-night-ferry': 1.5 }, queue: { items: [{ slug: 'demo-night-ferry' }], cursor: 0 } });
   const { window, app } = await makeApp('/songs/demo-night-ferry/', { storage: { 'zx.music.v1': state } });
   const doc = window.document;
   await wait(80);
-  assert.equal(app.player.lyricOffset, 1.5, '刷新后应恢复该曲偏移');
+  assert.equal(app.player.lyricOffset, 1.5, '坏舞台字段不得连累逐曲偏移');
   assert.equal(doc.getElementById('plCalibVal').textContent, '+1.5s');
-  assert.equal(doc.getElementById('plStage').dataset.stage, 'about');
-  assert.match(doc.getElementById('plAbout').textContent, /合成测试音/);
+  assert.equal(doc.getElementById('plStage').dataset.stage, 'cover', '已下线的 about 舞台应回退封面');
 });

@@ -17,7 +17,7 @@ const RECENT_LIMIT = 50;
 const OFFSET_LIMIT = 200;
 
 const VIEWS = ['list', 'grid', 'vinyl'];
-const STAGES = ['cover', 'vinyl', 'lyrics', 'about'];
+const STAGES = ['cover', 'vinyl', 'lyrics'];
 
 /** 三套外观。cloud 是首次访问的默认值，系统深色偏好不参与决策。 */
 export const THEMES = ['cloud', 'forest', 'midnight'];

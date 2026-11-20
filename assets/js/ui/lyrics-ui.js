@@ -67,6 +67,15 @@ export class LyricsUI {
     // 字号偏好：当前浏览器保存，启动即恢复（只影响歌词文字）
     this.font = normalizeLrcFont(player.store?.getLrcFont?.());
     this._applyFont(this.font);
+
+    // 首尾居中所需的滚动留白放在滚动容器内部（padding），按容器自身高度算，
+    // 不用屏幕高度；视口 / 工具栏展开 / 字号变化由 ResizeObserver 触发重算与重新定位。
+    this._padPending = false;
+    if (typeof ResizeObserver !== 'undefined' && c) {
+      this._ro = new ResizeObserver(() => this._schedulePad());
+      this._ro.observe(c);
+    }
+    this._schedulePad();
   }
 
   /* ── 字号（工具栏「小 / 中 / 大」）───────────────────── */
@@ -82,6 +91,38 @@ export class LyricsUI {
   _applyFont(value) {
     if (this.container) this.container.dataset.font = value;
     for (const b of qsa('[data-act="lyric-font"]')) b.setAttribute('aria-pressed', String(b.dataset.size === value));
+    this._schedulePad();
+  }
+
+  /* ── 滚动留白（首尾行也能居中）───────────────────── */
+  /** 下一帧重算留白：合并 ResizeObserver / 字号 / 渲染触发的多次调用 */
+  _schedulePad() {
+    if (this._padPending) return;
+    this._padPending = true;
+    const raf = typeof requestAnimationFrame === 'function' ? requestAnimationFrame : (fn) => setTimeout(fn, 0);
+    raf(() => { this._padPending = false; this._updatePad(); });
+  }
+
+  /** 留白 = (歌词可视高度 - 行高) / 2，写在容器 padding 上（随内容一起滚动，不推远歌名/控件）。
+   *  高度取父级 .pl__lyricsbox（flex 决定、不受留白 padding 影响）——取容器自身 clientHeight
+   *  会形成反馈环：留白过大时内容被钳到 0，ResizeObserver 不再触发，留白收敛不到正确值。
+   *  面板不可见（高度 0）时跳过；留白变化会触发 scroll 事件，打程序化标记避免误暂停跟随。 */
+  _updatePad() {
+    const c = this.container;
+    if (!c) return;
+    const h = c.parentElement ? c.parentElement.clientHeight : c.clientHeight;
+    if (!h) return;
+    const line = c.querySelector('.lrc__line.is-active') || c.querySelector('.lrc__line');
+    const lh = line ? line.getBoundingClientRect().height : 44;
+    const pad = Math.max(8, Math.round((h - lh) / 2));
+    if (c.style.paddingTop !== `${pad}px`) {
+      this._autoScroll = true;
+      clearTimeout(this._autoScrollTimer);
+      this._autoScrollTimer = setTimeout(() => { this._autoScroll = false; }, 200);
+      c.style.paddingTop = `${pad}px`;
+      c.style.paddingBottom = `${pad}px`;
+    }
+    if (this.timed && !this._followPaused) this._scrollToCurrent();
   }
 
   /* ── 自动跟随 ─────────────────────────────────────── */
@@ -175,6 +216,7 @@ export class LyricsUI {
       : `<li class="lrc__line lrc__line--plain" data-i="${i}">${escapeHtml(line.text)}</li>`).join('');
     this.container.innerHTML = `${head}<ol class="lrc${this.timed ? '' : ' lrc--plain'}">${items}</ol>`;
     this.container.scrollTop = 0;
+    this._schedulePad();
   }
 
   /** 校准量读数：正值 = 歌词提前（与 LRC [offset:] 同一约定） */
