@@ -1,0 +1,31 @@
+{
+  "slug": "tanyunxi",
+  "title": "叹云兮",
+  "artist": "金石竹青",
+  "composer": "SHIMA",
+  "lyricist": "郭德紫毅",
+  "originalArtist": "鞠婧祎",
+  "versionNote": "翻唱版本",
+  "versionBy": "演唱：金石竹青",
+  "tools": [
+    "SUNO"
+  ],
+  "album": null,
+  "tags": [
+    "翻唱",
+    "国风"
+  ],
+  "date": "2026-11-20",
+  "duration": 276.864,
+  "cover": "auto",
+  "audio": {
+    "src": "audio/tanyunxi.mp3",
+    "mime": "audio/mpeg",
+    "master": null
+  },
+  "lyrics": null,
+  "instrumental": false,
+  "demo": false,
+  "about": "《叹云兮》翻唱版：郭德紫毅作词，SHIMA作曲，鞠婧祎原唱，金石竹青演唱。",
+  "credits": []
+}
