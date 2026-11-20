@@ -1,0 +1,30 @@
+{
+  "slug": "bu-yao-zai-gu-dan",
+  "title": "不要再孤单",
+  "artist": "金石竹青",
+  "composer": "黄少峰（火星电台）",
+  "lyricist": "黄少峰（火星电台）",
+  "originalArtist": "徐佳莹",
+  "versionNote": "翻唱版本",
+  "versionBy": "演唱：金石竹青",
+  "tools": [
+    "SUNO"
+  ],
+  "album": null,
+  "tags": [
+    "翻唱"
+  ],
+  "date": "2026-11-20",
+  "duration": 242.064,
+  "cover": "auto",
+  "audio": {
+    "src": "audio/bu-yao-zai-gu-dan.mp3",
+    "mime": "audio/mpeg",
+    "master": null
+  },
+  "lyrics": null,
+  "instrumental": false,
+  "demo": false,
+  "about": "《不要再孤单》翻唱版：黄少峰（火星电台）作词，黄少峰（火星电台）作曲，徐佳莹原唱，金石竹青演唱。",
+  "credits": []
+}

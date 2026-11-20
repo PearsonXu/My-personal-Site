@@ -1,0 +1,30 @@
+{
+  "slug": "jiyidian",
+  "title": "记忆点",
+  "artist": "金石竹青",
+  "composer": "刘昊霖、拜德盖Viigho",
+  "lyricist": "赵大白、刘昊霖、拜德盖Viigho、陈卓璇",
+  "originalArtist": "陈卓璇",
+  "versionNote": "翻唱版本",
+  "versionBy": "演唱：金石竹青",
+  "tools": [
+    "SUNO"
+  ],
+  "album": null,
+  "tags": [
+    "翻唱"
+  ],
+  "date": "2026-11-20",
+  "duration": 262.656,
+  "cover": "auto",
+  "audio": {
+    "src": "audio/jiyidian.mp3",
+    "mime": "audio/mpeg",
+    "master": null
+  },
+  "lyrics": null,
+  "instrumental": false,
+  "demo": false,
+  "about": "《记忆点》翻唱版：赵大白、刘昊霖、拜德盖Viigho、陈卓璇作词，刘昊霖、拜德盖Viigho作曲，陈卓璇原唱，金石竹青演唱。",
+  "credits": []
+}

@@ -1,0 +1,31 @@
+{
+  "slug": "wuji",
+  "title": "无羁",
+  "artist": "金石竹青",
+  "composer": "林海",
+  "lyricist": "澄一、冥凰",
+  "originalArtist": "肖战、王一博（合唱版）/ 周笔畅（独唱版）",
+  "versionNote": "翻唱版本",
+  "versionBy": "演唱：金石竹青",
+  "tools": [
+    "SUNO"
+  ],
+  "album": null,
+  "tags": [
+    "翻唱",
+    "国风"
+  ],
+  "date": "2026-11-20",
+  "duration": 229.056,
+  "cover": "auto",
+  "audio": {
+    "src": "audio/wuji.mp3",
+    "mime": "audio/mpeg",
+    "master": null
+  },
+  "lyrics": null,
+  "instrumental": false,
+  "demo": false,
+  "about": "《无羁》翻唱版：澄一、冥凰作词，林海作曲，肖战、王一博（合唱版）/ 周笔畅（独唱版）原唱，金石竹青演唱。",
+  "credits": []
+}

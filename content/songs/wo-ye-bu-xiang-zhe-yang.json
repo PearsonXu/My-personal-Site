@@ -1,0 +1,30 @@
+{
+  "slug": "wo-ye-bu-xiang-zhe-yang",
+  "title": "我也不想这样",
+  "artist": "金石竹青",
+  "composer": "Alex San（辛伟力）",
+  "lyricist": "林夕（本名梁伟文）",
+  "originalArtist": "王菲",
+  "versionNote": "翻唱版本",
+  "versionBy": "演唱：金石竹青",
+  "tools": [
+    "SUNO"
+  ],
+  "album": null,
+  "tags": [
+    "翻唱"
+  ],
+  "date": "2026-11-20",
+  "duration": 243.264,
+  "cover": "auto",
+  "audio": {
+    "src": "audio/wo-ye-bu-xiang-zhe-yang.mp3",
+    "mime": "audio/mpeg",
+    "master": null
+  },
+  "lyrics": null,
+  "instrumental": false,
+  "demo": false,
+  "about": "《我也不想这样》翻唱版：林夕（本名梁伟文）作词，Alex San（辛伟力）作曲，王菲原唱，金石竹青演唱。",
+  "credits": []
+}
