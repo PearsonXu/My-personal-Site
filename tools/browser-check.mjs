@@ -393,11 +393,16 @@ async function functionalSuite(page, group, { viewport }) {
 
   await check(group, '专辑与歌单一键播放', async () => {
     await goto(page, `${BASE}/albums/demo-fixtures/`);
+    // 手机迷你条是固定底栏：先滚到视口中部再点，避免按钮落在底栏覆盖区（真实用户也会先滚动）
+    await page.evaluate(() => document.querySelector('[data-act="play-collection"]')?.scrollIntoView({ block: 'center' }));
+    await sleep(300);
     await page.click('[data-act="play-collection"]');
     await page.waitForFunction(() => window.__music.player.state === 'playing');
     const s = await state(page);
     assert(s.queue.length === 2, `专辑队列 ${s.queue.length}`);
     await goto(page, `${BASE}/playlists/late-night/`);
+    await page.evaluate(() => document.querySelector('[data-act="queue-collection"][data-pos="last"]')?.scrollIntoView({ block: 'center' }));
+    await sleep(300);
     await page.click('[data-act="queue-collection"][data-pos="last"]');
     await sleep(250);
     const s2 = await state(page);
@@ -883,14 +888,17 @@ async function main() {
     await check('自动适配', `${label}：形态正确且无溢出`, async () => {
       const m = await page.evaluate(() => ({
         burger: getComputedStyle(document.querySelector('.nav__burger')).display !== 'none',
-        extra: getComputedStyle(document.querySelector('.pl__extra')).display !== 'none',
+        // 手机迷你条操作区常驻但只留「词」「简介」两键；桌面才是完整控件
+        extraKids: [...document.querySelectorAll('.pl__extra > *')].filter((el) => getComputedStyle(el).display !== 'none').length,
         overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
       }));
       const expectMobile = vp.width <= 760;
+      // 中间带（761–900，auto 布局）音量组收起 → 7 键；完整桌面 8 键；手机只留「词」「简介」2 键
+      const expectKids = expectMobile ? 2 : (vp.width <= 900 ? 7 : 8);
       assert(m.burger === expectMobile, `${label} 汉堡菜单=${m.burger}，期望 ${expectMobile}`);
-      assert(m.extra === !expectMobile, `${label} 播放器完整控件=${m.extra}`);
+      assert(m.extraKids === expectKids, `${label} 迷你条操作键=${m.extraKids}，期望 ${expectKids}`);
       assert(m.overflow <= 1, `${label} 横向溢出 ${m.overflow}px`);
-      return `汉堡=${m.burger} 完整控件=${m.extra} 溢出=${m.overflow}px`;
+      return `汉堡=${m.burger} 操作键=${m.extraKids} 溢出=${m.overflow}px`;
     });
     await shot(page, `auto-${vp.width}x${vp.height}`);
     await page.close();
@@ -904,15 +912,15 @@ async function main() {
     await check('手动布局', '宽屏 1440 选「手机」：确实变成手机形态', async () => {
       const m = await page.evaluate(() => ({
         burger: getComputedStyle(document.querySelector('.nav__burger')).display !== 'none',
-        extra: getComputedStyle(document.querySelector('.pl__extra')).display !== 'none',
+        extraKids: [...document.querySelectorAll('.pl__extra > *')].filter((el) => getComputedStyle(el).display !== 'none').length,
         blur: getComputedStyle(document.documentElement).getPropertyValue('--blur').trim(),
         overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
       }));
       assert(m.burger === true, '宽屏手动手机布局没有汉堡菜单');
-      assert(m.extra === false, '宽屏手动手机布局仍显示完整控件');
+      assert(m.extraKids === 2, `宽屏手动手机布局迷你条应只留「词」「简介」，实际 ${m.extraKids} 键`);
       assert(m.blur === '0px', `midnight 手机布局应关闭模糊，实际 ${m.blur}`);
       assert(m.overflow <= 1, `溢出 ${m.overflow}`);
-      return `汉堡=true 完整控件=false blur=${m.blur}`;
+      return `汉堡=true 操作键=2 blur=${m.blur}`;
     });
     await shot(page, 'manual-mobile-on-wide');
     await page.close();
@@ -924,13 +932,13 @@ async function main() {
     await check('手动布局', '窄屏 390 选「桌面」：保持桌面结构且不溢出', async () => {
       const m = await page.evaluate(() => ({
         burger: getComputedStyle(document.querySelector('.nav__burger')).display !== 'none',
-        extra: getComputedStyle(document.querySelector('.pl__extra')).display !== 'none',
+        extraKids: [...document.querySelectorAll('.pl__extra > *')].filter((el) => getComputedStyle(el).display !== 'none').length,
         overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
       }));
       assert(m.burger === false, '窄屏手动桌面布局仍显示汉堡菜单');
-      assert(m.extra === true, '窄屏手动桌面布局丢了完整控件');
+      assert(m.extraKids === 8, `窄屏手动桌面布局丢了完整控件，实际 ${m.extraKids} 键`);
       assert(m.overflow <= 1, `溢出 ${m.overflow}px`);
-      return `汉堡=false 完整控件=true 溢出=${m.overflow}px`;
+      return `汉堡=false 操作键=8 溢出=${m.overflow}px`;
     });
     await layoutSuite(page, '手动布局 · 窄屏桌面');
     await shot(page, 'manual-desktop-on-narrow');

@@ -34,8 +34,11 @@ test('lyrics-entry · 「词」按钮常驻迷你条操作区与展开页主控�
   for (const id of ['plLyricsBtn', 'plLyricsBtnFull']) {
     const btn = new RegExp(`<button[^>]*id="${id}"[^>]*>([\\s\\S]*?)</button>`).exec(html);
     assert.ok(btn, `缺 #${id}`);
-    assert.equal(btn[1].trim(), '词', `#${id} 可见文字应为「词」`);
+    assert.equal(btn[1].replace(/<[^>]+>/g, '').trim(), '词', `#${id} 可见文字应为「词」`);
     assert.match(btn[0], /data-act="toggle-lyrics"/);
+    assert.match(btn[0], /data-mode="off"/, '初始应为隐藏态');
+    assert.match(btn[1], /class="pbtn__gear"/, '设置态齿轮标记应预渲染，靠 CSS 切显隐');
+    assert.match(btn[1], /<svg class="icon icon--gear"/);
     assert.match(btn[0], /aria-label="显示歌词"/);
     assert.match(btn[0], /aria-expanded="false"/);
     assert.match(btn[0], /aria-controls="plLyrics"/);
@@ -73,6 +76,9 @@ test('lyrics-entry · 「词」按钮样式：边框浅底、展开态主题红�
   const on = /\.pbtn--lyrics\[aria-expanded="true"\][^{]*\{([^}]*)\}/.exec(css)[1];
   assert.match(on, /background:var\(--acc\)/);
   assert.match(on, /color:var\(--on-acc\)/);
+  // 三态标记：齿轮默认隐藏，仅设置态露出（纯享与设置共用 aria-expanded 高亮）
+  assert.match(css, /\.pbtn__gear \{ display:none;/);
+  assert.match(css, /\.pbtn--lyrics\[data-mode="settings"\] \.pbtn__gear \{ display:inline-flex; \}/);
   // 点击区沿用 .pbtn 的 --pbtn-size（site.css 44px，移动端未缩小）
   assert.match(read('assets/css/site.css'), /--pbtn-size:44px/);
   assert.ok(!/--pbtn-size/.test(read('assets/css/layout-mobile.css')), '移动端缩小了功能键点击区');
@@ -160,31 +166,46 @@ test('lyrics-entry · 校准后重算高亮行并发事件；换歌复位', asyn
 
 /* ── 3b. jsdom 整机 ─────────────────────────────────── */
 
-test('lyrics-entry · 整机：「词」展开/收起歌词，aria 与红色态同步，audio 不动', async () => {
+test('lyrics-entry · 整机：「词」三态循环 隐藏→纯享→设置→隐藏，aria 与齿轮态同步，audio 不动', async () => {
   const { window, app, audio } = await makeApp('/songs/demo-night-ferry/');
   const doc = window.document;
   click(window, doc.querySelector('[data-act="play-song"]'));
   await wait();
   const barBtn = doc.getElementById('plLyricsBtn');
   const fullBtn = doc.getElementById('plLyricsBtnFull');
+  const stage = doc.getElementById('plStage');
   assert.equal(barBtn.getAttribute('aria-expanded'), 'false');
+  assert.equal(barBtn.dataset.mode, 'off');
 
-  click(window, barBtn);
+  click(window, barBtn); // 1 → 纯享
   await wait();
   assert.equal(doc.getElementById('player-root').dataset.expanded, 'true');
-  assert.equal(doc.getElementById('plStage').dataset.stage, 'lyrics');
+  assert.equal(stage.dataset.stage, 'lyrics');
+  assert.equal(stage.dataset.tools, 'false', '纯享不得显示工具栏');
   for (const b of [barBtn, fullBtn]) {
     assert.equal(b.getAttribute('aria-expanded'), 'true');
-    assert.equal(b.getAttribute('aria-label'), '收起歌词');
+    assert.equal(b.dataset.mode, 'pure');
+    assert.equal(b.getAttribute('aria-label'), '显示歌词设置');
   }
   assert.equal(doc.getElementById('zx-audio'), audio, 'toggle 不得重建 audio');
   assert.equal(app.player.state, 'playing', 'toggle 不得中断播放');
 
-  click(window, fullBtn); // 再点一次 → 收起面板回封面
+  click(window, fullBtn); // 2 → 设置
   await wait();
-  assert.equal(doc.getElementById('plStage').dataset.stage, 'cover');
+  assert.equal(stage.dataset.stage, 'lyrics', '设置态仍显示歌词');
+  assert.equal(stage.dataset.tools, 'true');
+  for (const b of [barBtn, fullBtn]) {
+    assert.equal(b.dataset.mode, 'settings');
+    assert.equal(b.getAttribute('aria-label'), '收起歌词');
+  }
+
+  click(window, barBtn); // 3 → 隐藏
+  await wait();
+  assert.equal(stage.dataset.stage, 'cover');
+  assert.equal(stage.dataset.tools, 'false');
   for (const b of [barBtn, fullBtn]) {
     assert.equal(b.getAttribute('aria-expanded'), 'false');
+    assert.equal(b.dataset.mode, 'off');
     assert.equal(b.getAttribute('aria-label'), '显示歌词');
   }
   assert.equal(app.player.state, 'playing');
@@ -196,6 +217,8 @@ test('lyrics-entry · 整机：面板内校准生效，读数更新，重置归�
   click(window, doc.querySelector('[data-act="play-song"]'));
   await wait();
   click(window, doc.getElementById('plLyricsBtn'));
+  await wait();
+  click(window, doc.getElementById('plLyricsBtn')); // 纯享 → 设置，工具栏才可见
   await wait();
   const plus = doc.querySelector('[data-act="lyric-offset"][data-delta="0.5"]');
   assert.equal(plus.disabled, false, '带时间轴歌词加载后校准应可用');
@@ -219,6 +242,7 @@ test('lyrics-entry · 整机：未选歌时「词」仍可点，提示「暂无�
   click(window, btn);
   await wait();
   assert.equal(doc.getElementById('plStage').dataset.stage, 'lyrics');
+  assert.equal(btn.dataset.mode, 'pure', '无歌词时首击也进纯享');
   assert.match(doc.getElementById('plLyrics').textContent, /暂无歌词/);
   assert.match(doc.getElementById('toasts').textContent, /暂无歌词/);
   for (const b of doc.querySelectorAll('.pl__calib__btn')) assert.equal(b.disabled, true);

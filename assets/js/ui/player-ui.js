@@ -18,6 +18,10 @@ export class PlayerUI {
     this.root = byId('player-root');
     this.seeking = false;
     this.stage = player.store?.data?.stage || 'cover';
+    /** 「词」三态循环里工具栏的开关（纯享=false / 设置=true）。
+     *  运行时状态，不持久化：刷新 / 收起后第一次点「词」永远回到纯享。
+     *  字号偏好（按浏览器）与校准偏移（按歌曲）各自持久化，不受三态切换影响。 */
+    this.lyricsTools = false;
     /** @type {null | ((stage: string) => void)} 由 app.js 注入：歌词面板重新可见时立即定位当前行 */
     this.onStageChange = null;
 
@@ -177,15 +181,39 @@ export class PlayerUI {
     this._syncPanelButtons();
   }
 
+  /** 「词」按钮三态：off（不显示歌词）/ pure（歌词纯享，无工具栏）/ settings（歌词 + 字号/校准工具栏） */
+  get lyricsMode() {
+    if (this.root?.dataset.expanded !== 'true' || this.stage !== 'lyrics') return 'off';
+    return this.lyricsTools ? 'settings' : 'pure';
+  }
+
   /**
-   * 歌词「词」按钮：收起时点击 → 展开歌词面板；展开且正在看歌词时再点 → 收起面板回封面。
-   * @returns {boolean} 点击后歌词面板是否处于展开状态
+   * 工具栏显隐（纯享 ↔ 设置）。只改 data 属性与按钮态：不重建 DOM、不碰 audio、不动时间轴。
+   * @returns {'off'|'pure'|'settings'} 切换后的三态
+   */
+  setLyricsTools(on) {
+    this.lyricsTools = !!on;
+    if (this.el.stage) this.el.stage.dataset.tools = String(this.lyricsTools);
+    this._syncPanelButtons();
+    return this.lyricsMode;
+  }
+
+  /**
+   * 歌词「词」按钮三态循环：隐藏 → 纯享 → 设置 → 隐藏（回封面普通播放页）。
+   * 唯一点击入口是委托的 data-act="toggle-lyrics"，一次点击只推进一态，不会连跳。
+   * @returns {'off'|'pure'|'settings'} 点击后的状态
    */
   toggleLyrics() {
     const expanded = this.root?.dataset.expanded === 'true';
-    if (expanded && this.stage === 'lyrics') { this.setStage('cover'); return false; }
+    if (expanded && this.stage === 'lyrics') {
+      if (!this.lyricsTools) return this.setLyricsTools(true); // 纯享 → 设置
+      this.setLyricsTools(false); // 设置 → 隐藏（收起歌词与全部工具）
+      this.setStage('cover');
+      return 'off';
+    }
+    this.setLyricsTools(false); // 隐藏 → 纯享（工具栏保持收起）
     this.expand('lyrics');
-    return true;
+    return 'pure';
   }
 
   /**
@@ -200,22 +228,29 @@ export class PlayerUI {
     return true;
   }
 
-  /** 迷你条与展开页的「词」「简介」按钮状态同步：aria-expanded 同时驱动主题红底样式 */
+  /** 迷你条与展开页的「词」「简介」按钮状态同步。
+   *  「词」：data-mode=off/pure/settings —— off 普通样式；pure/settings 由 aria-expanded 驱动主题红底；
+   *  settings 额外露出小齿轮（CSS .pbtn__gear）。aria-label 描述下一次点击的动作。 */
   _syncPanelButtons() {
     const expanded = this.root?.dataset.expanded === 'true';
-    const panels = [
-      { on: expanded && this.stage === 'lyrics', ids: ['plLyricsBtn', 'plLyricsBtnFull'], open: '收起歌词', shut: '显示歌词' },
-      { on: expanded && this.stage === 'about', ids: ['plAboutBtn', 'plAboutBtnFull'], open: '收起简介', shut: '显示简介' }
-    ];
-    for (const p of panels) {
-      for (const id of p.ids) {
-        const btn = byId(id);
-        if (!btn) continue;
-        const label = p.on ? p.open : p.shut;
-        btn.setAttribute('aria-expanded', String(p.on));
-        btn.setAttribute('aria-label', label);
-        btn.setAttribute('title', label);
-      }
+    const mode = this.lyricsMode;
+    const lyricsLabel = mode === 'settings' ? '收起歌词' : mode === 'pure' ? '显示歌词设置' : '显示歌词';
+    for (const id of ['plLyricsBtn', 'plLyricsBtnFull']) {
+      const btn = byId(id);
+      if (!btn) continue;
+      btn.dataset.mode = mode;
+      btn.setAttribute('aria-expanded', String(mode !== 'off'));
+      btn.setAttribute('aria-label', lyricsLabel);
+      btn.setAttribute('title', lyricsLabel);
+    }
+    const aboutOn = expanded && this.stage === 'about';
+    for (const id of ['plAboutBtn', 'plAboutBtnFull']) {
+      const btn = byId(id);
+      if (!btn) continue;
+      const label = aboutOn ? '收起简介' : '显示简介';
+      btn.setAttribute('aria-expanded', String(aboutOn));
+      btn.setAttribute('aria-label', label);
+      btn.setAttribute('title', label);
     }
   }
 
@@ -226,7 +261,10 @@ export class PlayerUI {
 
   setStage(stage, { lock = true } = {}) {
     this.stage = STAGES.includes(stage) ? stage : 'cover';
-    if (this.el.stage) this.el.stage.dataset.stage = this.stage;
+    if (this.el.stage) {
+      this.el.stage.dataset.stage = this.stage;
+      this.el.stage.dataset.tools = String(this.lyricsTools);
+    }
     setSvg('plViewIcon', STAGE_ICON[this.stage], 22);
     if (lock) this.player.store?.save({ stage: this.stage, stageLocked: true }, { immediate: true });
     else this.player.store?.save({ stage: this.stage });

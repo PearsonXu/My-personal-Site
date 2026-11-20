@@ -148,8 +148,9 @@ function player({ base }) {
     `<button class="pbtn pbtn--play${extraClass ? ` ${extraClass}` : ''}" type="button" data-act="toggle" id="${id}" aria-label="播放" title="播放 / 暂停 (空格)">${toggleIcons({ size: 24 })}</button>`;
   // 歌词入口：常驻文字按钮「词」。文字即标签（不是图标字符），迷你条与展开页各一个，
   // 展开态由 aria-expanded 驱动（主题红底），见 docs/PLAYER-CONTROLS.md。
+  // 三态循环按钮：off 普通 / pure 主题高亮 / settings 高亮 + 小齿轮（CSS 按 data-mode 切齿轮显隐）
   const lyricsBtn = (id) =>
-    `<button class="pbtn pbtn--text pbtn--lyrics" type="button" data-act="toggle-lyrics" id="${id}" aria-label="显示歌词" title="显示歌词" aria-expanded="false" aria-controls="plLyrics">词</button>`;
+    `<button class="pbtn pbtn--text pbtn--lyrics" type="button" data-act="toggle-lyrics" id="${id}" data-mode="off" aria-label="显示歌词" title="显示歌词" aria-expanded="false" aria-controls="plLyrics">词<span class="pbtn__gear" aria-hidden="true">${icon('gear', { size: 12 })}</span></button>`;
   // 简介入口：与「词」并排的文字按钮，互斥展开；内容随切歌更新（ui/song-info-ui.js）
   const aboutBtn = (id) =>
     `<button class="pbtn pbtn--text pbtn--about" type="button" data-act="toggle-about" id="${id}" aria-label="显示简介" title="显示简介" aria-expanded="false" aria-controls="plAbout">简介</button>`;

@@ -328,12 +328,12 @@ async function handleClick(e, app) {
     case 'toggle-mute': player.toggleMute(); break;
     case 'expand': ui.expand(); break;
     case 'collapse': ui.collapse(); break;
-    case 'open-lyrics': ui.expand('lyrics'); break;
+    case 'open-lyrics': ui.setLyricsTools(false); ui.expand('lyrics'); break;
     case 'toggle-lyrics': {
-      const opened = ui.toggleLyrics();
-      // 无歌词时入口仍可发现：面板里有空状态，这里再给一句明确提示。
+      const mode = ui.toggleLyrics(); // 三态循环：off → pure → settings → off
+      // 无歌词时入口仍可发现：面板里有空状态，这里再给一句明确提示（只在刚打开纯享时提示一次）。
       // 加载中 / 纯音乐 / 读取失败各有面板自己的文案，不叠加 toast。
-      if (opened && !lyrics.pending && !player.currentSong?.instrumental && !player.lyrics?.error && !player.lyrics?.lines?.length) {
+      if (mode === 'pure' && !lyrics.pending && !player.currentSong?.instrumental && !player.lyrics?.error && !player.lyrics?.lines?.length) {
         toast('暂无歌词');
       }
       break;
@@ -412,7 +412,7 @@ function handleKey(e, app) {
   else if (e.key === 'ArrowLeft') { app.player.seek((app.player.audio.currentTime || 0) - 5); }
   else if (e.key === '/') { e.preventDefault(); byId('libSearch')?.focus(); }
   else if (e.key.toLowerCase() === 'm') { app.player.cycleMode(); toast(`播放模式：${app.player.queueInfo().modeLabel}`); }
-  else if (e.key.toLowerCase() === 'l') { app.ui.expand('lyrics'); }
+  else if (e.key.toLowerCase() === 'l') { app.ui.setLyricsTools(false); app.ui.expand('lyrics'); }
   else if (e.key.toLowerCase() === 'q') { app.queueUI.open(); }
 }
 

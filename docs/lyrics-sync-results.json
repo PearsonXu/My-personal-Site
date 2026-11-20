@@ -1,5 +1,5 @@
 {
-  "at": "2026-11-19T20:04:11.782Z",
+  "at": "2026-11-20T01:43:37.918Z",
   "chrome": "headless Google Chrome (puppeteer-core)",
   "bases": [
     "http://localhost:8391 (dist)",
@@ -13,7 +13,7 @@
       "group": "local",
       "name": "首句高亮按时落地",
       "ok": true,
-      "detail": "t=19.70 idx=0"
+      "detail": "t=19.60 idx=0"
     },
     {
       "group": "local",
@@ -31,7 +31,7 @@
       "group": "local",
       "name": "当前行保持在容器中部附近",
       "ok": true,
-      "detail": "Δ=67px"
+      "detail": "Δ=84px"
     },
     {
       "group": "local",
@@ -79,7 +79,7 @@
       "group": "local",
       "name": "重开歌词面板立即回到当前行",
       "ok": true,
-      "detail": "Δ=0px"
+      "detail": "Δ=1px"
     },
     {
       "group": "local",
@@ -91,13 +91,13 @@
       "group": "local",
       "name": "恢复进度+慢网落地：高亮立即在正确行",
       "ok": true,
-      "detail": "t=71.56 idx=10 active=10（旧构建在此冻住=根因复现）"
+      "detail": "t=71.57 idx=10 active=10（旧构建在此冻住=根因复现）"
     },
     {
       "group": "local",
       "name": "reduced-motion 瞬时定位（150ms 内完成滚动）",
       "ok": true,
-      "detail": "scrollTop 331→878"
+      "detail": "scrollTop 314→861"
     },
     {
       "group": "local",
@@ -127,7 +127,7 @@
       "group": "local",
       "name": "手机首句高亮按时落地",
       "ok": true,
-      "detail": "t=19.80 idx=0"
+      "detail": "t=19.74 idx=0"
     },
     {
       "group": "local",
@@ -151,7 +151,7 @@
       "group": "live",
       "name": "首句高亮按时落地",
       "ok": true,
-      "detail": "t=19.67 idx=0"
+      "detail": "t=19.80 idx=0"
     },
     {
       "group": "live",
@@ -211,7 +211,7 @@
       "group": "live",
       "name": "暂停恢复后按 currentTime 定位",
       "ok": true,
-      "detail": "t=41.66"
+      "detail": "t=41.65"
     },
     {
       "group": "live",
@@ -223,19 +223,19 @@
       "group": "live",
       "name": "慢网缓冲后按 currentTime 重新同步",
       "ok": true,
-      "detail": "缓冲期 state=playing，恢复后 t=47.30"
+      "detail": "缓冲期 state=playing，恢复后 t=47.28"
     },
     {
       "group": "live",
       "name": "恢复进度+慢网落地：高亮立即在正确行",
       "ok": true,
-      "detail": "t=70.96 idx=10 active=10（旧构建在此冻住=根因复现）"
+      "detail": "t=71.26 idx=10 active=10（旧构建在此冻住=根因复现）"
     },
     {
       "group": "live",
       "name": "reduced-motion 瞬时定位（150ms 内完成滚动）",
       "ok": true,
-      "detail": "scrollTop 0→878"
+      "detail": "scrollTop 331→878"
     },
     {
       "group": "live",

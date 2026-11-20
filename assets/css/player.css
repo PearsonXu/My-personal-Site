@@ -42,10 +42,13 @@
 /* 歌词文字按钮「词」：常驻迷你条与展开页，圆角 + 清晰边框 + 浅色底。
    文字是标签而非图标字符（pbtn--text 例外，见 docs/PLAYER-CONTROLS.md）。
    点击区沿用 --pbtn-size（桌面 / 手机都是 44×44）。展开态走主题红底白字。 */
-.pbtn--lyrics { border-color:var(--line-2); background:var(--panel-2); color:var(--text); font-family:var(--font-d); font-size:.95rem; font-weight:600; line-height:1; }
+.pbtn--lyrics { display:flex; align-items:center; justify-content:center; gap:3px; border-color:var(--line-2); background:var(--panel-2); color:var(--text); font-family:var(--font-d); font-size:.95rem; font-weight:600; line-height:1; }
 .pbtn--lyrics:hover:not(:disabled) { border-color:var(--acc); color:var(--acc); background:rgba(var(--acc-rgb),.08); }
+/* 三态：off 普通；pure / settings 都高亮（aria-expanded）；settings 额外露出小齿轮标记 */
 .pbtn--lyrics[aria-expanded="true"],
 .pbtn--lyrics[aria-expanded="true"]:hover:not(:disabled) { background:var(--acc); border-color:transparent; color:var(--on-acc); }
+.pbtn__gear { display:none; align-items:center; justify-content:center; }
+.pbtn--lyrics[data-mode="settings"] .pbtn__gear { display:inline-flex; }
 
 /* 简介文字按钮「简介」：与「词」同一视觉语言，互斥展开（同一时刻只有一个面板） */
 .pbtn--about { border-color:var(--line-2); background:var(--panel-2); color:var(--text); font-family:var(--font-d); font-size:.82rem; font-weight:600; line-height:1; }
@@ -115,10 +118,13 @@
 .pl__stage[data-stage="lyrics"] .pl__bigart { display:none; }
 .pl__stage[data-stage="about"] { flex-direction:column; gap:var(--sp2); }
 .pl__stage[data-stage="about"] .pl__bigart { display:none; }
-/* 歌词舞台 = 顶部工具栏（字号 + 校准）+ 歌词滚动区；工具栏不随歌词滚动 */
+/* 歌词舞台 = 歌词滚动区（纯享）或 顶部工具栏 + 歌词滚动区（设置）。
+   工具栏只在设置态（data-tools="true"）显示，独立占一行、不随歌词滚动、不覆盖歌词/歌名/按钮；
+   纯享态 display:none 完全让出空间，歌词区拿满高度。 */
 .pl__lyricswrap { display:none; flex-direction:column; gap:var(--sp2); width:100%; min-height:0; flex:1; }
 .pl__stage[data-stage="lyrics"] .pl__lyricswrap { display:flex; }
-.pl__toolbar { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:var(--sp2) var(--sp4); width:100%; max-width:760px; margin:0 auto; padding:var(--sp2) var(--sp3); border:1px solid var(--line-2); border-radius:12px; background:var(--panel-2); box-sizing:border-box; }
+.pl__toolbar { display:none; flex-wrap:wrap; align-items:center; justify-content:center; gap:var(--sp2) var(--sp4); width:100%; max-width:760px; margin:0 auto; padding:var(--sp2) var(--sp3); border:1px solid var(--line-2); border-radius:12px; background:var(--panel-2); box-sizing:border-box; }
+.pl__stage[data-stage="lyrics"][data-tools="true"] .pl__toolbar { display:flex; }
 .pl__toolbar__label { font-family:var(--font-m); font-size:.72rem; letter-spacing:.08em; color:var(--mute); }
 .pl__font { display:flex; align-items:center; flex-wrap:wrap; gap:4px; }
 .pl__font__btn { min-width:44px; min-height:44px; padding:0 12px; border-radius:10px; border:1px solid var(--line-2); background:var(--panel); color:var(--dim); font-family:var(--font-d); font-size:.85rem; font-weight:600; cursor:pointer; transition:color var(--dur) var(--ease),border-color var(--dur) var(--ease),background-color var(--dur) var(--ease); }

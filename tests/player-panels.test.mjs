@@ -95,8 +95,9 @@ test('panels · 字号只缩放歌词文字，选中态清晰；简介面板只�
   assert.match(css, /\.pl__about \{ display:none;/);
   assert.match(css, /\.pl__stage\[data-stage="about"\] \.pl__about \{ display:block; \}/);
   assert.match(css, /\.pbtn--about\[aria-expanded="true"\],/);
-  // 工具栏允许换行，不产生横向溢出
-  assert.match(css, /\.pl__toolbar \{ display:flex; flex-wrap:wrap;/);
+  // 工具栏允许换行，不产生横向溢出；默认隐藏，仅设置态（data-tools）显示
+  assert.match(css, /\.pl__toolbar \{ display:none; flex-wrap:wrap;/);
+  assert.match(css, /\.pl__stage\[data-stage="lyrics"\]\[data-tools="true"\] \.pl__toolbar \{ display:flex; \}/);
   assert.match(css, /\.pl__calib \{ display:flex;[^}]*flex-wrap:wrap;/);
 });
 /* ── 3. store ───────────────────────────────────────── */
@@ -222,6 +223,8 @@ test('panels · 整机：字号立即生效、只改歌词、刷新后恢复', a
   await wait();
   click(window, doc.getElementById('plLyricsBtn'));
   await wait();
+  click(window, doc.getElementById('plLyricsBtn')); // 纯享 → 设置
+  await wait();
   const box = doc.getElementById('plLyrics');
   assert.equal(box.dataset.font, 'm', '默认中');
   assert.ok(box.querySelector('.lrc__line'), '歌词应已渲染');
@@ -249,6 +252,8 @@ test('panels · 整机：校准逐曲保存，切歌不串，读数与存储一�
   click(window, doc.querySelector('[data-act="play-song"][data-slug="demo-night-ferry"]'));
   await wait();
   click(window, doc.getElementById('plLyricsBtn'));
+  await wait();
+  click(window, doc.getElementById('plLyricsBtn')); // 纯享 → 设置
   await wait();
   click(window, doc.querySelector('[data-act="lyric-offset"][data-delta="0.5"]'));
   await wait();
@@ -278,10 +283,12 @@ test('panels · 整机：词 / 简介互斥展开，aria 同步，audio 不动',
   click(window, lyricsBtn);
   await wait();
   assert.equal(stage.dataset.stage, 'lyrics');
+  assert.equal(lyricsBtn.dataset.mode, 'pure');
   click(window, aboutBtn);
   await wait();
   assert.equal(stage.dataset.stage, 'about', '简介应取代歌词（互斥）');
   assert.equal(lyricsBtn.getAttribute('aria-expanded'), 'false');
+  assert.equal(lyricsBtn.dataset.mode, 'off');
   assert.equal(aboutBtn.getAttribute('aria-expanded'), 'true');
   assert.equal(aboutBtn.getAttribute('aria-label'), '收起简介');
   assert.equal(doc.getElementById('plAboutBtnFull').getAttribute('aria-expanded'), 'true');
@@ -292,9 +299,79 @@ test('panels · 整机：词 / 简介互斥展开，aria 同步，audio 不动',
   click(window, doc.getElementById('plLyricsBtnFull'));
   await wait();
   assert.equal(stage.dataset.stage, 'lyrics');
+  assert.equal(doc.getElementById('plLyricsBtnFull').dataset.mode, 'pure', '从简介切回歌词应回到纯享');
   assert.equal(aboutBtn.getAttribute('aria-expanded'), 'false');
   assert.equal(app.player.state, 'playing');
   assert.equal(doc.getElementById('zx-audio'), audio);
+});
+
+test('panels · 整机：「词」连点六次恰好两圈，一次点击只推进一态', async () => {
+  const { window, app, audio } = await makeApp('/songs/demo-night-ferry/');
+  const doc = window.document;
+  click(window, doc.querySelector('[data-act="play-song"]'));
+  await wait();
+  const btn = doc.getElementById('plLyricsBtn');
+  const modes = [];
+  // 委托把 handleClick 包在微任务里：每次点击后 flush 一次再读态。
+  // 真实浏览器里每次点击本就是独立任务；这里验的是一次点击只推进一态、不连跳。
+  for (let i = 0; i < 6; i++) { click(window, btn); await wait(0); modes.push(app.ui.lyricsMode); }
+  await wait();
+  assert.deepEqual(modes, ['pure', 'settings', 'off', 'pure', 'settings', 'off'], '三态循环不得连跳或回退');
+  assert.equal(doc.getElementById('plStage').dataset.stage, 'cover');
+  assert.equal(btn.dataset.mode, 'off');
+  assert.equal(app.player.state, 'playing', '连点不得中断播放');
+  assert.equal(doc.getElementById('zx-audio'), audio);
+});
+
+test('panels · 整机：设置态收起再展开仍在；切歌保持三态但校准逐曲', async () => {
+  const { window, app } = await makeApp('/songs/');
+  const doc = window.document;
+  click(window, doc.querySelector('[data-act="play-song"][data-slug="demo-night-ferry"]'));
+  await wait();
+  const btn = doc.getElementById('plLyricsBtn');
+  click(window, btn); await wait();
+  click(window, btn); await wait();
+  assert.equal(app.ui.lyricsMode, 'settings');
+  click(window, doc.querySelector('[data-act="collapse"]'));
+  await wait();
+  assert.equal(app.ui.lyricsMode, 'off', '收起时歌词不显示 → 按钮回普通态');
+  assert.equal(app.ui.lyricsTools, true, '会话内工具栏偏好保留');
+  click(window, doc.querySelector('[data-act="expand"]'));
+  await wait();
+  assert.equal(app.ui.lyricsMode, 'settings', '封面展开应恢复设置态');
+  click(window, doc.querySelector('[data-act="lyric-offset"][data-delta="0.5"]'));
+  await wait();
+  assert.equal(app.player.lyricOffset, 0.5);
+  click(window, doc.querySelector('[data-act="play-song"][data-slug="demo-paper-boat"]'));
+  await wait();
+  assert.equal(app.player.lyricOffset, 0, '切歌不得沿用上一首校准');
+  assert.equal(app.ui.lyricsMode, 'settings', '切歌不应关掉歌词设置态');
+  click(window, doc.querySelector('[data-act="play-song"][data-slug="demo-night-ferry"]'));
+  await wait();
+  assert.equal(app.player.lyricOffset, 0.5, '回原曲恢复其校准');
+  click(window, btn); await wait();
+  assert.equal(app.ui.lyricsMode, 'off', '设置态再点一次 → 隐藏');
+  assert.equal(doc.getElementById('plStage').dataset.tools, 'false');
+});
+
+test('panels · 整机：刷新后首击回纯享（三态不持久化），字号与逐曲校准仍恢复', async () => {
+  const state = JSON.stringify({ version: 1, stage: 'lyrics', stageLocked: true, lyricOffsets: { 'demo-night-ferry': 1.5 }, queue: { items: [{ slug: 'demo-night-ferry' }], cursor: 0 } });
+  const { window, app } = await makeApp('/songs/demo-night-ferry/', { storage: { 'zx.music.v1': state, 'zx.music.lrcFont': 's' } });
+  const doc = window.document;
+  await wait(80);
+  const btn = doc.getElementById('plLyricsBtn');
+  assert.equal(doc.getElementById('player-root').dataset.expanded, 'false');
+  assert.equal(btn.dataset.mode, 'off');
+  click(window, btn);
+  await wait();
+  assert.equal(app.ui.lyricsMode, 'pure', '刷新后第一次点击必须是纯享');
+  assert.equal(doc.getElementById('plStage').dataset.tools, 'false');
+  assert.equal(doc.getElementById('plLyrics').dataset.font, 's', '字号偏好仍恢复');
+  assert.equal(app.player.lyricOffset, 1.5, '逐曲校准仍恢复');
+  assert.equal(doc.getElementById('plCalibVal').textContent, '+1.5s');
+  click(window, btn);
+  await wait();
+  assert.equal(app.ui.lyricsMode, 'settings');
 });
 
 test('panels · 整机：简介随切歌更新，不残留上一首；跨页后仍在', async () => {

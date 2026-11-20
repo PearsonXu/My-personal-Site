@@ -91,18 +91,31 @@ hover 转 `var(--acc)`。**没有任何单独硬编码的颜色**：
 - **外观**：圆角 12px、`var(--line-2)` 边框 + `var(--panel-2)` 浅底、正文色文字，三套主题都有对比度。
   展开态由 `aria-expanded="true"` 驱动：`var(--acc)` 主题红底 + `var(--on-acc)` 文字。
 - **点击区**：沿用 `--pbtn-size`，桌面 / 手机都是 **44×44**。
-- **行为**：`data-act="toggle-lyrics"` / `data-act="toggle-about"` —— 收起时点击展开对应面板；
-  展开且正在看该面板时再点收起回封面。**两个面板互斥**：同一时刻只有一个舞台
-  （`cover / vinyl / lyrics / about`），看歌词时点「简介」直接切换，不会叠两层。
-  `aria-label` 在「显示… / 收起…」间切换，`aria-controls` 指向 `plLyrics` / `plAbout`。
+- **行为（「词」三态循环）**：`data-act="toggle-lyrics"`，唯一委托入口，一次点击只推进一态：
+  **隐藏 → 纯享 → 设置 → 隐藏**，之后循环。
+  - 隐藏（默认）：不显示歌词，按钮普通样式（`data-mode="off"`）。
+  - 纯享（第一击）：显示歌词，同步 / 高亮 / 自动跟随 / 点击跳转全保留；字号与校准工具栏隐藏，
+    界面简洁；按钮主题色高亮（`data-mode="pure"`，`aria-expanded="true"`）。
+  - 设置（第二击）：歌词继续显示；工具栏独立占一行出现，**不覆盖歌词 / 歌名 / 其他按钮**；
+    字号与校准调整立即生效；按钮高亮 + 小齿轮标记（`data-mode="settings"`，CSS 露出 `.pbtn__gear`）。
+  - 隐藏（第三击）：收起歌词与全部设置，回封面普通播放页（`data-mode="off"`）。
+  三态是运行时状态（`PlayerUI.lyricsTools` + 派生 `lyricsMode`），**不持久化**：
+  刷新 / 收起后第一击永远回纯享。字号偏好（按浏览器）与校准偏移（按歌曲）各自持久化，
+  关面板不重置；切歌不沿用上一首校准。`aria-label` 描述下一次点击：
+  显示歌词 / 显示歌词设置 / 收起歌词；`aria-controls` 指向 `plLyrics`。
+- **「简介」互斥**：`data-act="toggle-about"` —— 同一时刻只有一个舞台
+  （`cover / vinyl / lyrics / about`），看歌词（纯享或设置）时点「简介」直接切换，不会叠两层；
+  从简介点「词」回纯享。`aria-controls` 指向 `plAbout`。
 - **无歌词**：按钮永远可点；面板显示空状态，同时 toast「暂无歌词」。
 - **文字按钮例外**：AGENTS 规则 13 要求控件用内联 SVG；「词」「简介」是**文字标签**而非图标字符，
   是仅有的 `pbtn--text` 例外，`tests/icons.test.mjs` 对它们仍要求 aria-label + 可见文字，
   Emoji / Unicode 图形字符禁令不变。
 
-### 歌词面板顶部工具栏（字号 + 校准）
+### 歌词面板顶部工具栏（字号 + 校准，仅设置态显示）
 
-工具栏 `.pl__toolbar` 位于歌词滚动区**之前**（不随歌词滚动），集中两组控件，允许换行、不横向溢出：
+工具栏 `.pl__toolbar` 位于歌词滚动区**之前**（不随歌词滚动），**只在设置态显示**
+（`.pl__stage[data-stage="lyrics"][data-tools="true"] .pl__toolbar { display:flex; }`）；
+纯享态 `display:none` 完全让出高度，歌词区拿满。集中两组控件，允许换行、不横向溢出：
 
 - **字号**：`小 / 中 / 大` 三档（`data-act="lyric-font" data-size="s|m|l"`），默认「中」，
   选中态 `aria-pressed="true"` + 主题红底。只缩放歌词文字：`#plLyrics[data-font]` 设

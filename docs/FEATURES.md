@@ -93,7 +93,7 @@
 | 当前句高亮 + 自动滚动 | `LyricsUI` | B:「LRC 同步高亮」 |
 | 点击跳转 | `LyricsUI` / `bindPageLyrics` | `app-boot` + B: 同上 |
 | 纯文本 / 无歌词 / 纯音乐 | `lyricsState` | `core` + B:「纯音乐 / 无歌词空状态」 |
-| 全屏歌词舞台 | `.pl__stage[data-stage=lyrics]` | 六组合 lyrics 截图 + 按钮可点断言 |
+| 全屏歌词舞台（「词」三态：隐藏/纯享/设置） | `.pl__stage[data-stage=lyrics]` + `data-tools` | 六组合 lyrics 截图 + 按钮可点断言 + panels 探针三态循环 |
 
 ## 切换与导航保状态
 
