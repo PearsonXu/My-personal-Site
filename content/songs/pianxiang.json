@@ -1,0 +1,28 @@
+{
+  "slug": "pianxiang",
+  "title": "偏向",
+  "artist": "金石竹青",
+  "composer": "音融三喜",
+  "lyricist": "周仁",
+  "originalArtist": "陈子晴",
+  "versionNote": "翻唱版本",
+  "versionBy": "演唱：金石竹青",
+  "tools": ["SUNO"],
+  "album": null,
+  "tags": [
+    "翻唱"
+  ],
+  "date": "2026-11-19",
+  "duration": 207.816,
+  "cover": "auto",
+  "audio": {
+    "src": "audio/pianxiang.mp3",
+    "mime": "audio/mpeg",
+    "master": null
+  },
+  "lyrics": null,
+  "instrumental": false,
+  "demo": false,
+  "about": "《偏向》翻唱版：周仁作词，音融三喜作曲，陈子晴原唱，金石竹青演唱。",
+  "credits": []
+}
