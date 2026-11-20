@@ -145,4 +145,14 @@ node tools/check-assets.mjs --dist dist
 - 404 页零外部依赖，不引用任何图标文件。
 - iPhone 看新图标：删除旧主屏幕图标 → Safari 打开站点 → 分享 → 添加到主屏幕（名称应为「音乐小屋」）。
 
+验收（2026-11-20）：本地 typecheck 0 · npm test **221/221** · 生产构建 5 首真实歌 0 DEMO ·
+check-assets 全过（含图标尺寸/格式/head 引用/manifest 名称项）· 子路径 `--base /My-personal-Site/`
+实测首页+深页引用正确；真实 Chrome 六尺寸渲染与移动版首页截图入库
+（`site-icons-preview.png` / `site-icons-home-mobile.png`），深页 pushState 后 head 链接仍绝对。
+线上（`ca55c93` 部署 success）：head 五条图标/manifest 引用与两个标题 meta 全在；
+ico / 192 / 512 / 180 / manifest / 旧 favicon.svg 全 200 且 MIME 正确
+（image/vnd.microsoft.icon · image/png · application/manifest+json · image/svg+xml）；
+manifest name/short_name = 音乐小屋；og:image 与歌曲封面未动；
+verify-live **18 PASS · 1 N/A · 0 FAIL**。iPhone 真机加主屏幕 NOT_RUN（无设备）。
+
 确认输出里 `构建模式：production`，且歌曲数是你预期的真实歌曲数。
