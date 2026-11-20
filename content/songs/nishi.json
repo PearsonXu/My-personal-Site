@@ -16,13 +16,13 @@
   ],
   "date": "2026-11-20",
   "duration": 213.216,
-  "cover": "auto",
+  "cover": "nishi.jpg",
   "audio": {
     "src": "audio/nishi.mp3",
     "mime": "audio/mpeg",
     "master": null
   },
-  "lyrics": null,
+  "lyrics": "nishi.lrc",
   "instrumental": false,
   "demo": false,
   "about": "《你是》翻唱版：禹嫣uyyan作词作曲，孟慧圆原唱，金石竹青演唱。",
