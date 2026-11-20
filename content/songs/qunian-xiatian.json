@@ -1,0 +1,28 @@
+{
+  "slug": "qunian-xiatian",
+  "title": "去年夏天",
+  "artist": "金石竹青",
+  "composer": "家家",
+  "lyricist": "家家",
+  "originalArtist": "王大毛",
+  "versionNote": "翻唱版本",
+  "versionBy": "演唱：金石竹青",
+  "tools": ["SUNO"],
+  "album": null,
+  "tags": [
+    "翻唱"
+  ],
+  "date": "2026-11-19",
+  "duration": 219.888,
+  "cover": "auto",
+  "audio": {
+    "src": "audio/qunian-xiatian.mp3",
+    "mime": "audio/mpeg",
+    "master": null
+  },
+  "lyrics": "qunian-xiatian.lrc",
+  "instrumental": false,
+  "demo": false,
+  "about": "《去年夏天》翻唱版：家家作词作曲，王大毛原唱，金石竹青演唱。",
+  "credits": []
+}
