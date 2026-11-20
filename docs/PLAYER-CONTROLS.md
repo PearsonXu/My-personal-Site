@@ -180,16 +180,23 @@ hover 转 `var(--acc)`。**没有任何单独硬编码的颜色**：
   - **播放/暂停图标原位切换：不跳位、不断音**（按钮与图形四值位移 < 0.6px，
     音源不变、进度不倒退）
 - 控制区特写截图：`docs/screenshots/controls-{theme}-{viewport}-{bar,full}.png`
-- 面板轮（字号工具栏 + 逐曲校准 + 简介）：`tests/player-panels.test.mjs`（15 项）+
+- 面板轮（「词」三态循环 + 字号工具栏 + 逐曲校准 + 简介）：`tests/player-panels.test.mjs`（18 项）+
   `tools/probe-player-panels.mjs` 真实 Chrome 桌面 1440×900 / 移动 390×844，
-  本地 DEMO 与线上生产各 47/47；截图 `docs/screenshots/panels-{local,live}-*.png`，
+  本地 DEMO 与线上生产各 **63/63**；截图 `docs/screenshots/panels-{local,live}-*.png`
+  （含纯享态 `-pure.png`：无工具栏、歌词拿满高度），
   报告 `docs/player-panels-results.json`（`alsoRun` 保留另一目标的上一次摘要）
-- 面板轮复测：`probe-regression` 138/0、`probe-lyrics-sync` local+live 41/41、
-  `verify-live` 18 PASS · 1 N/A · 0 FAIL（2026-11-19，部署 commit 281e168 后；
-  线上 3 首真实歌曲，「另一首歌」为无 LRC 的《天和山雨雪》，覆盖无歌词时校准与简介仍可用）
+- 三态轮复测：`probe-regression` 138/0、`probe-lyrics-sync` local+live 41/41、
+  `npm run browser:check` **215/215**（六组合 + 自动适配 + 手动布局 + 横竖屏）、
+  `verify-live` 18 PASS · 1 N/A · 0 FAIL（2026-11-19，部署 commit 81dc7c3 后；
+  线上 4 首真实歌曲，「另一首歌」为纯文本歌词的《去年夏天》，覆盖无时间轴时校准禁用仍如实）
+- browser-check 两处**旧断言**按现行设计更新（非站点回归）：手机迷你条操作区常驻但只留
+  「词」「简介」→ 改按可见子键计数（手机 2 / 平板带 7 / 桌面 8）；专辑 / 歌单按钮先滚到
+  视口中部再点，避开固定迷你条覆盖区（与 probe-player-panels 的 playRow 同一做法）
 - **NOT_RUN**：iOS Safari 真机、微信内浏览器真机（无设备 / 账号）；
   「全部资料缺失 → 歌曲资料待补充」分支仅单元覆盖，未真机目视
 
 > 图标轮只改图标、尺寸、间距与交互样式；面板轮新增字号偏好（按浏览器持久化）、
 > 校准偏移（按歌曲持久化）与简介舞台，Media Session 封面 MIME 改为按扩展名如实声明。
+> 三态轮把「词」改为 隐藏→纯享→设置→隐藏 循环：工具栏仅设置态独立占位显示，
+> 设置态按钮加小齿轮标记；三态本身不持久化（刷新 / 收起后首击回纯享）。
 > 走带 / 快捷键 / 竞态令牌 / 媒体事件驱动状态机均未改动。

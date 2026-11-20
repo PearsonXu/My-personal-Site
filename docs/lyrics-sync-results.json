@@ -1,5 +1,5 @@
 {
-  "at": "2026-11-20T01:43:37.918Z",
+  "at": "2026-11-20T02:20:28.670Z",
   "chrome": "headless Google Chrome (puppeteer-core)",
   "bases": [
     "http://localhost:8391 (dist)",
@@ -13,7 +13,7 @@
       "group": "local",
       "name": "首句高亮按时落地",
       "ok": true,
-      "detail": "t=19.60 idx=0"
+      "detail": "t=19.67 idx=0"
     },
     {
       "group": "local",
@@ -85,7 +85,7 @@
       "group": "local",
       "name": "慢网缓冲后按 currentTime 重新同步",
       "ok": true,
-      "detail": "缓冲期 state=playing，恢复后 t=47.28"
+      "detail": "缓冲期 state=playing，恢复后 t=47.29"
     },
     {
       "group": "local",
@@ -109,7 +109,7 @@
       "group": "local",
       "name": "重播按 currentTime 重新定位（首句前/首句）",
       "ok": true,
-      "detail": "t=0.95 idx=-1 active=null"
+      "detail": "t=0.94 idx=-1 active=null"
     },
     {
       "group": "local",
@@ -127,7 +127,7 @@
       "group": "local",
       "name": "手机首句高亮按时落地",
       "ok": true,
-      "detail": "t=19.74 idx=0"
+      "detail": "t=19.75 idx=0"
     },
     {
       "group": "local",
@@ -151,7 +151,7 @@
       "group": "live",
       "name": "首句高亮按时落地",
       "ok": true,
-      "detail": "t=19.80 idx=0"
+      "detail": "t=19.68 idx=0"
     },
     {
       "group": "live",
@@ -169,7 +169,7 @@
       "group": "live",
       "name": "当前行保持在容器中部附近",
       "ok": true,
-      "detail": "Δ=67px"
+      "detail": "Δ=84px"
     },
     {
       "group": "live",
@@ -217,7 +217,7 @@
       "group": "live",
       "name": "重开歌词面板立即回到当前行",
       "ok": true,
-      "detail": "Δ=0px"
+      "detail": "Δ=1px"
     },
     {
       "group": "live",
@@ -235,7 +235,7 @@
       "group": "live",
       "name": "reduced-motion 瞬时定位（150ms 内完成滚动）",
       "ok": true,
-      "detail": "scrollTop 331→878"
+      "detail": "scrollTop 314→861"
     },
     {
       "group": "live",
@@ -247,7 +247,7 @@
       "group": "live",
       "name": "重播按 currentTime 重新定位（首句前/首句）",
       "ok": true,
-      "detail": "t=0.95 idx=-1 active=null"
+      "detail": "t=0.96 idx=-1 active=null"
     },
     {
       "group": "live",
