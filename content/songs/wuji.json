@@ -17,13 +17,13 @@
   ],
   "date": "2026-11-20",
   "duration": 229.056,
-  "cover": "auto",
+  "cover": "wuji.jpg",
   "audio": {
     "src": "audio/wuji.mp3",
     "mime": "audio/mpeg",
     "master": null
   },
-  "lyrics": null,
+  "lyrics": "wuji.lrc",
   "instrumental": false,
   "demo": false,
   "about": "《无羁》翻唱版：澄一、冥凰作词，林海作曲，肖战、王一博（合唱版）/ 周笔畅（独唱版）原唱，金石竹青演唱。",

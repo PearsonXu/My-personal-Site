@@ -16,13 +16,13 @@
   ],
   "date": "2026-11-20",
   "duration": 242.064,
-  "cover": "auto",
+  "cover": "bu-yao-zai-gu-dan.jpg",
   "audio": {
     "src": "audio/bu-yao-zai-gu-dan.mp3",
     "mime": "audio/mpeg",
     "master": null
   },
-  "lyrics": null,
+  "lyrics": "bu-yao-zai-gu-dan.lrc",
   "instrumental": false,
   "demo": false,
   "about": "《不要再孤单》翻唱版：黄少峰（火星电台）作词，黄少峰（火星电台）作曲，徐佳莹原唱，金石竹青演唱。",

@@ -17,13 +17,13 @@
   ],
   "date": "2026-11-20",
   "duration": 213.264,
-  "cover": "auto",
+  "cover": "jiuwanzi.jpg",
   "audio": {
     "src": "audio/jiuwanzi.mp3",
     "mime": "audio/mpeg",
     "master": null
   },
-  "lyrics": null,
+  "lyrics": "jiuwanzi.lrc",
   "instrumental": false,
   "demo": false,
   "about": "《九万字》翻唱版：左木修作词，黄诗扶、WH宇恒作曲，黄诗扶原唱，金石竹青演唱。",

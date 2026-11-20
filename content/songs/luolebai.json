@@ -16,13 +16,13 @@
   ],
   "date": "2026-11-20",
   "duration": 200.064,
-  "cover": "auto",
+  "cover": "luolebai.jpg",
   "audio": {
     "src": "audio/luolebai.mp3",
     "mime": "audio/mpeg",
     "master": null
   },
-  "lyrics": null,
+  "lyrics": "luolebai.lrc",
   "instrumental": false,
   "demo": false,
   "about": "《落了白》翻唱版：堇临作词，刘涛作曲，蒋雪儿原唱，金石竹青演唱。",
