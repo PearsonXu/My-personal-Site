@@ -84,6 +84,9 @@ async function main() {
   /* 1. 静态资源 */
   let copied = 0;
   for (const dir of ['js', 'css', 'audio', 'img']) copied += copyDir(path.join(ROOT, 'assets', dir), path.join(OUT, 'assets', dir));
+  // Web App Manifest 不在四个资源目录里，显式复制（head 的 rel=manifest 指向它）
+  const manifestSrc = path.join(ROOT, 'assets/manifest.webmanifest');
+  if (fs.existsSync(manifestSrc)) { fs.copyFileSync(manifestSrc, path.join(OUT, 'assets/manifest.webmanifest')); copied++; }
 
   /* 1b. 合成可切换布局 CSS：同一份源规则产出 auto / 手动手机 / 手动桌面三种作用域 */
   const cssDir = path.join(ROOT, 'assets/css');

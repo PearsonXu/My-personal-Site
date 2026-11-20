@@ -139,7 +139,7 @@ test('router · 导航到更深路径后 head 资源仍是绝对 URL（不会 40
   const { window, Router } = await makeDom('/');
   const doc = window.document;
   // 模拟 app.js 的 absolutizeHeadAssets：启动时把相对 head 资源转绝对
-  for (const el of doc.querySelectorAll('head link[rel~="icon"], head link[rel="stylesheet"], script[src]')) {
+  for (const el of doc.querySelectorAll('head link[rel~="icon"], head link[rel="apple-touch-icon"], head link[rel="manifest"], head link[rel="stylesheet"], script[src]')) {
     const attr = el.hasAttribute('href') ? 'href' : 'src';
     const raw = el.getAttribute(attr);
     if (raw && !/^https?:/.test(raw)) el.setAttribute(attr, new window.URL(raw, window.location.href).href);
@@ -148,7 +148,11 @@ test('router · 导航到更深路径后 head 资源仍是绝对 URL（不会 40
   router.start();
   await router.navigate('https://www.xuzhaoqing.com/notes/hello-music-house/');
   const icon = doc.querySelector('head link[rel~="icon"]').getAttribute('href');
-  assert.equal(icon, 'https://www.xuzhaoqing.com/assets/img/favicon.svg', `favicon 变成了 ${icon}`);
+  assert.equal(icon, 'https://www.xuzhaoqing.com/assets/img/icons/favicon-v2.ico', `favicon 变成了 ${icon}`);
+  const apple = doc.querySelector('head link[rel="apple-touch-icon"]').getAttribute('href');
+  assert.equal(apple, 'https://www.xuzhaoqing.com/assets/img/icons/apple-touch-icon-v2.png', `apple-touch-icon 变成了 ${apple}`);
+  const mani = doc.querySelector('head link[rel="manifest"]').getAttribute('href');
+  assert.equal(mani, 'https://www.xuzhaoqing.com/assets/manifest.webmanifest', `manifest 变成了 ${mani}`);
   for (const el of doc.querySelectorAll('head link[rel="stylesheet"]')) {
     assert.match(el.getAttribute('href'), /^https:\/\/www\.xuzhaoqing\.com\/assets\/css\//);
   }

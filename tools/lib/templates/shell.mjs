@@ -32,6 +32,10 @@ function head({ site, base, meta, kind, slug, extraHead = '' }) {
     '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">',
     '<meta name="color-scheme" content="light dark">',
     '<meta name="theme-color" content="#f5f6f8">',
+    // 主屏幕 / 应用名称统一「音乐小屋」。不加 apple-mobile-web-app-capable：
+    // iOS 主屏幕图标仍按现有方式在 Safari 中打开，不改变窗口行为。
+    '<meta name="application-name" content="音乐小屋">',
+    '<meta name="apple-mobile-web-app-title" content="音乐小屋">',
     `<title>${esc(title)}</title>`,
     `<meta name="description" content="${attr(desc)}">`,
     `<link rel="canonical" href="${attr(canonical)}">`,
@@ -57,7 +61,13 @@ function head({ site, base, meta, kind, slug, extraHead = '' }) {
     if (meta.song.albumTitle) lines.push(`<meta property="music:album" content="${attr(meta.song.albumTitle)}">`);
   }
   lines.push(
-    `<link rel="icon" href="${attr(base)}assets/img/favicon.svg" type="image/svg+xml">`,
+    // 站点图标：红底白字「金石竹青」（tools/make-icons.mjs 生成）。
+    // 引用 -v2 缓存版本文件名：旧 favicon.svg 在同 URL 上有缓存，换图必须换文件名。
+    `<link rel="icon" href="${attr(base)}assets/img/icons/favicon-v2.ico" sizes="16x16 32x32 48x48">`,
+    `<link rel="icon" type="image/png" sizes="192x192" href="${attr(base)}assets/img/icons/icon-192-v2.png">`,
+    `<link rel="icon" type="image/png" sizes="512x512" href="${attr(base)}assets/img/icons/icon-512-v2.png">`,
+    `<link rel="apple-touch-icon" sizes="180x180" href="${attr(base)}assets/img/icons/apple-touch-icon-v2.png">`,
+    `<link rel="manifest" href="${attr(base)}assets/manifest.webmanifest">`,
     `<link rel="stylesheet" href="${attr(base)}assets/css/site.css">`,
     `<link rel="stylesheet" href="${attr(base)}assets/css/player.css">`,
     `<link rel="stylesheet" href="${attr(base)}assets/css/themes.css">`,

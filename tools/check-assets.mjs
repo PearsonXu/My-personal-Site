@@ -57,6 +57,41 @@ function checkDist() {
   }
   if (fs.existsSync(path.join(ROOT, 'CNAME')) && !fs.existsSync(path.join(DIST, 'CNAME'))) bad('CNAME 没有被复制进产物');
   ok('Pages 必需文件齐全');
+
+  // 站点图标：尺寸 / 格式 / head 引用 / manifest 名称
+  const iconDir = path.join(DIST, 'assets/img/icons');
+  let iconBad = 0;
+  /** @type {[string, number][]} */
+  const pngWant = [['apple-touch-icon-v2.png', 180], ['icon-192-v2.png', 192], ['icon-512-v2.png', 512]];
+  for (const [f, n] of pngWant) {
+    const p = path.join(iconDir, f);
+    if (!fs.existsSync(p)) { bad(`缺少图标 ${f}`); iconBad++; continue; }
+    const b = fs.readFileSync(p);
+    if (b.readUInt32BE(0) !== 0x89504e47 || b.readUInt32BE(16) !== n || b.readUInt32BE(20) !== n) { bad(`${f} 格式/尺寸不对`); iconBad++; }
+  }
+  const icoPath = path.join(iconDir, 'favicon-v2.ico');
+  if (!fs.existsSync(icoPath)) { bad('缺少 favicon-v2.ico'); iconBad++; }
+  else {
+    const b = fs.readFileSync(icoPath);
+    const sizes = [];
+    for (let i = 0; i < b.readUInt16LE(4); i++) sizes.push(b.readUInt8(6 + i * 16) || 256);
+    if (![16, 32, 48].every((n) => sizes.includes(n))) { bad(`favicon-v2.ico 缺档：${sizes}`); iconBad++; }
+  }
+  const homeHtml = fs.readFileSync(path.join(DIST, 'index.html'), 'utf8');
+  for (const m of homeHtml.matchAll(/<link rel="(?:icon|apple-touch-icon|manifest)"[^>]*href="([^"]+)"/g)) {
+    const rel = m[1].replace(/^https?:\/\/[^/]+/, '').replace(/^\//, '');
+    if (!fs.existsSync(path.join(DIST, rel))) { bad(`head 图标引用不存在：${m[1]}`); iconBad++; }
+  }
+  const mfPath = path.join(DIST, 'assets/manifest.webmanifest');
+  if (!fs.existsSync(mfPath)) { bad('缺少 manifest.webmanifest'); iconBad++; }
+  else {
+    const mf = JSON.parse(fs.readFileSync(mfPath, 'utf8'));
+    if (mf.name !== '音乐小屋' || mf.short_name !== '音乐小屋') { bad('manifest 名称不是「音乐小屋」'); iconBad++; }
+    for (const ic of mf.icons || []) {
+      if (!fs.existsSync(path.join(DIST, 'assets', ic.src))) { bad(`manifest 图标不存在：${ic.src}`); iconBad++; }
+    }
+  }
+  if (!iconBad) ok('站点图标 180/192/512 PNG + 16/32/48 ICO + manifest「音乐小屋」，head 引用齐全');
   console.log(`  构建模式：${manifest.mode}${manifest.mode === 'demo' ? '（含合成测试音，不要上线）' : ''}`);
 }
 

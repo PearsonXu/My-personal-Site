@@ -119,4 +119,30 @@ npm run typecheck && npm test && npm run build
 node tools/check-assets.mjs --dist dist
 ```
 
+
+## 站点图标（红底白字「金石竹青」）
+
+源图：`assets/img/icons/source-jinshizhuqing.png`（站长原图原样保留，正方形、背景铺满、不预加圆角）。
+生成：`node tools/make-icons.mjs`（只用 macOS 自带 `sips` 等比 resample，零依赖），产出：
+
+| 文件 | 规格 | 用途 |
+| --- | --- | --- |
+| `assets/img/icons/apple-touch-icon.png` | 180×180 PNG | iOS 主屏幕 |
+| `assets/img/icons/favicon.ico` | 16/32/48 三档 ICO | 浏览器标签 |
+| `assets/img/icons/icon-192.png` / `icon-512.png` | 192/512 PNG | manifest / Android |
+| 同名 `-v2` 副本 | 逐字节一致 | **head 与 manifest 实际引用的名字** |
+| `assets/manifest.webmanifest` | name/short_name=音乐小屋 | 主屏幕名称；icons 相对 manifest 自身 URL，子路径 base 天然正确 |
+| `assets/img/favicon.svg` | 内嵌新图的 SVG 外壳 | 旧 URL 继续可用（content-type 不变） |
+
+规则：
+- **换图必须 bump `make-icons.mjs` 的 `VERSION` 重跑**：旧图标在同 URL 上有浏览器 / iOS 缓存，
+  靠版本化文件名失效，而不是靠 query 或等缓存过期。
+- head 模板（`tools/lib/templates/shell.mjs`）引用 ico + 192/512 PNG + apple-touch-icon + manifest；
+  `apple-mobile-web-app-title` / `application-name` = 音乐小屋；**不加** `apple-mobile-web-app-capable`，
+  manifest `display: browser` —— 主屏幕图标仍按现有方式打开，不改变窗口行为。
+- `absolutizeHeadAssets`（app.js）覆盖 `rel=icon / apple-touch-icon / manifest`，pushState 后不 404。
+- **只换站点图标**：歌曲封面、`og:image`、微信分享图一律不动（有测试守着）。
+- 404 页零外部依赖，不引用任何图标文件。
+- iPhone 看新图标：删除旧主屏幕图标 → Safari 打开站点 → 分享 → 添加到主屏幕（名称应为「音乐小屋」）。
+
 确认输出里 `构建模式：production`，且歌曲数是你预期的真实歌曲数。

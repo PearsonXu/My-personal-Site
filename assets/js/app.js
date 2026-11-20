@@ -35,7 +35,7 @@ const BASE = baseFromModuleUrl(import.meta.url, 'assets/js/app.js');
  * 启动时（此刻 document URL 还是真实页面地址）把它们转成绝对 URL，之后就不受路由影响。
  */
 function absolutizeHeadAssets() {
-  const selector = 'head link[rel~="icon"], head link[rel="stylesheet"], head link[rel="preload"], head link[rel="modulepreload"], script[src]';
+  const selector = 'head link[rel~="icon"], head link[rel="apple-touch-icon"], head link[rel="manifest"], head link[rel="stylesheet"], head link[rel="preload"], head link[rel="modulepreload"], script[src]';
   for (const el of qsa(selector)) {
     const attr = el.hasAttribute('href') ? 'href' : 'src';
     const raw = el.getAttribute(attr);
