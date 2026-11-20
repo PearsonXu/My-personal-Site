@@ -14,13 +14,13 @@
   ],
   "date": "2026-11-19",
   "duration": 207.816,
-  "cover": "auto",
+  "cover": "pianxiang.jpg",
   "audio": {
     "src": "audio/pianxiang.mp3",
     "mime": "audio/mpeg",
     "master": null
   },
-  "lyrics": null,
+  "lyrics": "pianxiang.lrc",
   "instrumental": false,
   "demo": false,
   "about": "《偏向》翻唱版：周仁作词，音融三喜作曲，陈子晴原唱，金石竹青演唱。",
