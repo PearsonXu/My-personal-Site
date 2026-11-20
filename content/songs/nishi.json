@@ -1,0 +1,30 @@
+{
+  "slug": "nishi",
+  "title": "你是",
+  "artist": "金石竹青",
+  "composer": "禹嫣uyyan",
+  "lyricist": "禹嫣uyyan",
+  "originalArtist": "孟慧圆",
+  "versionNote": "翻唱版本",
+  "versionBy": "演唱：金石竹青",
+  "tools": [
+    "SUNO"
+  ],
+  "album": null,
+  "tags": [
+    "翻唱"
+  ],
+  "date": "2026-11-20",
+  "duration": 213.216,
+  "cover": "auto",
+  "audio": {
+    "src": "audio/nishi.mp3",
+    "mime": "audio/mpeg",
+    "master": null
+  },
+  "lyrics": null,
+  "instrumental": false,
+  "demo": false,
+  "about": "《你是》翻唱版：禹嫣uyyan作词作曲，孟慧圆原唱，金石竹青演唱。",
+  "credits": []
+}
