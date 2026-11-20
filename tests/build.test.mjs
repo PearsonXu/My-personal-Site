@@ -85,7 +85,7 @@ test('build · 站内链接与资源一律用 base 绝对路径，任意深度�
   // 站内路由链接必须是根绝对路径
   assert.match(deep, /href="\/songs\/"/);
   assert.match(deep, /href="\/about\/"/);
-  assert.match(home, /href="\/songs\/demo-night-ferry\/"/);
+  assert.match(home, /href="\/songs\/[a-z0-9-]+\/"/, '首页歌曲卡链接必须是根绝对路径');
   // 构建 base 写进 html，供运行时兜底比对
   assert.match(home, /data-base="\/"/);
 });

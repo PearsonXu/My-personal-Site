@@ -78,8 +78,11 @@ test('router · 站内导航后 audio 与播放器是同一个节点（不断歌
   audioBefore.setAttribute('src', 'https://www.xuzhaoqing.com/assets/audio/_demo/demo-night-ferry.mp3');
   playerBefore.dataset.state = 'playing';
 
-  const link = [...doc.querySelectorAll('a[href]')].find((a) => a.getAttribute('href').includes('songs/demo-night-ferry/'));
+  // 不绑定具体哪首歌：首页只显示最新 6 首，新歌入库会把旧歌（含 DEMO）挤下去
+  const link = [...doc.querySelectorAll('a[href]')].find((a) => /\/songs\/[^/]+\/$/.test(a.getAttribute('href') || ''));
   assert.ok(link, '首页应该有指向单曲页的链接');
+  const slug = (link.getAttribute('href').match(/\/songs\/([^/]+)\/$/) || [])[1];
+  const songPageTitle = (fs.readFileSync(path.join(DIST, 'songs', slug, 'index.html'), 'utf8').match(/<title>([^<]*)<\/title>/) || [])[1] || '';
   link.dispatchEvent(new window.MouseEvent('click', { bubbles: true, cancelable: true, button: 0 }));
   await new Promise((r) => setTimeout(r, 60));
 
@@ -89,7 +92,7 @@ test('router · 站内导航后 audio 与播放器是同一个节点（不断歌
   assert.equal(audioBefore.getAttribute('src'), 'https://www.xuzhaoqing.com/assets/audio/_demo/demo-night-ferry.mp3', '音源被换掉了');
   assert.equal(playerBefore.dataset.state, 'playing', '播放状态被重置了');
   assert.equal(doc.body.dataset.kind, 'song');
-  assert.ok(doc.title.includes('夜渡'), '标题应更新为新页面');
+  assert.ok(songPageTitle && doc.title === songPageTitle, '标题应更新为新页面');
   assert.equal(routes.at(-1).kind, 'song');
 });
 
