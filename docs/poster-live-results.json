@@ -1,0 +1,222 @@
+[
+  {
+    "name": "自定义封面：预览 slug 对应",
+    "ok": true,
+    "detail": "nishi"
+  },
+  {
+    "name": "自定义封面：PNG 尺寸 1080×1440",
+    "ok": true,
+    "detail": "1080×1440"
+  },
+  {
+    "name": "自定义封面：默认选句 4–6 行",
+    "ok": true,
+    "detail": "checked=5/28"
+  },
+  {
+    "name": "自定义封面：封面有真实图像（方差）",
+    "ok": true,
+    "detail": "var=0.056"
+  },
+  {
+    "name": "自定义封面：四周 72px 留白无墨",
+    "ok": true,
+    "detail": "dark=0"
+  },
+  {
+    "name": "自定义封面：二维码白底留白环",
+    "ok": true,
+    "detail": "bad=0"
+  },
+  {
+    "name": "自定义封面：二维码与规范 SVG 像素一致",
+    "ok": true,
+    "detail": "maxdiff=0"
+  },
+  {
+    "name": "自定义封面：歌名/署名有墨",
+    "ok": true,
+    "detail": "ink=720"
+  },
+  {
+    "name": "自定义封面：歌词有墨",
+    "ok": true,
+    "detail": "ink=4182"
+  },
+  {
+    "name": "自定义封面：文本行簇 ≥6（歌名+署名+歌词）",
+    "ok": true,
+    "detail": "clusters=6"
+  },
+  {
+    "name": "自定义封面：无页面报错",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "默认选句：预览 slug 对应",
+    "ok": true,
+    "detail": "qunian-xiatian"
+  },
+  {
+    "name": "默认选句：PNG 尺寸 1080×1440",
+    "ok": true,
+    "detail": "1080×1440"
+  },
+  {
+    "name": "默认选句：默认选句 4–6 行",
+    "ok": true,
+    "detail": "checked=5/66"
+  },
+  {
+    "name": "默认选句：封面有真实图像（方差）",
+    "ok": true,
+    "detail": "var=0.09"
+  },
+  {
+    "name": "默认选句：四周 72px 留白无墨",
+    "ok": true,
+    "detail": "dark=0"
+  },
+  {
+    "name": "默认选句：二维码白底留白环",
+    "ok": true,
+    "detail": "bad=0"
+  },
+  {
+    "name": "默认选句：二维码与规范 SVG 像素一致",
+    "ok": true,
+    "detail": "maxdiff=0"
+  },
+  {
+    "name": "默认选句：歌名/署名有墨",
+    "ok": true,
+    "detail": "ink=1350"
+  },
+  {
+    "name": "默认选句：歌词有墨",
+    "ok": true,
+    "detail": "ink=3344"
+  },
+  {
+    "name": "默认选句：文本行簇 ≥6（歌名+署名+歌词）",
+    "ok": true,
+    "detail": "clusters=6"
+  },
+  {
+    "name": "默认选句：无页面报错",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "默认选句：不全为重复钩子句",
+    "ok": true,
+    "detail": "distinct=5"
+  },
+  {
+    "name": "多行：勾选后已选 6 行",
+    "ok": true,
+    "detail": "checked=6"
+  },
+  {
+    "name": "多行：预览已重生成",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "多行：6 行导出尺寸合法",
+    "ok": true,
+    "detail": "1080×1440"
+  },
+  {
+    "name": "多行：6 行不越界",
+    "ok": true,
+    "detail": "dark=0 ink=2519"
+  },
+  {
+    "name": "保存按钮：真实下载落盘",
+    "ok": true,
+    "detail": "/tmp/poster-dl/qunian-xiatian-poster.png"
+  },
+  {
+    "name": "保存按钮：下载字节 = 预览字节",
+    "ok": true,
+    "detail": "00cdb05a42ab"
+  },
+  {
+    "name": "长歌名：一字不丢",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "长歌名+6 长行：真实度量下零越界",
+    "ok": true,
+    "detail": "bad=0, H=1520"
+  },
+  {
+    "name": "长内容：加高而非裁切",
+    "ok": true,
+    "detail": "H=1520"
+  },
+  {
+    "name": "手机：预览宽度适配 390",
+    "ok": true,
+    "detail": "left=17.0 right=373.0"
+  },
+  {
+    "name": "手机：保存按钮在视口内",
+    "ok": true,
+    "detail": "right=373.0"
+  },
+  {
+    "name": "混用防护：海报属于目标歌 qunian",
+    "ok": true,
+    "detail": "qunian-xiatian"
+  },
+  {
+    "name": "混用防护：播放仍是 nishi",
+    "ok": true,
+    "detail": "nishi"
+  },
+  {
+    "name": "播放不中断：state=playing",
+    "ok": true,
+    "detail": "playing"
+  },
+  {
+    "name": "播放不中断：同一 audio 节点",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "播放不中断：进度前进",
+    "ok": true,
+    "detail": "0.00→0.17"
+  },
+  {
+    "name": "混用防护：选句列表 = 目标歌歌词",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "生成期间切歌：海报仍属 qunian",
+    "ok": true,
+    "detail": "qunian-xiatian"
+  },
+  {
+    "name": "生成期间切歌：选句仍为目标歌默认",
+    "ok": true,
+    "detail": "checked=5"
+  },
+  {
+    "name": "手机：截图留存",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "手机：无页面报错",
+    "ok": true,
+    "detail": ""
+  }
+]

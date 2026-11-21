@@ -52,7 +52,17 @@
 默认选句回归：qunian-xiatian 副歌为重复钩子句，旧启发式会选出一窗 4 行雷同；
 现滑窗按「不同行数」优先，默认 5 行各不相同（distinct=5），并有 `poster.test.mjs` 回归守着。
 
-## 四、未测 / 受限（如实标注）
+## 四、线上复验（部署后）
+
+提交 `1dfa6f2` · Actions run 44920102831 success · `www.xuzhaoqing.com`
+
+- 生产模式探针（无 demo 案例）：**44/44 PASS**（自定义封面 / 默认选句 / 多行 / 长歌名度量 /
+  手机适配 / 播放不中断 / 切歌守卫 / 下载字节比对 / 二维码像素一致）。
+- 线上导出 PNG 与本地逐像素同设计（存档 `docs/screenshots/poster-live-qunian-xiatian.png`）。
+- `tools/verify-live.mjs`：18 PASS · 1 N/A · 0 FAIL（`docs/LIVE-VERIFICATION.md`）。
+- 线上 `assets/js/core/poster.js` 与 `share-ui.js` 的 `_drawPoster/_posterSeq` 已确认上线。
+
+## 五、未测 / 受限（如实标注）
 
 | 项 | 状态 | 原因 |
 | --- | --- | --- |
