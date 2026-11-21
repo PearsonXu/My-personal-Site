@@ -405,6 +405,13 @@ h1,h2,h3,h4 { font-family:var(--font-d); font-weight:600; line-height:1.2; lette
 .qitem__s { font-size:.74rem; color:var(--mute); }
 .qitem__act { display:flex; gap:2px; }
 .poster { width:100%; border-radius:var(--r-sm); border:1px solid var(--line-2); }
+/* 歌词海报选句：勾选列表 + 计数条；预览图沿用 .poster（宽度自适应弹层） */
+.poster-pick { margin-top:var(--sp4); }
+.poster-pick__bar { display:flex; align-items:center; justify-content:space-between; gap:var(--sp3); margin-bottom:var(--sp2); }
+.poster-pick__list { max-height:224px; overflow:auto; border:1px solid var(--line-2); border-radius:var(--r-sm); padding:8px 10px; display:grid; gap:2px; background:var(--bg); }
+.poster-pick__item { display:flex; gap:8px; align-items:flex-start; font-size:.86rem; line-height:1.55; padding:3px 2px; cursor:pointer; }
+.poster-pick__item input { margin-top:3px; accent-color:var(--acc); flex:0 0 auto; }
+.poster-out { margin-top:var(--sp4); }
 
 /* ── 外观选择 ───────────────────────────────────────── */
 .appearance-btn { display:inline-flex; align-items:center; gap:6px; width:auto; padding:0 10px; }

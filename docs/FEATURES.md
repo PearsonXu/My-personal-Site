@@ -118,7 +118,7 @@
 | 资源探测工具 | `tools/check-assets.mjs`（离线 + 在线 MIME/Range/206/CORS） |
 | 单曲独立路径与元数据 | `build.test.mjs` 逐页断言 + B:「分享」「深链接」 |
 | 复制链接 / 二维码 | B:「分享：规范链接 / 复制 / 二维码」 |
-| 歌词海报 | Canvas 实现；**真机导出 NOT_RUN**（headless 未做人工确认） |
+| 歌词海报 | Canvas 1080×1440（超长内容自动加高）；选句 4–6 行可调；`poster.test.mjs` 9 项 + 真实 Chrome 导出 61 项；**真机长按保存 NOT_RUN** |
 | 微信 JS-SDK 签名适配层 | `adapters.js`；未配置时 `app-boot` 断言返回 not-configured |
 
 ## 部署

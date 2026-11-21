@@ -9,6 +9,8 @@
  */
 
 import { canonicalUrl } from '../core/paths.js';
+import { parseLrc } from '../core/lrc.js';
+import { sanitizeLyricLines, defaultSelection, layoutPoster, posterPalette, mixColor } from '../core/poster.js';
 import { escapeHtml as esc, escapeAttr as attr } from '../core/util.js';
 import { openSheet, copyText, toast, download } from './common.js';
 import { icon } from '../core/icons.js';
@@ -21,6 +23,7 @@ export class ShareUI {
     this.adapters = adapters;
     this.resolve = resolve;
     this.link = link;
+    this._posterSeq = 0;
   }
 
   /**
@@ -156,83 +159,181 @@ export class ShareUI {
     });
   }
   /**
-   * 歌词海报：Canvas 生成 PNG。
-   * 封面与二维码都是同源资源，不会污染画布；
-   * 若站长把封面换成了没有 CORS 头的外站图片，这里会降级为无封面海报并说明原因。
+   * 歌词海报：Canvas 生成 1080×1440 竖版 PNG（内容放不下时自动加高，绝不裁切）。
+   * ★ 歌词永远独立 fetch **目标歌曲**的词文件，绝不读 player.lyrics（那是正在播的歌）；
+   * ★ 所有异步回调过 token 守卫：生成期间切歌 / 重开面板不会混入另一首歌的资料；
+   * ★ 封面以 crossOrigin=anonymous 加载：无 CORS 的外站图直接走回退，不会污染画布；
+   * ★ 封面 / 歌词 / 二维码缺失时如实说明并回退，不报告虚假的生成成功。
    */
   async poster(song, host) {
     if (!song || !host) return;
-    host.innerHTML = '<p class="note">海报生成中…</p>';
-    const W = 1080;
-    const H = 1350;
-    const canvas = document.createElement('canvas');
-    canvas.width = W;
-    canvas.height = H;
-    const ctx = canvas.getContext('2d');
+    const seq = ++this._posterSeq;
+    host.innerHTML = '<p class="note">海报准备中…</p>';
+    let parsed = { format: 'none', meta: {}, lines: [] };
+    let lyricErr = '';
+    if (song.instrumental) lyricErr = '这首歌是纯音乐，没有歌词';
+    else if (!song.lyrics) lyricErr = '这首歌还没有歌词文件';
+    else {
+      try {
+        const res = await fetch(this.resolve(song.lyrics));
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        parsed = parseLrc(await res.text());
+      } catch { lyricErr = '歌词文件加载失败'; }
+    }
+    if (seq !== this._posterSeq) return;
+    const lines = sanitizeLyricLines(parsed);
+    if (!lines.length && !lyricErr) lyricErr = '歌词清洗后没有可用行';
+    const sel = new Set(defaultSelection(lines));
+    host.innerHTML = `${lines.length ? `<div class="poster-pick">
+      <div class="poster-pick__bar"><span class="note" data-pick-count></span>
+        <button class="btn btn--quiet" type="button" data-pick-reset>重置选句</button></div>
+      <div class="poster-pick__list" role="group" aria-label="选择歌词句">${lines.map((t, i) => `<label class="poster-pick__item"><input type="checkbox" data-line="${i}"${sel.has(i) ? ' checked' : ''}><span>${esc(t)}</span></label>`).join('')}</div>
+    </div>` : `<p class="warn">${esc(lyricErr)}：已生成无歌词版海报（封面、歌名与二维码照常）。</p>`}
+    <div class="poster-out" data-poster-out><p class="note">海报生成中…</p></div>`;
+    const out = host.querySelector('[data-poster-out]');
+    const countEl = host.querySelector('[data-pick-count]');
+    const syncCount = () => { if (countEl) countEl.textContent = `已选 ${sel.size} 行（建议 4–6 行），勾选可调整选句`; };
+    syncCount();
+    const state = { dataUrl: '' };
+    /** @type {ReturnType<typeof setTimeout>|undefined} */
+    let timer;
+    const regen = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => { this._drawPoster(song, lines, sel, out, state, seq); }, 120);
+    };
+    host.querySelector('[data-pick-reset]')?.addEventListener('click', () => {
+      sel.clear();
+      defaultSelection(lines).forEach((i) => sel.add(i));
+      host.querySelectorAll('.poster-pick__item input').forEach((cb) => { cb.checked = sel.has(Number(cb.dataset.line)); });
+      syncCount();
+      regen();
+    });
+    host.querySelector('.poster-pick__list')?.addEventListener('change', (e) => {
+      const i = Number(e.target?.dataset?.line);
+      if (!Number.isFinite(i)) return;
+      if (e.target.checked) sel.add(i); else sel.delete(i);
+      syncCount();
+      regen();
+    });
+    regen();
+  }
 
-    const bg = ctx.createLinearGradient(0, 0, W, H);
-    bg.addColorStop(0, '#0c1018');
-    bg.addColorStop(1, '#0a0d14');
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, W, H);
-
+  /** 海报绘制：测量 → 版面（core/poster.js）→ 逐块绘制 → 导出。与选句 UI 解耦，可反复重生成。 */
+  async _drawPoster(song, lines, sel, out, state, seq) {
+    const chosen = lines.filter((_, i) => sel.has(i));
     const load = (src) => new Promise((resolve) => {
       const img = new Image();
+      img.crossOrigin = 'anonymous';
       img.onload = () => resolve(img);
       img.onerror = () => resolve(null);
       img.src = src;
     });
+    const [cover, qr] = await Promise.all([
+      load(this.resolve(song.cover)),
+      load(this.resolve(`assets/qr/song-${song.slug}.svg`)),
+      (document.fonts && document.fonts.ready) || Promise.resolve()
+    ]);
+    if (seq !== this._posterSeq) return;
+    const scratch = document.createElement('canvas');
+    const mctx = scratch.getContext('2d');
+    const famD = getComputedStyle(document.documentElement).getPropertyValue('--font-d').trim() || 'sans-serif';
+    const famM = getComputedStyle(document.documentElement).getPropertyValue('--font-m').trim() || 'monospace';
+    const fontFor = (kind, size) => (kind === 'url' ? `${size}px ${famM}` : `${kind === 'title' ? 600 : 400} ${size}px ${famD}`);
+    const measure = (t, size, kind) => { mctx.font = fontFor(kind, size); return mctx.measureText(t).width; };
+    const layout = layoutPoster({
+      title: song.title,
+      artist: song.artist,
+      lyricLines: chosen,
+      siteLabel: this.site.title,
+      urlLabel: this.site.url.replace(/^https?:\/\//, '').replace(/\/+$/, ''),
+      hasCover: !!cover,
+      hasQr: !!qr
+    }, measure);
 
-    let coverOk = true;
-    const cover = await load(this.resolve(song.cover));
+    let dom = null;
     if (cover) {
       try {
+        const s = document.createElement('canvas');
+        s.width = 24; s.height = 24;
+        const sc = s.getContext('2d');
+        sc.drawImage(cover, 0, 0, 24, 24);
+        const d = sc.getImageData(0, 0, 24, 24).data;
+        let r = 0, g = 0, b = 0, n = 0;
+        for (let i = 0; i < d.length; i += 4) {
+          if (d[i + 3] < 128) continue;
+          r += d[i]; g += d[i + 1]; b += d[i + 2]; n++;
+        }
+        if (n) dom = [r / n, g / n, b / n];
+      } catch { dom = null; }
+    }
+    const pal = posterPalette(dom);
+    const canvas = document.createElement('canvas');
+    canvas.width = layout.W;
+    canvas.height = layout.H;
+    const ctx = canvas.getContext('2d');
+    const bg = ctx.createLinearGradient(0, 0, 0, layout.H);
+    bg.addColorStop(0, pal.bgTop);
+    bg.addColorStop(1, pal.bgBottom);
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, layout.W, layout.H);
+    ctx.textBaseline = 'top';
+    for (const b of layout.blocks) {
+      if (b.kind === 'cover') {
         ctx.save();
         ctx.beginPath();
-        ctx.roundRect ? ctx.roundRect(90, 90, 900, 900, 36) : ctx.rect(90, 90, 900, 900);
+        if (ctx.roundRect) ctx.roundRect(b.x, b.y, b.w, b.h, 28); else ctx.rect(b.x, b.y, b.w, b.h);
         ctx.clip();
-        ctx.drawImage(cover, 90, 90, 900, 900);
+        if (cover) {
+          const sc = Math.min(b.w / cover.width, b.h / cover.height);
+          const w = cover.width * sc;
+          const h = cover.height * sc;
+          ctx.drawImage(cover, b.x + (b.w - w) / 2, b.y + (b.h - h) / 2, w, h);
+        } else {
+          ctx.fillStyle = mixColor(dom || [127, 142, 163], '#ffffff', 0.6);
+          ctx.fillRect(b.x, b.y, b.w, b.h);
+          ctx.fillStyle = pal.mute;
+          ctx.font = fontFor('artist', 30);
+          ctx.textAlign = 'center';
+          ctx.fillText('封面未能加载', b.x + b.w / 2, b.y + b.h / 2 - 15);
+          ctx.textAlign = 'left';
+        }
         ctx.restore();
-      } catch { coverOk = false; }
-    } else {
-      coverOk = false;
+      } else if (b.kind === 'rule') {
+        ctx.fillStyle = pal.rule;
+        ctx.fillRect(b.x, b.y, b.w, b.h);
+      } else if (b.kind === 'qr') {
+        ctx.fillStyle = pal.card;
+        ctx.beginPath();
+        if (ctx.roundRect) ctx.roundRect(b.x, b.y, b.w, b.h, 12); else ctx.rect(b.x, b.y, b.w, b.h);
+        ctx.fill();
+        const pad = (b.w - b.inner) / 2;
+        ctx.drawImage(qr, b.x + pad, b.y + pad, b.inner, b.inner);
+      } else {
+        ctx.fillStyle = b.kind === 'artist' || b.kind === 'url' ? pal.mute : pal.ink;
+        ctx.font = fontFor(b.kind, b.size);
+        ctx.textAlign = b.align === 'center' ? 'center' : 'left';
+        b.lines.forEach((t, i) => ctx.fillText(t, b.x, b.y + i * b.lh));
+        ctx.textAlign = 'left';
+      }
     }
-
-    ctx.fillStyle = '#e8eef6';
-    ctx.font = '600 54px "Space Grotesk", "PingFang SC", sans-serif';
-    ctx.fillText(song.title.slice(0, 22), 90, 1070);
-    ctx.fillStyle = '#a4b1c0';
-    ctx.font = '32px "Inter", "PingFang SC", sans-serif';
-    ctx.fillText(song.artist.slice(0, 30), 90, 1120);
-
-    const lines = (this.player.lyrics?.lines || []).filter((l) => l.text).slice(0, 2);
-    ctx.fillStyle = '#59d3ff';
-    ctx.font = 'italic 30px Georgia, "Songti SC", serif';
-    lines.forEach((line, i) => ctx.fillText(`「${line.text.slice(0, 26)}」`, 90, 1180 + i * 44));
-
-    const qr = await load(this.resolve(`assets/qr/song-${song.slug}.svg`));
-    if (qr) {
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(W - 250, H - 250, 170, 170);
-      ctx.drawImage(qr, W - 242, H - 242, 154, 154);
-    }
-    ctx.fillStyle = '#6e7b8b';
-    ctx.font = '24px "JetBrains Mono", monospace';
-    ctx.fillText(this.site.url.replace(/^https?:\/\//, ''), 90, H - 90);
-
     let dataUrl;
     try {
       dataUrl = canvas.toDataURL('image/png');
     } catch {
-      host.innerHTML = '<p class="warn">封面图片来自外站且没有开放 CORS，画布被污染，无法导出海报。把封面放到仓库内即可解决。</p>';
+      out.innerHTML = '<p class="warn">画布被跨域图片污染，无法导出。请把封面放到仓库内（同源）后重试。</p>';
       return;
     }
-
-    host.innerHTML = `<p class="note">${coverOk ? '海报已生成' : '封面未能加载（可能是跨域限制），已生成无封面版本'}，长按或点下方按钮保存。</p>
-      <img class="poster" src="${attr(dataUrl)}" alt="歌词海报">
-      <p class="hero__cta"><button class="btn" type="button" data-poster-save><span aria-hidden="true">⤓</span> 保存 PNG</button></p>`;
-    host.querySelector('[data-poster-save]')?.addEventListener('click', () => {
-      download(`${song.slug}-poster.png`, dataURItoBlob(dataUrl), 'image/png');
+    if (seq !== this._posterSeq) return;
+    state.dataUrl = dataUrl;
+    const notes = [cover ? '海报已生成' : '封面未能加载（可能跨域或缺文件），已用占位封面生成'];
+    if (!chosen.length) notes.push('无歌词版');
+    if (!qr) notes.push('二维码资源缺失，仅显示链接文字');
+    if (layout.meta.grown) notes.push(`内容较多，尺寸 ${layout.W}×${layout.H}`);
+    out.innerHTML = `<p class="note">${esc(notes.join('；'))}。长按图片或点下方按钮保存。</p>
+      <img class="poster" data-song-slug="${attr(song.slug)}" src="${attr(dataUrl)}" alt="${attr(song.title)} 歌词海报">
+      <p class="hero__cta"><button class="btn" type="button" data-poster-save>${icon('download', { size: 18 })} 保存 PNG</button></p>`;
+    out.querySelector('[data-poster-save]')?.addEventListener('click', () => {
+      if (state.dataUrl) download(`${song.slug}-poster.png`, dataURItoBlob(state.dataUrl), 'image/png');
     });
   }
 }
