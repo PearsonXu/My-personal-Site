@@ -254,3 +254,7 @@ hover 转 `var(--acc)`。**没有任何单独硬编码的颜色**：
 audio 节点同一且进度前进（不断歌）；「词」三态 pure→settings→off 绑定完好。
 截图：`docs/screenshots/player-bar-row-{320,375,390,430}.png`、`player-bar-row-mobile-full.png`。
 `tests/lyrics-entry.test.mjs` 的迷你条布局契约断言同步为单行规格。
+线上复核（2026-11-20，部署 `a4b4480` / run 44853719683 success）：`www.xuzhaoqing.com`
+四宽度 **47/47 PASS**（指标与本地一致：同排 cy 差 0、间距 8/10px、条高 81px、零溢出、
+省略号、换宽不断歌、三态绑定完好）；`verify-live` **18 PASS · 1 N/A · 0 FAIL**。
+线上截图：`docs/screenshots/player-bar-row-live-390.png`。
