@@ -85,8 +85,10 @@ hover 转 `var(--acc)`。**没有任何单独硬编码的颜色**：
 歌词入口不是图标，而是**文字按钮**（`pbtn--text pbtn--lyrics`）：
 
 - **位置**：迷你条 `.pl__extra` + 展开页 `.pl__fullbtns`。
-  手机迷你条拆成两行：第一行 封面 / 标题 / 三主控，第二行右对齐「词」
-  （`layout-mobile.css`，`--pl-h:124px`）——44×44 文字键加三主控在 320px 宽也放不下一行。
+  手机迷你条**单行**：封面/信息 | 「词」 | 上一首/播放/下一首
+  （`layout-mobile.css` 用 grid-area 重排现有节点，**不移动 DOM**，事件绑定与 audio 不受影响；
+  `--pl-h:80px`）。信息列 `minmax(0,1fr)` 可收缩 + 省略号，控制组 nowrap；
+  列距 10px（≤400px 极窄屏 8px）即「词」与上一首的间距；320px 时只压缩信息列，按钮不换行。
   操作区只保留这个键，**不进「更多」菜单**。
   **「简介」按钮与面板已整体移除**（含 `ui/song-info-ui.js`、`toggle-about`、`about` 舞台）：
   展示模式只在 `cover / vinyl / lyrics` 三舞台循环；旧存储里的 `stage:'about'`
@@ -235,3 +237,20 @@ hover 转 `var(--acc)`。**没有任何单独硬编码的颜色**：
 > 布局轮重排全屏纵向骨架（舞台吃满剩余高度、间距显式、矮屏/横屏压缩、dvh + 安全区、
 > 首尾留白进滚动容器），并按此前要求整体移除「简介」按钮与面板（舞台仅 cover/vinyl/lyrics）。
 > 走带 / 快捷键 / 竞态令牌 / 媒体事件驱动状态机均未改动。
+
+## 迷你条单行轮（2026-11-20）
+
+手机迷你条由两行改单行：**封面/信息 | 「词」 | 上一首/播放/下一首**。
+实现只在 `layout-mobile.css` 用 grid-area 重排现有节点（`--pl-h` 124→80px），
+**不移动 DOM、不重建 audio**：事件委托与播放状态天然不受影响。
+信息列 `minmax(0,1fr)` 可收缩 + 省略号；「词」组与三主控 `flex-wrap:nowrap`；
+列距 10px（≤400px 极窄屏 8px，见 `layout-narrow.css`）即「词」与上一首间距；
+进度条仍 absolute 贴底，安全区由 `.pl` 的 `padding-bottom:var(--safe-b)` 保留。
+
+验收：真实 Chrome 320/375/390/430 四宽度 **47/47 PASS**（`/tmp/bar-row-probe.mjs`，
+结果 `/tmp/bar-row-results.json`）：五控件同排（中心线差 0.00px）、顺序正确、
+词→上一首间距 8/10px、点击区 44×44（主键 56）、条高 81px（含 1px 边）、
+进度贴底、零横向溢出、长歌名/作者省略号生效；播放中连续换宽 320→375→430→390
+audio 节点同一且进度前进（不断歌）；「词」三态 pure→settings→off 绑定完好。
+截图：`docs/screenshots/player-bar-row-{320,375,390,430}.png`、`player-bar-row-mobile-full.png`。
+`tests/lyrics-entry.test.mjs` 的迷你条布局契约断言同步为单行规格。

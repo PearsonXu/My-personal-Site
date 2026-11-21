@@ -1,5 +1,5 @@
 {
-  "at": "2026-11-20T04:14:59.255Z",
+  "at": "2026-11-21T01:49:00.659Z",
   "chrome": "headless Google Chrome (puppeteer-core)",
   "bases": [
     "http://localhost:8393 (dist --demo)"
@@ -510,23 +510,5 @@
     "iOS Safari 真机（无设备）",
     "微信内浏览器真机（无设备 / 账号）",
     "线上部署复测需在 push 部署后重跑：node tools/probe-player-panels.mjs --base=https://www.xuzhaoqing.com"
-  ],
-  "alsoRun": [
-    {
-      "at": "2026-11-20T03:53:24.383Z",
-      "bases": [
-        "https://www.xuzhaoqing.com"
-      ],
-      "pass": 83,
-      "fail": 0
-    },
-    {
-      "at": "2026-11-20T03:28:04.873Z",
-      "bases": [
-        "http://localhost:8393 (dist --demo)"
-      ],
-      "pass": 83,
-      "fail": 0
-    }
   ]
 }

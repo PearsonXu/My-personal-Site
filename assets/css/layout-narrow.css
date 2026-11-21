@@ -5,3 +5,5 @@
 .brand__txt strong { font-size:.86rem; }
 .pl__title { font-size:.84rem; }
 .pl__sub { font-size:.7rem; }
+/* 极窄屏列距收至 8px（仍在 8–12px 规格内），给可收缩的信息列多让一点宽度 */
+.pl__bar { gap:4px 8px; }

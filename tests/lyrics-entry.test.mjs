@@ -90,7 +90,10 @@ test('lyrics-entry · 移动端迷你条仍显示「词」，其余功能键留�
   const mobile = read('assets/css/layout-mobile.css');
   assert.match(mobile, /\.pl__extra \{ display:flex; \}/);
   assert.match(mobile, /\.pl__extra > :not\(\.pbtn--lyrics\) \{ display:none; \}/);
-  assert.match(mobile, /\.pl__bar \{ grid-template-columns:auto minmax\(0,1fr\) auto; grid-template-rows:auto auto;/);
+  // 单行：封面/信息 | 「词」 | 三主控（grid-area 重排现有节点，不移动 DOM）
+  assert.match(mobile, /\.pl__bar \{ grid-template-columns:auto minmax\(0,1fr\) auto auto; grid-template-rows:auto;/);
+  assert.match(mobile, /\.pl__extra \{ grid-area:1\/3\/2\/4;/);
+  assert.match(mobile, /\.pl__btns \{ grid-area:1\/4\/2\/5; gap:4px; flex-wrap:nowrap; \}/);
 });
 
 test('lyrics-entry · 校准组在歌词面板顶部工具栏内，只随歌词舞台显示，触控目标 ≥44px', () => {

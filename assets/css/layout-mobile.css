@@ -1,7 +1,7 @@
 /* layout-mobile.css — 手机布局（auto 时 ≤760px 生效；手动选「手机」时无条件生效）
    源文件只写普通规则，不要写 @media。 */
 
-:root { --pl-h:124px; --play-size:56px; --sp7:32px; --sp8:44px; }
+:root { --pl-h:80px; --play-size:56px; --sp7:32px; --sp8:44px; }
 .wrap { padding-inline:var(--sp4); }
 
 .head__in { gap:var(--sp2); }
@@ -42,12 +42,17 @@
 .hero__pick__cover img { width:72px; height:72px; }
 .aboutgrid { grid-template-columns:1fr; }
 
-/* 迷你播放器：第一行 封面/标题/三主控，第二行 常驻文字按钮「词」。
-   44×44 文字按钮 + 三主控在 320px 宽也放不下一行 → 拆两行，绝不横向溢出 */
-.pl__bar { grid-template-columns:auto minmax(0,1fr) auto; grid-template-rows:auto auto; gap:4px var(--sp2); padding:8px var(--sp4) 16px; }
-.pl__extra { grid-column:1/-1; grid-row:2; justify-content:flex-end; gap:4px; }
+/* 迷你播放器：单行 封面/信息 | 「词」 | 上一首/播放/下一首。
+   只用 grid-area 重排现有节点，**不移动 DOM**：事件绑定、audio、播放状态完全不受影响。
+   信息列 minmax(0,1fr) 可收缩 + 省略号；「词」组与三主控 nowrap；
+   320px 时只压缩信息列，按钮绝不换行 / 横向溢出。列距 10px（极窄屏 8px）= 「词」与上一首间距。
+   单行后条高 80px（--pl-h），进度条仍 absolute 贴底，安全区由 .pl 的 padding-bottom 保留。 */
+.pl__bar { grid-template-columns:auto minmax(0,1fr) auto auto; grid-template-rows:auto; gap:4px 10px; padding:8px var(--sp3) 16px; }
+.pl__art { grid-area:1/1/2/2; }
+.pl__meta { grid-area:1/2/2/3; }
+.pl__extra { grid-area:1/3/2/4; justify-content:flex-end; gap:4px; flex-wrap:nowrap; }
+.pl__btns { grid-area:1/4/2/5; gap:4px; flex-wrap:nowrap; }
 .pl__art img { width:44px; height:44px; }
-.pl__btns { gap:4px; }
 .pl__seekwrap { position:absolute; left:0; right:0; bottom:0; padding:0; }
 .pl__seekwrap .pl__times { display:none; }
 .pl__seekwrap .range { height:12px; }
