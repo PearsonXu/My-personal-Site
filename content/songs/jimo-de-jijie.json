@@ -16,13 +16,13 @@
   ],
   "date": "2026-11-21",
   "duration": 218.448,
-  "cover": "auto",
+  "cover": "jimo-de-jijie.jpg",
   "audio": {
     "src": "audio/jimo-de-jijie.mp3",
     "mime": "audio/mpeg",
     "master": null
   },
-  "lyrics": null,
+  "lyrics": "jimo-de-jijie.lrc",
   "instrumental": false,
   "demo": false,
   "about": "《寂寞的季节》翻唱版：娃娃作词，陶喆作曲并编曲，陶喆原唱，金石竹青演唱。",
