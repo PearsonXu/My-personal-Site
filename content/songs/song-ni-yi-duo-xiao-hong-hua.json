@@ -1,0 +1,32 @@
+{
+  "slug": "song-ni-yi-duo-xiao-hong-hua",
+  "title": "送你一朵小红花",
+  "artist": "金石竹青",
+  "composer": "赵英俊",
+  "lyricist": "赵英俊",
+  "originalArtist": "赵英俊",
+  "versionNote": "翻唱版本",
+  "versionBy": "演唱：金石竹青",
+  "tools": [
+    "SUNO"
+  ],
+  "album": null,
+  "tags": [
+    "翻唱"
+  ],
+  "date": "2026-11-22",
+  "duration": 226.728,
+  "cover": "song-ni-yi-duo-xiao-hong-hua.jpg",
+  "audio": {
+    "src": "audio/song-ni-yi-duo-xiao-hong-hua.mp3",
+    "mime": "audio/mpeg",
+    "master": null
+  },
+  "lyrics": "song-ni-yi-duo-xiao-hong-hua.lrc",
+  "instrumental": false,
+  "demo": false,
+  "about": "《送你一朵小红花》翻唱版：赵英俊作词作曲并原唱，同名电影《送你一朵小红花》主题曲，文魁编曲。金石竹青演唱。",
+  "credits": [
+    "编曲：文魁"
+  ]
+}
