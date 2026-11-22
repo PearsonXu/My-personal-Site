@@ -1,0 +1,30 @@
+{
+  "slug": "tuoxie",
+  "title": "妥协",
+  "artist": "金石竹青",
+  "composer": "阿沁",
+  "lyricist": "蒋笃全",
+  "originalArtist": "蔡依林",
+  "versionNote": "翻唱版本",
+  "versionBy": "演唱：金石竹青",
+  "tools": [
+    "SUNO"
+  ],
+  "album": null,
+  "tags": [
+    "翻唱"
+  ],
+  "date": "2026-11-22",
+  "duration": 237.648,
+  "cover": "auto",
+  "audio": {
+    "src": "audio/tuoxie.mp3",
+    "mime": "audio/mpeg",
+    "master": null
+  },
+  "lyrics": null,
+  "instrumental": false,
+  "demo": false,
+  "about": "《妥协》翻唱版：蒋笃全作词，阿沁作曲，蔡依林原唱，收录于其2009年3月27日发行的第十张专辑《花蝴蝶》。金石竹青演唱。",
+  "credits": []
+}
