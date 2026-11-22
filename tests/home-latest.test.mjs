@@ -187,7 +187,7 @@ test('整机 · 宽屏容量：grid 按列数、list 按宽度，保序补缩；
   assert.equal(eight.length, 8);
   assert.deepEqual(eight.slice(0, 5), six, '扩容必须保留现有顺序');
   // 列数足够大 → 容量 ≥ 总数 → 换一换隐藏且点击无效
-  app.homeLatest.measureCols = () => 16;
+  app.homeLatest.measureCols = () => app.catalog.songs.length;
   click(window, window.document.querySelector('#latest [data-act="set-view"][data-view="grid"]'));
   await wait();
   assert.equal(domBatch().length, app.catalog.songs.length, '全部歌曲同时展示');
