@@ -35,7 +35,7 @@ export async function makeApp(startPath = '/', { storage } = {}) {
     const body = fs.readFileSync(file, 'utf8');
     return { ok: true, status: 200, headers: { get: () => null }, text: async () => body, json: async () => JSON.parse(body) };
   };
-  for (const key of ['window', 'document', 'location', 'history', 'DOMParser', 'Node', 'Event', 'MouseEvent', 'HTMLElement', 'localStorage', 'navigator', 'CSS']) {
+  for (const key of ['window', 'document', 'location', 'history', 'DOMParser', 'Node', 'Event', 'MouseEvent', 'HTMLElement', 'localStorage', 'navigator', 'CSS', 'MutationObserver', 'ResizeObserver', 'getComputedStyle']) {
     if (window[key] === undefined) continue;
     Object.defineProperty(globalThis, key, { value: window[key], configurable: true, writable: true });
   }

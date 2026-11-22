@@ -1,0 +1,325 @@
+{
+  "matrix": [
+    {
+      "width": 288,
+      "view": "list",
+      "count": 4,
+      "items": [
+        "jimo-de-jijie",
+        "bu-yao-zai-gu-dan",
+        "jiuwanzi",
+        "jiyidian"
+      ],
+      "cols": 0,
+      "switchGap": 12,
+      "moreGap": 16,
+      "shuffleHidden": false,
+      "total": 16,
+      "moreText": "查看全部 16 首 →",
+      "audioSame": true
+    },
+    {
+      "width": 288,
+      "view": "grid",
+      "count": 4,
+      "items": [
+        "jimo-de-jijie",
+        "bu-yao-zai-gu-dan",
+        "jiuwanzi",
+        "jiyidian"
+      ],
+      "cols": 2,
+      "switchGap": 12,
+      "moreGap": 16,
+      "shuffleHidden": false,
+      "total": 16,
+      "moreText": "查看全部 16 首 →",
+      "audioSame": true
+    },
+    {
+      "width": 288,
+      "view": "vinyl",
+      "count": 2,
+      "items": [
+        "jimo-de-jijie",
+        "bu-yao-zai-gu-dan"
+      ],
+      "cols": 1,
+      "switchGap": 12,
+      "moreGap": 16,
+      "shuffleHidden": false,
+      "total": 16,
+      "moreText": "查看全部 16 首 →",
+      "audioSame": true
+    },
+    {
+      "width": 358,
+      "view": "list",
+      "count": 4,
+      "items": [
+        "jimo-de-jijie",
+        "bu-yao-zai-gu-dan",
+        "jiuwanzi",
+        "jiyidian"
+      ],
+      "cols": 0,
+      "switchGap": 12,
+      "moreGap": 16,
+      "shuffleHidden": false,
+      "total": 16,
+      "moreText": "查看全部 16 首 →",
+      "audioSame": true
+    },
+    {
+      "width": 358,
+      "view": "grid",
+      "count": 4,
+      "items": [
+        "jimo-de-jijie",
+        "bu-yao-zai-gu-dan",
+        "jiuwanzi",
+        "jiyidian"
+      ],
+      "cols": 2,
+      "switchGap": 12,
+      "moreGap": 16,
+      "shuffleHidden": false,
+      "total": 16,
+      "moreText": "查看全部 16 首 →",
+      "audioSame": true
+    },
+    {
+      "width": 358,
+      "view": "vinyl",
+      "count": 4,
+      "items": [
+        "jimo-de-jijie",
+        "bu-yao-zai-gu-dan",
+        "jiuwanzi",
+        "jiyidian"
+      ],
+      "cols": 2,
+      "switchGap": 12,
+      "moreGap": 16,
+      "shuffleHidden": false,
+      "total": 16,
+      "moreText": "查看全部 16 首 →",
+      "audioSame": true
+    },
+    {
+      "width": 728,
+      "view": "list",
+      "count": 5,
+      "items": [
+        "jimo-de-jijie",
+        "bu-yao-zai-gu-dan",
+        "jiuwanzi",
+        "jiyidian",
+        "tanyunxi"
+      ],
+      "cols": 0,
+      "switchGap": 16,
+      "moreGap": 16,
+      "shuffleHidden": false,
+      "total": 16,
+      "moreText": "查看全部 16 首 →",
+      "audioSame": true
+    },
+    {
+      "width": 728,
+      "view": "grid",
+      "count": 6,
+      "items": [
+        "jimo-de-jijie",
+        "bu-yao-zai-gu-dan",
+        "jiuwanzi",
+        "jiyidian",
+        "tanyunxi",
+        "wo-ye-bu-xiang-zhe-yang"
+      ],
+      "cols": 3,
+      "switchGap": 16,
+      "moreGap": 16,
+      "shuffleHidden": false,
+      "total": 16,
+      "moreText": "查看全部 16 首 →",
+      "audioSame": true
+    },
+    {
+      "width": 728,
+      "view": "vinyl",
+      "count": 4,
+      "items": [
+        "jimo-de-jijie",
+        "bu-yao-zai-gu-dan",
+        "jiuwanzi",
+        "jiyidian"
+      ],
+      "cols": 4,
+      "switchGap": 16,
+      "moreGap": 16,
+      "shuffleHidden": false,
+      "total": 16,
+      "moreText": "查看全部 16 首 →",
+      "audioSame": true
+    },
+    {
+      "width": 1140,
+      "view": "list",
+      "count": 8,
+      "items": [
+        "jimo-de-jijie",
+        "bu-yao-zai-gu-dan",
+        "jiuwanzi",
+        "jiyidian",
+        "luolebai",
+        "nishi",
+        "tanyunxi",
+        "wo-ye-bu-xiang-zhe-yang"
+      ],
+      "cols": 0,
+      "switchGap": 16,
+      "moreGap": 16,
+      "shuffleHidden": false,
+      "total": 16,
+      "moreText": "查看全部 16 首 →",
+      "audioSame": true
+    },
+    {
+      "width": 1140,
+      "view": "grid",
+      "count": 5,
+      "items": [
+        "jimo-de-jijie",
+        "bu-yao-zai-gu-dan",
+        "jiuwanzi",
+        "jiyidian",
+        "luolebai"
+      ],
+      "cols": 5,
+      "switchGap": 16,
+      "moreGap": 16,
+      "shuffleHidden": false,
+      "total": 16,
+      "moreText": "查看全部 16 首 →",
+      "audioSame": true
+    },
+    {
+      "width": 1140,
+      "view": "vinyl",
+      "count": 6,
+      "items": [
+        "jimo-de-jijie",
+        "bu-yao-zai-gu-dan",
+        "jiuwanzi",
+        "jiyidian",
+        "luolebai",
+        "wuji"
+      ],
+      "cols": 6,
+      "switchGap": 16,
+      "moreGap": 16,
+      "shuffleHidden": false,
+      "total": 16,
+      "moreText": "查看全部 16 首 →",
+      "audioSame": true
+    }
+  ],
+  "results": [
+    {
+      "name": "320px · list",
+      "ok": true,
+      "detail": "4 首 · 间距 12px · 换一换可见"
+    },
+    {
+      "name": "320px · grid",
+      "ok": true,
+      "detail": "4 首（2 列） · 间距 12px · 换一换可见"
+    },
+    {
+      "name": "320px · vinyl",
+      "ok": true,
+      "detail": "2 首（1 列） · 间距 12px · 换一换可见"
+    },
+    {
+      "name": "390px · list",
+      "ok": true,
+      "detail": "4 首 · 间距 12px · 换一换可见"
+    },
+    {
+      "name": "390px · grid",
+      "ok": true,
+      "detail": "4 首（2 列） · 间距 12px · 换一换可见"
+    },
+    {
+      "name": "390px · vinyl",
+      "ok": true,
+      "detail": "4 首（2 列） · 间距 12px · 换一换可见"
+    },
+    {
+      "name": "768px · list",
+      "ok": true,
+      "detail": "5 首 · 间距 16px · 换一换可见"
+    },
+    {
+      "name": "768px · grid",
+      "ok": true,
+      "detail": "6 首（3 列） · 间距 16px · 换一换可见"
+    },
+    {
+      "name": "768px · vinyl",
+      "ok": true,
+      "detail": "4 首（4 列） · 间距 16px · 换一换可见"
+    },
+    {
+      "name": "1440px · list",
+      "ok": true,
+      "detail": "8 首 · 间距 16px · 换一换可见"
+    },
+    {
+      "name": "1440px · grid",
+      "ok": true,
+      "detail": "5 首（5 列） · 间距 16px · 换一换可见"
+    },
+    {
+      "name": "1440px · vinyl",
+      "ok": true,
+      "detail": "6 首（6 列） · 间距 16px · 换一换可见"
+    },
+    {
+      "name": "390px · 连续换批 8 次",
+      "ok": true,
+      "detail": "每批 4 首 · 覆盖 16/16"
+    },
+    {
+      "name": "390px · 换批后播放 + 收藏",
+      "ok": true,
+      "detail": "播放 wuji 保持 · 收藏 qunian-xiatian 保持"
+    },
+    {
+      "name": "1440px · 连续换批 8 次",
+      "ok": true,
+      "detail": "每批 6 首 · 覆盖 16/16"
+    },
+    {
+      "name": "1440px · 换批后播放 + 收藏",
+      "ok": true,
+      "detail": "播放 pianxiang 保持 · 收藏 qunian-xiatian 保持"
+    },
+    {
+      "name": "主题 cloud · 1440 封面墙",
+      "ok": true,
+      "detail": "5 首（5 列）· 间距 16px"
+    },
+    {
+      "name": "主题 forest · 1440 封面墙",
+      "ok": true,
+      "detail": "5 首（5 列）· 间距 16px"
+    },
+    {
+      "name": "主题 midnight · 1440 封面墙",
+      "ok": true,
+      "detail": "5 首（5 列）· 间距 16px"
+    }
+  ]
+}

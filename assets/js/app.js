@@ -16,6 +16,7 @@ import { PlayerUI } from './ui/player-ui.js';
 import { LyricsUI, bindPageLyrics } from './ui/lyrics-ui.js';
 import { QueueUI } from './ui/queue-ui.js';
 import { LibraryUI } from './ui/library-ui.js';
+import { HomeLatestUI } from './ui/home-latest-ui.js';
 import { ShareUI } from './ui/share-ui.js';
 import { StatusUI } from './ui/status-ui.js';
 import { MeUI } from './ui/me-ui.js';
@@ -152,6 +153,7 @@ async function boot({ base = BASE } = {}) {
   };
   const queueUI = new QueueUI(player);
   const library = new LibraryUI(player, { catalog, searchIndex, resolve, link });
+  const homeLatest = new HomeLatestUI(player, { catalog, resolve, link });
   const share = new ShareUI(player, { site, adapters, resolve, link });
   const status = new StatusUI(player, { adapters, base, resolve, resolveAudio });
   const me = new MeUI(player, { resolve, link });
@@ -161,7 +163,7 @@ async function boot({ base = BASE } = {}) {
   player.bindMediaSession();
   if (store.data.audioSession) player.setAudioSession(true);
 
-  const app = { base, site, catalog, store, player, adapters, ui, lyrics, queueUI, library, share, status, me, appearance, resolve, resolveAudio, link };
+  const app = { base, site, catalog, store, player, adapters, ui, lyrics, queueUI, library, homeLatest, share, status, me, appearance, resolve, resolveAudio, link };
   window.__music = app; // 便于真机调试与自动化验收
 
   /* ── 路由 ─────────────────────────────────────────── */
@@ -185,6 +187,7 @@ async function boot({ base = BASE } = {}) {
       if (route.kind === 'me') me.render();
       if (route.kind === 'status') status.mount();
       library.setView(library.view, { lock: false });
+      homeLatest.mount();
       qs('.nav')?.classList.remove('is-open');
     } catch (err) {
       // 渲染增强失败不能把页面留成半截：内容已经在 DOM 里，给出提示与恢复入口
@@ -341,6 +344,7 @@ async function handleClick(e, app) {
     case 'open-share': await share.open(btn.dataset.kind, slug); break;
     case 'cycle-view': ui.cycleStage(); break;
     case 'set-view': library.setView(btn.dataset.view); break;
+    case 'shuffle-latest': app.homeLatest.shuffle(); break;
     case 'filter-tag': library.setTag(btn.dataset.tag); break;
     case 'clear-search': library.clearSearch(); break;
     case 'open-search': {

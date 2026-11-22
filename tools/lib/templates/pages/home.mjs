@@ -59,7 +59,10 @@ export function renderHome(model, { base }) {
       <div data-viewpane="grid" hidden>${songGrid(latest, base)}</div>
       <div data-viewpane="vinyl" hidden>${songGrid(latest, base)}</div>
     </div>` : emptyState({ icon: 'note', ...EMPTY_SONG })}
-    ${songs.length > 6 ? `<p class="sec__more"><a class="link" href="${attr(base)}songs/">查看全部 ${songs.length} 首 →</a></p>` : ''}
+    ${latest.length ? `<p class="sec__more sec__more--latest">
+      <button class="linkbtn" id="latestShuffle" type="button" data-act="shuffle-latest" hidden>${icon('refresh', { size: 15 })}<span>换一换</span></button>
+      <a class="link" href="${attr(base)}songs/">查看全部 ${songs.length} 首 →</a>
+    </p>` : ''}
   </div>
 </section>
 

@@ -166,6 +166,13 @@ h1,h2,h3,h4 { font-family:var(--font-d); font-weight:600; line-height:1.2; lette
 .sec__title { font-size:clamp(1.6rem,3.4vw,2.3rem); margin-bottom:var(--sp3); }
 .sec__lede { color:var(--dim); font-size:1rem; }
 .sec__more { margin-top:var(--sp4); }
+/* 「最近分享」底部：换一换在左、查看全部在右，间距 16px */
+.sec__more--latest { display:flex; align-items:center; flex-wrap:wrap; gap:var(--sp4); }
+/* 文字链接式按钮：与 .link 同一红色风格；hidden 时必须显式压掉 inline-flex */
+.linkbtn { display:inline-flex; align-items:center; gap:6px; padding:0; border:none; background:none; color:var(--acc); font-family:inherit; font-size:inherit; line-height:inherit; cursor:pointer; border-bottom:1px solid rgba(var(--acc-rgb),.35); }
+.linkbtn:hover { border-bottom-color:var(--acc); }
+.linkbtn:focus-visible { outline:2px solid var(--acc); outline-offset:3px; }
+.linkbtn[hidden] { display:none; }
 .sub { display:flex; align-items:center; gap:10px; margin:var(--sp6) 0 var(--sp4); font-size:1.05rem; }
 .sub::after { content:''; flex:1; height:1px; background:linear-gradient(90deg,var(--line-2),transparent); }
 
@@ -221,6 +228,8 @@ h1,h2,h3,h4 { font-family:var(--font-d); font-weight:600; line-height:1.2; lette
 
 /* 首屏与「最近分享」之间收紧，桌面端更早看到歌 */
 .sec--near { padding-top:var(--sp5); }
+/* 展示切换按钮组与歌曲区之间留出呼吸感：桌面 16px（手机布局覆盖为 12px） */
+#latest .viewswitch { margin-bottom:var(--sp4); }
 
 /* ── 歌曲列表 ───────────────────────────────────────── */
 .rows { display:flex; flex-direction:column; gap:2px; }

@@ -38,6 +38,7 @@
 .hero--home { padding-block:20px 12px; }
 .hero__intro p { font-size:.94rem; }
 .sec--near { padding-top:var(--sp4); }
+#latest .viewswitch { margin-bottom:var(--sp3); }
 .hero__pick { grid-template-columns:72px minmax(0,1fr); padding:10px; }
 .hero__pick__cover img { width:72px; height:72px; }
 .aboutgrid { grid-template-columns:1fr; }
