@@ -1,0 +1,30 @@
+{
+  "slug": "jimo-de-jijie",
+  "title": "寂寞的季节",
+  "artist": "金石竹青",
+  "composer": "陶喆",
+  "lyricist": "娃娃",
+  "originalArtist": "陶喆",
+  "versionNote": "翻唱版本",
+  "versionBy": "演唱：金石竹青",
+  "tools": [
+    "SUNO"
+  ],
+  "album": null,
+  "tags": [
+    "翻唱"
+  ],
+  "date": "2026-11-21",
+  "duration": 218.448,
+  "cover": "auto",
+  "audio": {
+    "src": "audio/jimo-de-jijie.mp3",
+    "mime": "audio/mpeg",
+    "master": null
+  },
+  "lyrics": null,
+  "instrumental": false,
+  "demo": false,
+  "about": "《寂寞的季节》翻唱版：娃娃作词，陶喆作曲并编曲，陶喆原唱，金石竹青演唱。",
+  "credits": []
+}
