@@ -16,13 +16,13 @@
   ],
   "date": "2026-11-22",
   "duration": 237.648,
-  "cover": "auto",
+  "cover": "tuoxie.jpg",
   "audio": {
     "src": "audio/tuoxie.mp3",
     "mime": "audio/mpeg",
     "master": null
   },
-  "lyrics": null,
+  "lyrics": "tuoxie.lrc",
   "instrumental": false,
   "demo": false,
   "about": "《妥协》翻唱版：蒋笃全作词，阿沁作曲，蔡依林原唱，收录于其2009年3月27日发行的第十张专辑《花蝴蝶》。金石竹青演唱。",
