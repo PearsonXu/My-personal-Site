@@ -1,0 +1,33 @@
+{
+  "slug": "jiuyue-2",
+  "title": "九月",
+  "artist": "金石竹青",
+  "composer": "黄怡",
+  "lyricist": "陈家丽",
+  "originalArtist": "江淑娜",
+  "versionNote": "翻唱版本",
+  "versionBy": "演唱：金石竹青",
+  "tools": [
+    "SUNO"
+  ],
+  "album": null,
+  "tags": [
+    "翻唱"
+  ],
+  "date": "2026-11-24",
+  "duration": 247.944,
+  "cover": "jiuyue-2.jpg",
+  "audio": {
+    "src": "audio/jiuyue-2.mp3",
+    "mime": "audio/mpeg",
+    "master": null
+  },
+  "lyrics": "jiuyue-2.lrc",
+  "instrumental": false,
+  "demo": false,
+  "about": "《九月》翻唱：陈家丽词、黄怡曲，江淑娜原唱，参考苏打绿《九月 (Live in summer)》编曲，吴青峰、徐千秀制作。金石竹青演唱的另一版同名演绎，时长略短、间奏更紧凑。",
+  "credits": [
+    "编曲：苏打绿",
+    "制作：吴青峰、徐千秀"
+  ]
+}
