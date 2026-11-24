@@ -32,7 +32,7 @@ test('build · DEMO 构建产出每首歌的真实独立目录', () => {
 test('build · 每首歌有独立标题 / 简介 / 规范链接 / 封面元数据', () => {
   const manifest = build(true);
   const songs = manifest.pages.filter((p) => p.kind === 'song');
-  const titles = new Set();
+  const contentSongs = loadContent(ROOT, { includeDemo: true }).songs;
   const canonicals = new Set();
   for (const s of songs) {
     const html = read(`songs/${s.slug}/index.html`);
@@ -40,7 +40,8 @@ test('build · 每首歌有独立标题 / 简介 / 规范链接 / 封面元数�
     const canonical = /<link rel="canonical" href="([^"]*)"/.exec(html)[1];
     const ogImage = /<meta property="og:image" content="([^"]*)"/.exec(html)[1];
     const desc = /<meta name="description" content="([^"]*)"/.exec(html)[1];
-    titles.add(title);
+    const own = contentSongs.find((c) => c.slug === s.slug);
+    assert.ok(own && title.includes(own.title), `${s.slug} 的页面标题必须包含本歌标题：${title}`);
     canonicals.add(canonical);
     assert.equal(canonical, `https://www.xuzhaoqing.com/songs/${s.slug}/`);
     assert.ok(ogImage.startsWith('https://www.xuzhaoqing.com/assets/img/'), `og:image 必须是站内绝对地址：${ogImage}`);
@@ -51,7 +52,8 @@ test('build · 每首歌有独立标题 / 简介 / 规范链接 / 封面元数�
     assert.match(html, /application\/ld\+json/);
     assert.match(html, /播放这首歌/, '分享落地页必须有明显的播放按钮');
   }
-  assert.equal(titles.size, songs.length, '不同歌曲的标题必须不同');
+  // 同名不同版（同一首歌的多个 take，如两版《九月》）是合法内容：标题允许重复，
+  // 每页标题含本歌标题已在上面逐首断言，身份唯一性由 slug/规范链接保证
   assert.equal(canonicals.size, songs.length, '不同歌曲的规范链接必须不同');
 });
 
