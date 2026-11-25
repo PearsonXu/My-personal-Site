@@ -1,0 +1,31 @@
+{
+  "slug": "bei-dong",
+  "title": "被动",
+  "artist": "金石竹青",
+  "composer": "伍佰",
+  "lyricist": "潘丽玉",
+  "originalArtist": "苏慧伦",
+  "versionNote": "翻唱版本",
+  "versionBy": "演唱：金石竹青",
+  "tools": [
+    "SUNO"
+  ],
+  "album": null,
+  "tags": [
+    "翻唱"
+  ],
+  "date": "2026-11-24",
+  "duration": 238.464,
+  "cover": "bei-dong.jpg",
+  "audio": {
+    "src": "audio/bei-dong.mp3",
+    "mime": "audio/mpeg",
+    "master": null
+  },
+  "lyrics": "bei-dong.lrc",
+  "instrumental": false,
+  "demo": false,
+  "about": "《被动》翻唱：潘丽玉词、伍佰曲，苏慧伦原唱（1996《Lemon Tree》）。金石竹青演唱，钢琴动机与氛围织体铺陈的抒情摇滚版。",
+  "credits": [],
+  "accent": "#43793e"
+}
