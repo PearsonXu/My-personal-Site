@@ -109,3 +109,12 @@ export function debounce(fn, wait = 200) {
   wrapped.cancel = () => { if (timer) { clearTimeout(timer); timer = null; } };
   return wrapped;
 }
+/**
+ * 浏览器上报到 window.onerror、但并非脚本错误的提示。
+ * 目前只有 ResizeObserver 的循环提示：回调里的布局变化被顺延到下一帧时触发，规范行为，无害。
+ * 全局兜底见到它不应弹「页面出了点问题」。
+ * @param {unknown} message
+ */
+export function isBenignErrorMessage(message) {
+  return /^ResizeObserver loop (completed with undelivered notifications|limit exceeded)/.test(String(message || ''));
+}

@@ -233,7 +233,7 @@ h1,h2,h3,h4 { font-family:var(--font-d); font-weight:600; line-height:1.2; lette
 
 /* ── 歌曲列表 ───────────────────────────────────────── */
 .rows { display:flex; flex-direction:column; gap:2px; }
-.row { display:grid; grid-template-columns:auto auto minmax(0,1fr) minmax(0,.5fr) auto auto; align-items:center; gap:var(--sp3); padding:8px 10px; border-radius:var(--r-sm); border:1px solid transparent; transition:background-color var(--dur),border-color var(--dur); }
+.row { display:grid; grid-template-columns:auto minmax(0,1fr) minmax(0,auto) auto auto; align-items:center; gap:var(--sp3); padding:8px 10px; border-radius:var(--r-sm); border:1px solid transparent; transition:background-color var(--dur),border-color var(--dur); }
 .row:hover { background:rgba(var(--acc-rgb),.06); border-color:var(--line); }
 .row.is-current { background:rgba(var(--acc-rgb),.1); border-color:rgba(var(--acc-rgb),.3); }
 .row__no { font-family:var(--font-m); font-size:.75rem; color:var(--faint); min-width:1.6em; text-align:right; }
@@ -246,10 +246,10 @@ h1,h2,h3,h4 { font-family:var(--font-d); font-weight:600; line-height:1.2; lette
 .row__txt { display:flex; flex-direction:column; min-width:0; }
 .row__t { font-size:.94rem; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .row__a { font-size:.78rem; color:var(--mute); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.row__al { font-size:.82rem; color:var(--dim); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.row__al { max-width:14em; font-size:.82rem; color:var(--dim); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .row__al:hover { color:var(--acc); }
 .row__d { font-family:var(--font-m); font-size:.78rem; color:var(--mute); }
-.rows--ordered .row { grid-template-columns:auto auto auto minmax(0,1fr) minmax(0,.5fr) auto auto; }
+.rows--ordered .row { grid-template-columns:auto auto minmax(0,1fr) minmax(0,auto) auto auto; }
 /* ── 封面墙 / 唱片 ──────────────────────────────────── */
 .grid--cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:var(--sp4); }
 .card { position:relative; display:flex; flex-direction:column; gap:8px; }
@@ -319,6 +319,17 @@ h1,h2,h3,h4 { font-family:var(--font-d); font-weight:600; line-height:1.2; lette
 .lrc__line { padding:7px 12px; border-radius:9px; color:var(--dim); font-size:1rem; cursor:pointer; transition:color var(--dur),background-color var(--dur),transform var(--dur) var(--out); }
 .lrc__line:hover { color:var(--text); background:rgba(var(--acc-rgb),.08); }
 .lrc__line.is-active { color:var(--lyric-active); font-weight:600; background:rgba(var(--acc-rgb),.12); transform:translateX(4px); }
+/* 歌曲页歌词（只作用于 .lrcwrap，不影响播放页）：居中、衬线、留白大一点，像歌词本；长歌词默认折叠 */
+.lrcwrap { position:relative; }
+.lrcwrap .lrc { padding:var(--sp5) var(--sp4); background:var(--panel); text-align:center; }
+.lrcwrap .lrc__line { padding:6px 12px; font-family:var(--font-d); font-size:1.06rem; line-height:1.75; }
+.lrcwrap .lrc__line:hover { background:rgba(var(--acc-rgb),.06); }
+.lrcwrap .lrc__line.is-active { background:rgba(var(--acc-rgb),.08); transform:none; }
+.lrcwrap[data-folded="true"] .lrc { max-height:30rem; overflow:hidden; -webkit-mask-image:linear-gradient(180deg,#000 72%,transparent); mask-image:linear-gradient(180deg,#000 72%,transparent); }
+.lrcwrap__more { display:block; margin:var(--sp3) auto 0; padding:8px 18px; min-height:40px; border-radius:999px; border:1px solid var(--line-2); background:var(--panel); color:var(--text); font-size:.88rem; cursor:pointer; }
+.lrcwrap__more:hover { border-color:var(--acc); color:var(--acc); }
+.lrcwrap__more[hidden] { display:none; }
+.lrc__hint { text-align:center; }
 .lrc--plain .lrc__line { cursor:default; }
 .lrc--plain .lrc__line:hover { background:transparent; color:var(--dim); }
 /* ── 分享 / 二维码 ──────────────────────────────────── */
@@ -377,14 +388,13 @@ h1,h2,h3,h4 { font-family:var(--font-d); font-weight:600; line-height:1.2; lette
 .switch input { width:20px; height:20px; accent-color:var(--acc); }
 /* ── 页脚 ───────────────────────────────────────────── */
 .foot { margin-top:var(--sp8); border-top:1px solid var(--line); background:var(--panel-2); }
-.foot__in { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:var(--sp5); padding-block:var(--sp6); }
-.foot__mark { font-size:1.4rem; color:var(--acc); }
-.foot__tag { font-family:var(--font-s); font-style:italic; color:var(--dim); margin-block:var(--sp2); }
+.foot__in { display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); gap:var(--sp5); padding-block:var(--sp6); align-items:start; }
+.foot__mark { display:inline-grid; place-items:center; width:36px; height:36px; border-radius:var(--r-sm); background:rgba(var(--acc-rgb),.1); color:var(--acc); }
+.foot__links { display:flex; flex-wrap:wrap; gap:4px 20px; justify-content:flex-end; }
+.foot__tag { font-family:var(--font-d); color:var(--dim); margin-block:var(--sp2); }
 .foot__note { font-size:.78rem; color:var(--mute); }
-.foot__head { font-family:var(--font-m); font-size:.66rem; letter-spacing:.14em; text-transform:uppercase; color:var(--mute); margin-bottom:var(--sp3); }
 .foot__col li { padding:3px 0; font-size:.86rem; color:var(--dim); }
 .foot__col a:hover { color:var(--acc); }
-.foot__plain li { color:var(--mute); font-size:.8rem; }
 .foot__bar { padding-block:var(--sp4); border-top:1px solid var(--line); font-size:.78rem; color:var(--mute); }
 
 /* ── Toast / 遮罩层 ─────────────────────────────────── */

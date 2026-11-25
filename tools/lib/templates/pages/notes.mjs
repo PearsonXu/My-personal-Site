@@ -6,7 +6,7 @@ import { icon } from '../../../../assets/js/core/icons.js';
 export function renderNotes(model, { base }) {
   const { site, notes } = model;
   const body = `<section class="sec"><div class="wrap">
-  ${sectionHead({ no: '§ 手记', kicker: 'Notes', title: '手记', lede: notes.length ? `${notes.length} 篇。旋律带来的故事与心情，还有听歌时想到的事。` : '旋律带来的故事与心情，写下来放在这里。' })}
+  ${sectionHead({ title: '手记', lede: notes.length ? `${notes.length} 篇。旋律带来的故事与心情，还有听歌时想到的事。` : '旋律带来的故事与心情，写下来放在这里。' })}
   ${collectionGrid(notes, base, 'notes', '想到什么就记下来，慢慢会有。')}
 </div></section>`;
   return {

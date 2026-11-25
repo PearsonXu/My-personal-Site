@@ -1,0 +1,16 @@
+{
+  "slug": "guofeng",
+  "title": "国风五首",
+  "about": "《九万字》《叹云兮》《天和山雨雪》《无羁》《知我》——五首古风翻唱放在一起，适合整张安静地听完。",
+  "cover": "tanyunxi.jpg",
+  "tags": ["国风", "翻唱"],
+  "date": "2026-11-24",
+  "demo": false,
+  "songs": [
+    "jiuwanzi",
+    "tanyunxi",
+    "tianhe-shan-yuxue",
+    "wuji",
+    "zhiwo"
+  ]
+}

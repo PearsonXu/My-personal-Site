@@ -11,7 +11,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const readCss = (f) => fs.readFileSync(path.join(ROOT, 'assets/css', f), 'utf8');
 
 test('theme · 三套外观与三档布局的取值集合', () => {
-  assert.deepEqual(THEMES, ['cloud', 'forest', 'midnight']);
+  assert.deepEqual(THEMES, ['cloud', 'forest', 'midnight', 'film']);
   assert.deepEqual(LAYOUTS, ['auto', 'desktop', 'mobile']);
 });
 
@@ -89,10 +89,10 @@ test('css · 合成的 layout.css 同时具备 auto 与手动手机两套作用�
   assert.ok(unconditional.startsWith('html[data-layout="mobile"]'), '手动手机规则必须在 @media 之外');
 });
 
-test('css · 三套主题都定义了完整的核心令牌', () => {
+test('css · 四套主题都定义了完整的核心令牌', () => {
   const themes = readCss('themes.css');
   const required = ['--bg', '--panel', '--text', '--dim', '--acc', '--acc-2', '--on-acc', '--line', '--head-bg', '--pl-bg', '--scrim', '--toast-bg', '--chip-bg', '--blur', '--art-radius', '--lyric-active', '--bad', '--warn', '--ok'];
-  for (const name of ['cloud', 'forest', 'midnight']) {
+  for (const name of ['cloud', 'forest', 'midnight', 'film']) {
     const start = themes.indexOf(`html[data-theme="${name}"]`);
     assert.ok(start >= 0, `themes.css 缺少 ${name}`);
     const block = themes.slice(start, themes.indexOf('}', start));
@@ -102,7 +102,7 @@ test('css · 三套主题都定义了完整的核心令牌', () => {
   }
 });
 
-test('css · 三套主题在配色 / 字体 / 留白 / 封面形状上确有区别', () => {
+test('css · 四套主题在配色 / 字体 / 留白 / 封面形状上确有区别', () => {
   const themes = readCss('themes.css');
   const grab = (name, token) => {
     const start = themes.indexOf(`html[data-theme="${name}"]`);
@@ -110,10 +110,11 @@ test('css · 三套主题在配色 / 字体 / 留白 / 封面形状上确有区�
     const m = new RegExp(`${token}:([^;]+);`).exec(block);
     return m ? m[1].trim() : null;
   };
-  assert.equal(new Set(['cloud', 'forest', 'midnight'].map((n) => grab(n, '--acc'))).size, 3, '强调色必须不同');
-  assert.equal(new Set(['cloud', 'forest', 'midnight'].map((n) => grab(n, '--art-radius'))).size, 3, '封面形状必须不同');
-  assert.equal(new Set(['cloud', 'forest', 'midnight'].map((n) => grab(n, '--sp7'))).size, 3, '留白节奏必须不同');
+  assert.equal(new Set(['cloud', 'forest', 'midnight', 'film'].map((n) => grab(n, '--acc'))).size, 4, '强调色必须不同');
+  assert.equal(new Set(['cloud', 'forest', 'midnight', 'film'].map((n) => grab(n, '--art-radius'))).size, 4, '封面形状必须不同');
+  assert.equal(new Set(['cloud', 'forest', 'midnight', 'film'].map((n) => grab(n, '--sp7'))).size, 4, '留白节奏必须不同');
   assert.notEqual(grab('forest', '--font-d'), grab('cloud', '--font-d'), 'forest 应使用不同标题字体');
+  assert.notEqual(grab('film', '--font-d'), grab('cloud', '--font-d'), 'film 应使用宋体标题');
 });
 
 test('css · 基础层不再残留硬编码深色表面', () => {

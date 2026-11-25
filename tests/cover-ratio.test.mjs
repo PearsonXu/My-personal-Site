@@ -53,7 +53,7 @@ test('封面 · 修复只作用于 .song__art，不碰横版分享图 / 其他�
 });
 
 test('封面 · 手机 / 桌面布局的 max-width 覆盖仍然生效（作用域特异性更高）', () => {
-  assert.match(src('assets/css/layout-tablet.css'), /\.song__art \{ max-width:320px; \}/);
+  assert.match(src('assets/css/layout-tablet.css'), /\.song__art \{ max-width:320px; margin-inline:auto; \}/);
   assert.match(src('assets/css/layout-desktop.css'), /\.song__art \{ max-width:260px; \}/);
 });
 

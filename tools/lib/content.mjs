@@ -37,6 +37,7 @@ function coverFields(data, key, assetsDir, where, errors) {
       coverAuto: true,
       coverSeed: `${key}`,
       coverPath: `assets/img/covers/${key}.png`,
+      thumbPath: `assets/img/covers/${key}.png`,
       ogPath: `assets/img/og/${key}.png`
     };
   }
@@ -46,7 +47,10 @@ function coverFields(data, key, assetsDir, where, errors) {
     errors.push(`${where}: 封面文件不存在 assets/img/${rel}`);
   }
   const full = isRemote ? rel : `assets/img/${rel}`;
-  return { coverAuto: false, coverSeed: key, coverPath: full, ogPath: full };
+  // 列表 / 卡片用的缩略图（tools/make-cover-assets.mjs 生成）；没有就回退原图，不报错
+  const thumbRel = `thumbs/${rel.replace(/\.[^.]+$/, '')}.jpg`;
+  const thumbPath = !isRemote && fs.existsSync(path.join(assetsDir, 'img', thumbRel)) ? `assets/img/${thumbRel}` : full;
+  return { coverAuto: false, coverSeed: key, coverPath: full, thumbPath, ogPath: full };
 }
 
 export function loadContent(root, { includeDemo = false } = {}) {
@@ -138,7 +142,8 @@ export function loadContent(root, { includeDemo = false } = {}) {
       demo: !!data.demo,
       about: data.about || '',
       aboutHtml: data.about ? renderMarkdown(data.about) : '',
-      credits: Array.isArray(data.credits) ? data.credits : []
+      credits: Array.isArray(data.credits) ? data.credits : [],
+      accent: typeof data.accent === 'string' && /^#[0-9a-f]{6}$/i.test(data.accent) ? data.accent.toLowerCase() : null
     });
   }
   songs.sort(byDateDesc);
@@ -223,6 +228,12 @@ export function loadContent(root, { includeDemo = false } = {}) {
       return false;
     });
     const html = renderMarkdown(parsed.body);
+    const noteSongs = pick(data.songs, songBySlug, '歌曲');
+    // 封面 auto 且关联了歌：用第一首歌的真实封面，而不是千篇一律的程序化波形图
+    const firstSong = noteSongs.length && (!data.cover || data.cover === 'auto') ? songBySlug.get(noteSongs[0]) : null;
+    const cover = firstSong && !firstSong.coverAuto
+      ? { coverAuto: false, coverSeed: `note-${data.slug}`, coverPath: firstSong.coverPath, thumbPath: firstSong.thumbPath, ogPath: firstSong.ogPath }
+      : coverFields(data, `note-${data.slug}`, assetsDir, where, errors);
     notes.push({
       slug: data.slug,
       title: data.title,
@@ -230,8 +241,8 @@ export function loadContent(root, { includeDemo = false } = {}) {
       excerpt: data.excerpt || truncate(stripTags(html), 140),
       tags: Array.isArray(data.tags) ? data.tags : [],
       cover: data.cover || 'auto',
-      ...coverFields(data, `note-${data.slug}`, assetsDir, where, errors),
-      songs: pick(data.songs, songBySlug, '歌曲'),
+      ...cover,
+      songs: noteSongs,
       albums: pick(data.albums, new Set(albums.map((a) => a.slug)), '专辑'),
       playlists: pick(data.playlists, new Set(playlists.map((p) => p.slug)), '歌单'),
       html,
@@ -286,6 +297,8 @@ export function publicCatalog(model) {
       date: s.date,
       duration: s.duration,
       cover: s.coverPath,
+      thumb: s.thumbPath,
+      accent: s.accent,
       audio: s.audio,
       audioMime: s.audioMime,
       lyrics: s.lyricsPath,
@@ -295,11 +308,11 @@ export function publicCatalog(model) {
     })),
     albums: albums.map((a) => ({
       slug: a.slug, title: a.title, artist: a.artist, date: a.date,
-      cover: a.coverPath, tracks: a.tracks, demo: a.demo
+      cover: a.coverPath, thumb: a.thumbPath, tracks: a.tracks, demo: a.demo
     })),
     playlists: playlists.map((p) => ({
       slug: p.slug, title: p.title, date: p.date,
-      cover: p.coverPath, tracks: p.tracks, demo: p.demo
+      cover: p.coverPath, thumb: p.thumbPath, tracks: p.tracks, demo: p.demo
     })),
     notes: notes.map((n) => ({
       slug: n.slug, title: n.title, date: n.date, excerpt: n.excerpt,

@@ -77,12 +77,12 @@ function head({ site, base, meta, kind, slug, extraHead = '' }) {
   if (meta.jsonLd) lines.push(`<script type="application/ld+json">${JSON.stringify(meta.jsonLd)}</script>`);
   // 首帧前定好外观与布局，避免闪烁。
   // ★ 首次访问一律 cloud，系统深色偏好不参与决策；存储不可用 / 值非法也回退 cloud。
-  lines.push('<script>(function(){var T=["cloud","forest","midnight"],L=["auto","desktop","mobile"],A={light:"cloud",dark:"midnight"},t="cloud",l="auto";try{var s=localStorage.getItem("zx.music.theme");s=A[s]||s;if(T.indexOf(s)>=0)t=s;var v=localStorage.getItem("zx.music.layout");if(L.indexOf(v)>=0)l=v;}catch(e){}var r=document.documentElement;r.setAttribute("data-theme",t);r.setAttribute("data-layout",l);r.className+=" js";})();</script>');
+  lines.push('<script>(function(){var T=["cloud","forest","midnight","film"],L=["auto","desktop","mobile"],A={light:"cloud",dark:"midnight"},t="cloud",l="auto";try{var s=localStorage.getItem("zx.music.theme");s=A[s]||s;if(T.indexOf(s)>=0)t=s;var v=localStorage.getItem("zx.music.layout");if(L.indexOf(v)>=0)l=v;}catch(e){}var r=document.documentElement;r.setAttribute("data-theme",t);r.setAttribute("data-layout",l);r.className+=" js";})();</script>');
   if (extraHead) lines.push(extraHead);
   return lines.join('\n');
 }
-function header({ site, base, kind }) {
-  const links = NAV.map((item) => {
+function header({ site, base, kind, hiddenNav = [] }) {
+  const links = NAV.filter((item) => !hiddenNav.includes(item.kind)).map((item) => {
     const active = item.kind === kind || (item.kind === 'library' && kind === 'song')
       || (item.kind === 'albums' && kind === 'album')
       || (item.kind === 'playlists' && kind === 'playlist')
@@ -107,42 +107,29 @@ function header({ site, base, kind }) {
 </header>`;
 }
 
-function footer({ site, base }) {
+function footer({ site, base, hiddenNav = [] }) {
   const year = new Date().getFullYear();
+  const links = [
+    ['library', 'songs/', '曲库'],
+    ['playlists', 'playlists/', '歌单'],
+    ['albums', 'albums/', '专辑'],
+    ['notes', 'notes/', '手记'],
+    ['me', 'me/', '我的收藏'],
+    ['about', 'about/', '关于我']
+  ].filter(([kind]) => !hiddenNav.includes(kind));
   return `<footer class="foot">
   <div class="wrap foot__in">
     <div class="foot__col">
-      <p class="foot__mark" aria-hidden="true">♪ ∮</p>
+      <p class="foot__mark" aria-hidden="true">${icon('note', { size: 20 })}</p>
       <p class="foot__tag">${esc(site.tagline || '')}</p>
-      <p class="foot__note">收藏、最近播放、队列与进度只保存在<strong>当前浏览器</strong>，不代表跨设备同步。</p>
+      <p class="foot__note">收藏和播放记录只留在这台设备的浏览器里。</p>
     </div>
     <nav class="foot__col" aria-label="页脚导航">
-      <p class="foot__head">小屋</p>
-      <ul>
-        <li><a href="${attr(base)}songs/">曲库</a></li>
-        <li><a href="${attr(base)}albums/">专辑</a></li>
-        <li><a href="${attr(base)}playlists/">歌单</a></li>
-        <li><a href="${attr(base)}notes/">创作手记</a></li>
-        <li><a href="${attr(base)}me/">我的（本地数据）</a></li>
-      </ul>
-    </nav>
-    <nav class="foot__col" aria-label="关于">
-      <p class="foot__head">关于</p>
-      <ul>
-        <li><a href="${attr(base)}about/">关于我</a></li>
+      <ul class="foot__links">
+        ${links.map(([, href, label]) => `<li><a href="${attr(base + href)}">${esc(label)}</a></li>`).join('\n        ')}
         ${site.author?.github ? `<li><a href="${attr(site.author.github)}" target="_blank" rel="noopener">GitHub ↗</a></li>` : ''}
-        <li><a href="${attr(base)}status/">播放自检</a></li>
       </ul>
     </nav>
-    <div class="foot__col">
-      <p class="foot__head">说明</p>
-      <ul class="foot__plain">
-        <li>静态站点 · GitHub Pages</li>
-        <li>原生 audio · 无跟踪 · 无 Cookie</li>
-        <li>免登录试听，首次播放需点击</li>
-        <li>长时间收听建议用系统浏览器</li>
-      </ul>
-    </div>
   </div>
   <div class="wrap foot__bar"><p>© ${year} ${esc(site.author?.name || '')}</p></div>
 </footer>`;
@@ -253,7 +240,7 @@ function player({ base }) {
  * 渲染一份完整的静态 HTML 文档。
  * @param base 该页面回到站点根的相对前缀（"./" / "../" / "../../"）
  */
-export function renderDocument({ site, base, kind, slug = null, meta, body, extraHead = '', pageClass = '' }) {
+export function renderDocument({ site, base, kind, slug = null, meta, body, extraHead = '', pageClass = '', hiddenNav = [] }) {
   return `<!DOCTYPE html>
 <html lang="${attr(site.lang || 'zh-CN')}" data-theme="${attr(site.theme?.default || 'cloud')}" data-layout="${attr(site.layout?.default || 'auto')}" data-base="${attr(base)}">
 <head>
@@ -261,14 +248,14 @@ ${head({ site, base, meta, kind, slug, extraHead })}
 </head>
 <body data-kind="${attr(kind)}"${slug ? ` data-slug="${attr(slug)}"` : ''}>
 <a class="skip" href="#main">跳到主要内容</a>
-${header({ site, base, kind })}
+${header({ site, base, kind, hiddenNav })}
 
 <!-- ▼ 路由只替换这一块 ▼ -->
 <div id="page-root" data-page="${attr(kind)}">
 <main id="main" class="page ${attr(pageClass)}">
 ${body}
 </main>
-${footer({ site, base })}
+${footer({ site, base, hiddenNav })}
 </div>
 <!-- ▲ 路由只替换这一块 ▲ -->
 

@@ -20,7 +20,7 @@ const VIEWS = ['list', 'grid', 'vinyl'];
 const STAGES = ['cover', 'vinyl', 'lyrics'];
 
 /** 三套外观。cloud 是首次访问的默认值，系统深色偏好不参与决策。 */
-export const THEMES = ['cloud', 'forest', 'midnight'];
+export const THEMES = ['cloud', 'forest', 'midnight', 'film'];
 export const LAYOUTS = ['auto', 'desktop', 'mobile'];
 /** 旧版本存过 light / dark，迁移到新的三套外观 */
 const THEME_ALIAS = { light: 'cloud', dark: 'midnight' };

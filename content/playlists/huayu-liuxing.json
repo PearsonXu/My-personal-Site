@@ -1,0 +1,20 @@
+{
+  "slug": "huayu-liuxing",
+  "title": "华语流行翻唱",
+  "about": "从《去年夏天》到《寂寞的季节》，九首华语流行的翻唱，一首接一首放下去。",
+  "cover": "qunian-xiatian.jpg",
+  "tags": ["流行", "翻唱"],
+  "date": "2026-11-24",
+  "demo": false,
+  "songs": [
+    "jimo-de-jijie",
+    "bu-yao-zai-gu-dan",
+    "jiyidian",
+    "luolebai",
+    "nishi",
+    "wo-ye-bu-xiang-zhe-yang",
+    "pianxiang",
+    "qingchun-dagai",
+    "qunian-xiatian"
+  ]
+}

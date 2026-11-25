@@ -7,7 +7,9 @@
   "originalArtist": "陈子晴",
   "versionNote": "翻唱版本",
   "versionBy": "演唱：金石竹青",
-  "tools": ["SUNO"],
+  "tools": [
+    "SUNO"
+  ],
   "album": null,
   "tags": [
     "翻唱"
@@ -24,5 +26,6 @@
   "instrumental": false,
   "demo": false,
   "about": "《偏向》翻唱版：周仁作词，音融三喜作曲，陈子晴原唱，金石竹青演唱。",
-  "credits": []
+  "credits": [],
+  "accent": "#ab2f2b"
 }

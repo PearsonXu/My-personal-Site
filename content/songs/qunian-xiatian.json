@@ -7,7 +7,9 @@
   "originalArtist": "王大毛",
   "versionNote": "翻唱版本",
   "versionBy": "演唱：金石竹青",
-  "tools": ["SUNO"],
+  "tools": [
+    "SUNO"
+  ],
   "album": null,
   "tags": [
     "翻唱"
@@ -24,5 +26,6 @@
   "instrumental": false,
   "demo": false,
   "about": "《去年夏天》翻唱版：家家作词作曲，王大毛原唱，金石竹青演唱。",
-  "credits": []
+  "credits": [],
+  "accent": "#79663e"
 }

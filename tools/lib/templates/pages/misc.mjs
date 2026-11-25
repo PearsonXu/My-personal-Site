@@ -5,7 +5,7 @@ import { icon } from '../../../../assets/js/core/icons.js';
 export function renderAbout(model, { base }) {
   const { site } = model;
   const body = `<section class="sec"><div class="wrap wrap--prose">
-  ${sectionHead({ no: '§ 关于', kicker: 'About', title: '关于我', lede: esc(site.author?.bio || '') })}
+  ${sectionHead({ title: '关于我', lede: esc(site.author?.bio || '') })}
   <dl class="kv">
     <div><dt>署名</dt><dd>${esc(site.author?.name || '')}</dd></div>
     ${site.author?.github ? `<div><dt>GitHub</dt><dd><a class="link" href="${attr(site.author.github)}" target="_blank" rel="noopener">${esc(site.author.github)} ↗</a></dd></div>` : ''}
@@ -42,7 +42,7 @@ export function renderAbout(model, { base }) {
 export function renderMe(model, { base }) {
   const { site } = model;
   const body = `<section class="sec"><div class="wrap">
-  ${sectionHead({ no: '§ 我的', kicker: 'Local', title: '我的', lede: '收藏、最近播放和进度都留在这台设备的这个浏览器里。换设备、换浏览器或清理站点数据就会没有了——不是账号，也不会同步到别处。' })}
+  ${sectionHead({ title: '我的', lede: '收藏、最近播放和进度都留在这台设备的这个浏览器里。换设备、换浏览器或清理站点数据就会没有了——不是账号，也不会同步到别处。' })}
 
   <h2 class="sub">收藏 <span class="count" id="favCount">0</span></h2>
   <div id="favList">${emptyState({ icon: 'heart', title: '还没有收藏', text: '在任意歌曲上点心形图标即可收藏。收藏只存在这台设备的这个浏览器里。' })}</div>
@@ -71,7 +71,7 @@ export function renderMe(model, { base }) {
 export function renderStatus(model, { base }) {
   const { site } = model;
   const body = `<section class="sec"><div class="wrap">
-  ${sectionHead({ no: '§ 自检', kicker: 'Check', title: '播放自检', lede: '如果听不了或者拖不动进度，来这里点两下，看看是这台设备的浏览器的问题，还是音源的问题。' })}
+  ${sectionHead({ title: '播放自检', lede: '如果听不了或者拖不动进度，来这里点两下，看看是这台设备的浏览器的问题，还是音源的问题。' })}
 
   <h2 class="sub">这台设备能不能好好播</h2>
   <p class="c-dim">点一下，结果直接来自你当前的浏览器。</p>
@@ -209,7 +209,7 @@ export function renderStandaloneNotFound(site, base = '/') {
 export function renderNotFound(model, { base }) {
   const { site, songs } = model;
   const body = `<section class="sec"><div class="wrap">
-  ${sectionHead({ no: '404', kicker: 'Not Found', title: '这一页不在小屋里', lede: '链接可能拼错了，或者那首歌还没发布。' })}
+  ${sectionHead({ title: '这一页不在小屋里', lede: '链接可能拼错了，或者那首歌还没发布。' })}
   <div class="hero__cta">
     <a class="btn btn--pri" href="${attr(base)}">回首页</a>
     <a class="btn" href="${attr(base)}songs/">去曲库</a>

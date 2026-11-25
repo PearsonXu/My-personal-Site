@@ -10,6 +10,7 @@
 .hero__pick__cover img { width:84px; height:84px; }
 .hero__pick__row { margin-top:0; }
 .song__head { grid-template-columns:1fr; }
-.song__art { max-width:320px; }
+.song__art { max-width:320px; margin-inline:auto; }
 .pl__extra .pl__vol { display:none; }
-.foot__in { grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); }
+.foot__in { grid-template-columns:1fr; }
+.foot__links { justify-content:flex-start; }

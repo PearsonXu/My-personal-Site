@@ -2,6 +2,10 @@ import { escapeHtml as esc, escapeAttr as attr, formatTime } from '../../../../a
 import { canonicalUrl } from '../../../../assets/js/core/paths.js';
 import { songList, tags, demoBadge, emptyState } from '../components.mjs';
 import { icon } from '../../../../assets/js/core/icons.js';
+import { songKind } from '../../../../assets/js/core/song-meta.js';
+
+/** 歌曲页歌词超过这么多行就折叠（与 lyrics-ui 的自动展开阈值一致） */
+export const LYRIC_FOLD_LINES = 12;
 
 function lyricsBlock(song) {
   if (song.instrumental) {
@@ -14,8 +18,13 @@ function lyricsBlock(song) {
   const items = song.lyricsLines.map((line) => timed
     ? `<li class="lrc__line" data-t="${line.time.toFixed(3)}">${esc(line.text) || '&nbsp;'}</li>`
     : `<li class="lrc__line lrc__line--plain">${esc(line.text)}</li>`).join('\n');
-  return `<ol class="lrc${timed ? '' : ' lrc--plain'}" data-lrc="${attr(song.slug)}" data-timed="${timed}">${items}</ol>
-  ${timed ? '<p class="note">点任意一句可以跳到那个时间点。播放时当前句会自动高亮并滚动。</p>' : '<p class="note">这是纯文本歌词，没有时间轴，因此不做逐句高亮。</p>'}`;
+  // 长歌词默认只露前十来行，避免整页被拉得很长；播放到折叠处会自动展开
+  const fold = song.lyricsLines.length > LYRIC_FOLD_LINES;
+  return `<div class="lrcwrap" data-folded="${fold}">
+  <ol class="lrc${timed ? '' : ' lrc--plain'}" data-lrc="${attr(song.slug)}" data-timed="${timed}">${items}</ol>
+  ${fold ? '<button class="lrcwrap__more" type="button" data-act="unfold-lyrics" aria-expanded="false">展开全部歌词</button>' : ''}
+</div>
+  ${timed ? '<p class="note lrc__hint">点任意一句，从那里开始听。</p>' : ''}`;
 }
 
 function shareBlock(song, site, base, qrSvg) {
@@ -23,7 +32,7 @@ function shareBlock(song, site, base, qrSvg) {
   const wechat = site.backends?.wechat || {};
   return `<div class="share" id="share">
   <h3 class="sub">分享这首歌</h3>
-  <p class="c-dim">这是一条<strong>真实独立链接</strong>，任何人点开都直接进入这首歌的页面，无需登录。</p>
+  <p class="c-dim">把链接发给朋友，点开就是这首歌，不用登录。</p>
   <div class="share__row">
     <input class="share__url" id="shareUrl" type="text" readonly value="${attr(url)}" aria-label="歌曲分享链接">
     <button class="btn" type="button" data-act="copy-link" data-url="${attr(url)}">${icon('copy', { size: 18 })} 复制链接</button>
@@ -38,7 +47,6 @@ function shareBlock(song, site, base, qrSvg) {
         <li>想长时间听、锁屏也继续，点右上角「在浏览器打开」。</li>
         <li>链接会带着这首歌，换到浏览器可以接着听。</li>
       </ul>
-      <p class="note">复制链接和扫码都能用，不需要登录。</p>
     </div>
   </div>
 </div>`;
@@ -66,15 +74,17 @@ export function renderSong(model, { base, song, qrSvg }) {
         <img src="${attr(base + song.coverPath)}" alt="${attr(song.title)} 封面" width="420" height="420" decoding="async" fetchpriority="high">
       </div>
       <div class="song__info">
-        <p class="eyebrow">单曲 ${demoBadge(song)}</p>
+        <p class="eyebrow">${esc(songKind(song))} ${demoBadge(song)}</p>
         <h1 class="song__title">${esc(song.title)}</h1>
         <p class="song__artist">${esc(song.artist)}</p>
         <dl class="kv kv--inline">
+          ${song.originalArtist ? `<div><dt>原唱</dt><dd>${esc(song.originalArtist)}</dd></div>` : ''}
+          ${song.lyricist ? `<div><dt>作词</dt><dd>${esc(song.lyricist)}</dd></div>` : ''}
+          ${song.composer ? `<div><dt>作曲</dt><dd>${esc(song.composer)}</dd></div>` : ''}
           ${album ? `<div><dt>专辑</dt><dd><a class="link" href="${attr(base)}albums/${attr(album.slug)}/">${esc(album.title)}</a></dd></div>` : ''}
           <div><dt>时长</dt><dd>${formatTime(song.duration)}</dd></div>
           <div><dt>发布</dt><dd>${esc(song.date)}</dd></div>
-          ${song.composer ? `<div><dt>作曲</dt><dd>${esc(song.composer)}</dd></div>` : ''}
-          ${song.lyricist ? `<div><dt>作词</dt><dd>${esc(song.lyricist)}</dd></div>` : ''}
+          ${song.tools?.length ? `<div><dt>制作工具</dt><dd>${esc(song.tools.join('、'))}</dd></div>` : ''}
         </dl>
         ${tags(song.tags, base)}
         <div class="hero__cta">

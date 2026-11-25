@@ -1,5 +1,5 @@
 /**
- * ui/appearance-ui.js — 外观（三套主题）与布局（自动 / 桌面 / 手机）。
+ * ui/appearance-ui.js — 外观（四套主题）与布局（自动 / 桌面 / 手机）。
  *
  * ★ 两者都只改 <html> 上的 data 属性 + 写 localStorage：
  *   不重建 DOM、不碰 <audio>、不重新加载歌曲。
@@ -36,8 +36,33 @@ export const THEME_META = {
     color: '#0a0918',
     view: 'grid',
     stage: 'lyrics'
+  },
+  film: {
+    name: '黑白胶片',
+    desc: '灰白纸色 / 宋体标题 / 相片式封面，强调色跟着正在播放的封面走。让封面当主角。',
+    swatches: ['#f2f0eb', '#1c1b19', '#8a6d4b'],
+    color: '#f2f0eb',
+    view: 'grid',
+    stage: 'cover'
   }
 };
+
+/**
+ * 把当前歌曲的封面强调色写成 <html> 上的两个颜色变量（只有 film 主题会用到）。
+ * 黑白封面 accent 为 null → 移除变量，主题回退默认墨色。不改 data 属性、不碰 audio。
+ * @param {{ accent?: string | null } | null | undefined} song
+ */
+export function applyCoverAccent(song) {
+  const style = document.documentElement.style;
+  const m = /^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(song?.accent || '');
+  if (!m) {
+    style.removeProperty('--cover-acc');
+    style.removeProperty('--cover-rgb');
+    return;
+  }
+  style.setProperty('--cover-acc', `#${m[1]}${m[2]}${m[3]}`);
+  style.setProperty('--cover-rgb', [m[1], m[2], m[3]].map((h) => parseInt(h, 16)).join(','));
+}
 
 export const LAYOUT_META = {
   auto: { name: '自动', desc: '按屏幕尺寸适配' },
@@ -151,7 +176,7 @@ export class Appearance {
       <div class="theme-list">${themes}</div>
       <p class="panel__head" style="margin-top:var(--sp5)">布局</p>
       <div class="chips">${layouts}</div>
-      <p class="note">自动 = 按屏幕尺寸适配；桌面 / 手机 = 手动固定，便于对照验证。布局与外观互相独立。</p>
+      <p class="note">自动会按屏幕大小切换；也可以固定成桌面或手机样式。</p>
       <p class="note">切换外观或布局<strong>不会中断播放</strong>：同一个音频实例、同一份队列与进度，暂停时切换仍保持暂停。</p>
       <p class="note">首次访问默认「清爽云音乐」，系统深色偏好不会覆盖它。你的主动选择会记在本浏览器里。</p>`;
   }

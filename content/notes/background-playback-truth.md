@@ -5,7 +5,7 @@
   "date": "2026-11-17",
   "excerpt": "锁屏还能继续听吗？播完会自动接下一首吗？把能做到的和做不到的分开说。",
   "tags": ["日常", "听歌"],
-  "songs": ["demo-paper-boat"],
+  "songs": ["qunian-xiatian"],
   "albums": [],
   "playlists": [],
   "cover": "auto",

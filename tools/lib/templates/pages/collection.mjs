@@ -8,7 +8,7 @@ function indexPage(model, ctx, kind) {
   const items = kind === 'albums' ? model.albums : model.playlists;
   const label = kind === 'albums' ? '专辑' : '歌单';
   const body = `<section class="sec"><div class="wrap">
-  ${sectionHead({ no: `§ ${label}`, kicker: kind === 'albums' ? 'Albums' : 'Playlists', title: label, lede: `共 ${items.length} 个。每个都有独立链接，可以一键播放或整张加入队列。` })}
+  ${sectionHead({ title: label, lede: `共 ${items.length} 个。可以整张播放，也可以加进正在听的队列。` })}
   ${collectionGrid(items, ctx.base, kind, `慢慢整理，会有的。`)}
 </div></section>`;
   return {

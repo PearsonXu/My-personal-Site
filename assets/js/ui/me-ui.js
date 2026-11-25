@@ -6,6 +6,7 @@ import { escapeHtml as esc, escapeAttr as attr, formatTime } from '../core/util.
 import { toast, download } from './common.js';
 import { byId } from './dom.js';
 import { icon } from '../core/icons.js';
+import { songSubline } from '../core/song-meta.js';
 
 export class MeUI {
   constructor(player, { resolve, link }) {
@@ -21,10 +22,10 @@ export class MeUI {
     return `<li class="row" data-song="${attr(song.slug)}">
       <button class="row__play" type="button" data-act="play-song" data-slug="${attr(song.slug)}" aria-label="播放 ${attr(song.title)}">${icon('play', { size: 20 })}</button>
       <a class="row__main" href="${attr(this.link(`songs/${song.slug}/`))}">
-        <img class="row__art" src="${attr(this.resolve(song.cover))}" alt="" width="44" height="44" loading="lazy">
-        <span class="row__txt"><span class="row__t">${esc(song.title)}</span><span class="row__a">${esc(song.artist)}${extra}</span></span>
+        <img class="row__art" src="${attr(this.resolve(song.thumb || song.cover))}" alt="" width="44" height="44" loading="lazy">
+        <span class="row__txt"><span class="row__t">${esc(song.title)}</span><span class="row__a">${esc(songSubline(song))}${extra}</span></span>
       </a>
-      <span class="row__al c-mute">${esc(song.albumTitle || '单曲')}</span>
+      <span class="row__al c-mute">${esc(song.albumTitle || '')}</span>
       <span class="row__d">${formatTime(song.duration)}</span>
       <div class="acts">
         <button class="iact iact--sm" type="button" data-act="queue-next" data-slug="${attr(song.slug)}" aria-label="下一首播放">${icon('queue-next', { size: 18 })}</button>

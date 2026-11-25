@@ -223,3 +223,58 @@ html[data-layout="mobile"][data-theme="dark"] .card.is-current .card__art img { 
 html[data-theme="midnight"] .pl[data-state="error"] .pbtn--play,
 html[data-theme="dark"] .pl[data-state="error"] .pbtn--play { background:var(--bad); color:#12001a; }
 html[data-theme="forest"] .pl[data-state="error"] .pbtn--play { background:var(--bad); }
+/* ── film「黑白胶片」：灰白纸色 / 墨色 / 封面取色 ─────────
+   让封面当主角：界面退成一本摄影集的纸与墨，强调色跟着「正在播放的封面」走。
+   --cover-acc / --cover-rgb 由 app 在换歌时写到 <html> 的 style 上（只是两个颜色变量，
+   不改 data 属性、不重建 DOM、不碰 audio）；黑白封面没有可取的颜色 → 回退默认墨色。 */
+html[data-theme="film"] {
+  --bg:#f2f0eb; --bg-1:#faf9f6; --bg-2:#e7e4dd;
+  --panel:#faf9f6; --panel-2:#efece6;
+  --line:rgba(28,27,25,.1); --line-2:rgba(28,27,25,.18); --line-3:rgba(28,27,25,.32);
+  --text:#1c1b19; --dim:#46443f; --mute:#77746d; --faint:#a29e96;
+  --acc:var(--cover-acc,#2b2a27); --acc-2:#8a6d4b;
+  --acc-rgb:var(--cover-rgb,43,42,39); --acc2-rgb:138,109,75;
+  --on-acc:#faf9f6;
+  --ok:#3d7a4f; --warn:#9a6a14; --bad:#b03a2e;
+  --grid:transparent;
+  --head-bg:rgba(242,240,235,.9);
+  --pl-bg:rgba(250,249,246,.96);
+  --scrim:rgba(20,19,17,.5);
+  --toast-bg:rgba(250,249,246,.98);
+  --chip-bg:rgba(250,249,246,.92);
+  --blur:10px;
+  --glow-1:0; --glow-2:0;
+  --r-xs:3px; --r-sm:4px; --r:6px; --r-lg:8px;
+  --art-radius:2px;
+  --lyric-active:var(--acc);
+  --font-d:'Songti SC','STSong','Noto Serif CJK SC','Source Han Serif SC','Noto Serif SC',Georgia,serif;
+  --font-b:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB',Helvetica,sans-serif;
+  --title-spacing:.04em;
+  --sp5:24px; --sp6:36px; --sp7:64px; --sp8:96px;
+  --dur:.28s;
+  --shadow:0 18px 40px -26px rgba(0,0,0,.5);
+}
+/* 纸面：不要网格，也不要辉光 */
+html[data-theme="film"] body::after { opacity:0; }
+html[data-theme="film"] body::before { background:none; }
+html[data-theme="film"] .hero__title,
+html[data-theme="film"] .sec__title,
+html[data-theme="film"] .song__title { font-weight:600; }
+html[data-theme="film"] .eyebrow { border-radius:var(--r-xs); background:transparent; font-family:var(--font-b); letter-spacing:.2em; }
+/* 封面像冲印出来的相片：细白边 + 落影，方角 */
+html[data-theme="film"] .song__art img,
+html[data-theme="film"] .hero__pick__cover img { border:6px solid #fff; border-radius:var(--art-radius); box-shadow:0 1px 2px rgba(0,0,0,.08), var(--shadow); }
+html[data-theme="film"] .card__art { border-radius:var(--art-radius); box-shadow:0 1px 2px rgba(0,0,0,.08), 0 14px 28px -22px rgba(0,0,0,.6); }
+html[data-theme="film"] .card:hover .card__art img { transform:scale(1.03); }
+html[data-theme="film"] .card__t,
+html[data-theme="film"] .row__t,
+html[data-theme="film"] .note__title,
+html[data-theme="film"] .pl__fullsong { font-family:var(--font-d); }
+html[data-theme="film"] .btn--pri { box-shadow:none; }
+html[data-theme="film"] .nav__a.is-active { color:var(--text); background:transparent; box-shadow:inset 0 -2px 0 var(--acc); border-radius:0; }
+html[data-theme="film"] .row.is-current { background:rgba(var(--acc-rgb),.06); border-color:rgba(var(--acc-rgb),.2); }
+html[data-theme="film"] .row.is-current .row__t { color:var(--acc); }
+html[data-theme="film"] .lrc__line { font-family:var(--font-d); }
+html[data-theme="film"] .pl__lyrics .lrc__line.is-active { letter-spacing:.04em; }
+html[data-theme="film"] .empty { background:var(--panel); border-style:solid; }
+html[data-theme="film"] .pl__bar { border-top:1px solid var(--line-2); }

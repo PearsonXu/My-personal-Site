@@ -4,6 +4,7 @@
   "artist": "金石竹青",
   "composer": "王朝",
   "lyricist": "沈栀",
+  "originalArtist": "国风堂、哦漏",
   "album": null,
   "tags": [
     "翻唱",
@@ -28,5 +29,6 @@
     "制作：王朝",
     "原唱：国风堂、哦漏",
     "演唱：金石竹青"
-  ]
+  ],
+  "accent": "#2b66ab"
 }

@@ -76,6 +76,12 @@
     才回退整页。测试的 fetch stub 必须尊重 AbortSignal，否则测不出这类竞态。
     详见 `docs/NAV-RACE.md`。
 
+19. **播放条预置只显示、不下载**：访客还没碰过播放时，歌曲页预置这首、其他页预置最新一首
+    （`Player.cueSong`）。预置**不设 audio.src**（第一次 `play()` 才接音源）、不写最近播放、
+    不持久化；有恢复的队列或访客已操作过就不再预置。预置必须在 `player.restore()` 之后。
+20. **`film`（黑白胶片）主题的强调色来自封面**：`npm run covers` 把 accent 写进 song JSON，
+    app 在换歌时只往 `<html>` style 上写 `--cover-acc / --cover-rgb` 两个颜色变量。
+
 ## 常用命令
 
 ```bash
@@ -99,6 +105,8 @@ npm run check:assets -- --base http://localhost:8000   # 真实 HTTP 探测
 
 - 加歌：`npm run new:song -- "歌名" --audio /path/to.mp3`（会逐帧解析真实时长）
 - 加手记：`npm run new:note -- "标题" --slug my-note`（默认 `draft:true`）
+- 换 / 加封面后：`npm run covers`（macOS sips：生成 `assets/img/thumbs/` 缩略图 + 封面强调色）
+- 浏览器验收截图只在本地生成，`docs/screenshots*/` 已 gitignore，不要再提交
 - **不要**手改 `dist/`，它每次构建都会被清空
 - **不要**把陌生音源冒充站长作品；测试音必须 `demo:true` 并在页面上标 DEMO
 

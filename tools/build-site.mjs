@@ -144,13 +144,18 @@ async function main() {
     return svg;
   };
   /* 6. 页面 */
+  // 空的栏目不在导航 / 页脚 / sitemap 露面（页面本身照常生成，旧链接不会 404）
+  const hiddenNav = [
+    ...(albums.length ? [] : ['albums']),
+    ...(playlists.length ? [] : ['playlists'])
+  ];
   const pages = [];
   const addPage = (route, rendered, extra = {}) => {
     // ★ 统一 base：所有站内链接与资源都生成 **绝对路径**（BASE_PATH + 路径）。
     //   以前按页面深度生成 ./ ../ ../../，只要页面被服务在别的深度（404 页就是任意深度），
     //   相对路径就会逐跳累积成 /songs/x/songs/songs/about/me/… 这种坏地址。
     const html = renderDocument({
-      site, base: BASE_PATH, kind: rendered.kind, slug: rendered.slug,
+      site, base: BASE_PATH, kind: rendered.kind, slug: rendered.slug, hiddenNav,
       meta: rendered.meta, body: rendered.body, pageClass: rendered.pageClass || '', ...extra
     });
     const file = route ? path.join(OUT, route, 'index.html') : path.join(OUT, 'index.html');
@@ -188,7 +193,18 @@ async function main() {
   if (fs.existsSync(cname)) fs.copyFileSync(cname, path.join(OUT, 'CNAME'));
   write(path.join(OUT, '.nojekyll'), '');
   write(path.join(OUT, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${site.url.replace(/\/+$/, '')}/sitemap.xml\n`);
-  const urls = pages.map((p) => `  <url><loc>${site.url.replace(/\/+$/, '')}/${p.route}</loc></url>`).join('\n');
+  // sitemap：只收给访客看的内容页；空栏目与工具页（我的 / 播放自检）不收。lastmod 取内容日期
+  const newest = [...songs, ...notes, ...albums, ...playlists].map((x) => x.date).filter(Boolean).sort().pop() || '';
+  const dateOf = (p) => {
+    const pool = { song: songs, note: notes, album: albums, playlist: playlists }[p.kind];
+    return (pool && pool.find((x) => x.slug === p.slug)?.date) || newest;
+  };
+  const urls = pages
+    .filter((p) => !hiddenNav.includes(p.kind) && !['me', 'status'].includes(p.kind))
+    .map((p) => {
+      const lastmod = dateOf(p);
+      return `  <url><loc>${site.url.replace(/\/+$/, '')}/${p.route}</loc>${lastmod ? `<lastmod>${lastmod}</lastmod>` : ''}</url>`;
+    }).join('\n');
   write(path.join(OUT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`);
 
   /* 9. 构建清单：验收脚本据此逐条检查 */

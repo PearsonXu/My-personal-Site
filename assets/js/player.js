@@ -69,6 +69,9 @@ export class Player {
 
     this.songs = new Map((catalog.songs || []).map((s) => [s.slug, s]));
     this.queue = new PlayQueue({ mode: store?.data?.mode || 'order' });
+    this.cued = false;
+    /** 预置歌曲尚未接到 audio 上的音源 */
+    this._deferredSrc = null;
     this.state = 'idle';
     this.stateDetail = '';
     this.currentItem = null;
@@ -202,7 +205,7 @@ export class Player {
       }
     }
     const now = Date.now();
-    if (now - this._lastPersist > 4000) {
+    if (!this.cued && now - this._lastPersist > 4000) {
       this._lastPersist = now;
       this.store?.save({ position: info.currentTime, queue: this.queue.snapshot() });
     }
@@ -210,6 +213,8 @@ export class Player {
   }
 
   _persistNow() {
+    // 预置的歌访客还没碰过：不写进存储，免得下次被当成「上次听到这里」恢复
+    if (this.cued) return;
     this.store?.save({
       position: Number.isFinite(this.audio.currentTime) ? this.audio.currentTime : 0,
       queue: this.queue.snapshot(),
@@ -218,8 +223,16 @@ export class Player {
   }
 
   /* ── 加载（token 守卫的核心） ─────────────────────── */
-  async _load(item, { autoplay = false, startTime = 0 } = {}) {
+  /**
+   * @param {any} item
+   * @param {{ autoplay?: boolean, startTime?: number, cue?: boolean }} [opts]
+   *   cue=true：只是把歌放进播放条备着（访客还没点过任何歌）。不写最近播放、不持久化，
+   *   这样它既不污染「最近播放」，下次来也不会被当成「上次听到这里」恢复。
+   */
+  async _load(item, { autoplay = false, startTime = 0, cue = false } = {}) {
     const token = ++this._token;
+    /** 当前曲目是否只是预置（未被访客触碰）；play() 或任何用户操作会清掉 */
+    this.cued = cue;
     const hadError = !!this.audio.error;
     const song = item ? this.songOf(item.slug) : null;
     if (!song) {
@@ -245,6 +258,29 @@ export class Player {
     this._setState('loading');
 
     const src = this.resolveAudio(song.audio);
+    // 预置：只显示歌名 / 封面 / 时长，音频等访客按播放时再接上 —— 不为一首可能不听的歌白下载
+    this._deferredSrc = cue ? src : null;
+    if (!cue) this._bindSrc(src, { hadError, startTime });
+
+    if (!cue) this.store?.pushRecent(song.slug);
+    this._updateMediaSession(song);
+    this.emit('queue', this.queueInfo());
+
+    // 歌词异步加载：回来晚了也不能覆盖新歌
+    this._loadLyrics(song, token);
+
+    if (autoplay) {
+      await this._attemptPlay(token);
+    } else {
+      // 不自动播放的加载必须真的停下来，否则上一首还在响、状态却写着 paused
+      this.audio.pause();
+      this._setState('paused', startTime > 0 ? '已恢复上次的进度，点击继续播放' : '');
+    }
+    if (!cue) this._persistNow();
+  }
+
+  /** 把音源接到唯一的 audio 元素上（换源 / 失败复位 / 同源跳进度） */
+  _bindSrc(src, { hadError = false, startTime = 0 } = {}) {
     this._expectedSrc = new URL(src, typeof location !== 'undefined' ? location.href : 'https://example.invalid/').href;
     // 上一次加载失败过（404 / 断网）时，即使 src 没变也必须 load() 复位媒体元素，
     // 否则 Chrome 会停留在失败态，后续 play() 一直失败。
@@ -259,22 +295,6 @@ export class Player {
         this._pendingSeek = null;
       }
     }
-
-    this.store?.pushRecent(song.slug);
-    this._updateMediaSession(song);
-    this.emit('queue', this.queueInfo());
-
-    // 歌词异步加载：回来晚了也不能覆盖新歌
-    this._loadLyrics(song, token);
-
-    if (autoplay) {
-      await this._attemptPlay(token);
-    } else {
-      // 不自动播放的加载必须真的停下来，否则上一首还在响、状态却写着 paused
-      this.audio.pause();
-      this._setState('paused', startTime > 0 ? '已恢复上次的进度，点击继续播放' : '');
-    }
-    this._persistNow();
   }
 
   async _loadLyrics(song, token) {
@@ -396,6 +416,17 @@ export class Player {
     await this._load(item, { autoplay });
   }
 
+  /**
+   * 预置一首歌到播放条但不播放（不碰 play()，因此不会触发 NotAllowedError）。
+   * 只在访客还没开始听的时候由 app 调用；点播放键即从这首开始。
+   */
+  async cueSong(slug, { contextSlugs = null } = {}) {
+    if (!this.songOf(slug)) return;
+    const slugs = (contextSlugs && contextSlugs.length ? contextSlugs : [slug]).filter((s) => this.songs.has(s));
+    const item = this.queue.replace(slugs, Math.max(0, slugs.indexOf(slug)));
+    await this._load(item, { autoplay: false, cue: true });
+  }
+
   async playSlugs(slugs, { startIndex = 0, autoplay = true } = {}) {
     const list = (slugs || []).filter((s) => this.songs.has(s));
     if (!list.length) { this._setState('idle', '没有可播放的曲目'); return; }
@@ -412,6 +443,17 @@ export class Player {
   }
 
   async play() {
+    this.cued = false;
+    if (this._deferredSrc && this.currentItem) {
+      // 预置的歌第一次被按下播放：此刻才接上音源（之前点过的歌词跳转留在 _pendingSeek 里）
+      const src = this._deferredSrc;
+      const pending = this._pendingSeek;
+      this._deferredSrc = null;
+      this._bindSrc(src, { hadError: !!this.audio.error });
+      this._pendingSeek = pending;
+      if (this.currentSong) this.store?.pushRecent(this.currentSong.slug);
+      this._persistNow();
+    }
     if (!this.currentItem) {
       const first = this.catalog.songs[0];
       if (first) return this.playSong(first.slug);
@@ -458,6 +500,12 @@ export class Player {
   seek(seconds) {
     const dur = this.duration || this.currentSong?.duration || 0;
     const t = clamp(seconds, 0, Math.max(0, dur - 0.05));
+    if (this._deferredSrc) {
+      // 预置的歌还没接音源：记下目标进度，play() 接上音源后由 loadedmetadata 落地
+      this._pendingSeek = t;
+      this.emit('time', { ...this.timeInfo(), currentTime: t });
+      return;
+    }
     try {
       this.audio.currentTime = t;
     } catch {

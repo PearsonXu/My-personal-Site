@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { makeApp, click, wait } from './helpers/dom-app.mjs';
 
-const THEMES = ['cloud', 'forest', 'midnight'];
+const THEMES = ['cloud', 'forest', 'midnight', 'film'];
 const LAYOUTS = ['desktop', 'mobile'];
 
 /** 抓一份「播放业务状态」快照，切换前后逐项比对 */

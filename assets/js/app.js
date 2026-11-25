@@ -8,23 +8,27 @@
  */
 
 import { baseFromModuleUrl, joinUrl, resolveMedia, parseRoute } from './core/paths.js';
+import { isBenignErrorMessage } from './core/util.js';
 import { Store } from './store.js';
 import { Player } from './player.js';
 import { Router } from './router.js';
 import { Adapters } from './adapters.js';
 import { PlayerUI } from './ui/player-ui.js';
-import { LyricsUI, bindPageLyrics } from './ui/lyrics-ui.js';
+import { LyricsUI, bindPageLyrics, unfoldPageLyrics } from './ui/lyrics-ui.js';
 import { QueueUI } from './ui/queue-ui.js';
 import { LibraryUI } from './ui/library-ui.js';
 import { HomeLatestUI } from './ui/home-latest-ui.js';
 import { ShareUI } from './ui/share-ui.js';
 import { StatusUI } from './ui/status-ui.js';
 import { MeUI } from './ui/me-ui.js';
-import { Appearance } from './ui/appearance-ui.js';
+import { Appearance, applyCoverAccent } from './ui/appearance-ui.js';
 import { toast, closeSheet, isSheetOpen, copyText, showErrorBanner } from './ui/common.js';
 import { byId, qs, qsa, tgt } from './ui/dom.js';
 
 const BASE = baseFromModuleUrl(import.meta.url, 'assets/js/app.js');
+
+/** @param {ErrorEvent} e */
+const isBenignError = (e) => isBenignErrorMessage(e?.message);
 
 /**
  * 把 <head> 里的相对资源链接绝对化。
@@ -159,11 +163,13 @@ async function boot({ base = BASE } = {}) {
   const me = new MeUI(player, { resolve, link });
   // 外观 / 布局：只改 <html> 的 data 属性，绝不触碰 audio
   const appearance = new Appearance({ store, player, library, ui });
+  // 「黑白胶片」主题的强调色跟着当前封面走（其他主题不读这两个变量）
+  player.on('track', ({ song }) => applyCoverAccent(song));
 
   player.bindMediaSession();
   if (store.data.audioSession) player.setAudioSession(true);
 
-  const app = { base, site, catalog, store, player, adapters, ui, lyrics, queueUI, library, homeLatest, share, status, me, appearance, resolve, resolveAudio, link };
+  const app = { cue: { auto: false, touched: false, ready: false }, base, site, catalog, store, player, adapters, ui, lyrics, queueUI, library, homeLatest, share, status, me, appearance, resolve, resolveAudio, link };
   window.__music = app; // 便于真机调试与自动化验收
 
   /* ── 路由 ─────────────────────────────────────────── */
@@ -174,6 +180,22 @@ async function boot({ base = BASE } = {}) {
     onError: (err) => console.warn('[router] 回退为整页跳转：', err.message)
   });
 
+  /* ── 播放条预置：访客还没听过任何歌时，不让播放条空着写「还没有在播放」 ──
+     歌曲页预置这首歌，其他页预置最新一首；只显示、不出声（播放仍须用户点击）。
+     有恢复的队列、或访客已经开始听过，一律不动。 */
+  const { cue } = app;
+  player.on('state', ({ state }) => { if (state === 'playing') cue.touched = true; });
+  function autoCue(route) {
+    // 必须等本地状态恢复完：router.start() 会先触发一次 onPage，那时还没 restore
+    if (!cue.ready || cue.touched) return;
+    if (player.currentItem && !cue.auto) return; // 恢复了上次的队列：尊重它
+    const target = route.kind === 'song' && route.slug ? route.slug : catalog.songs?.[0]?.slug;
+    if (!target || player.currentSong?.slug === target || !player.songOf(target)) return;
+    cue.auto = true;
+    player.cueSong(target, { contextSlugs: (catalog.songs || []).map((s) => s.slug) })
+      .finally(() => { cue.auto = !!player.currentItem && !cue.touched; });
+  }
+
   function onPage(route) {
     try {
       // 换页后新内容里的路径仍是构建 base，部署位置不同则再兜底一次
@@ -182,6 +204,7 @@ async function boot({ base = BASE } = {}) {
       queueUI.sheet = null;
       ui.markCurrent(player.currentSong?.slug || null);
       ui.refreshFavorites();
+      autoCue(route);
       bindPageLyrics(player);
       if (route.kind === 'library') library.mount();
       if (route.kind === 'me') me.render();
@@ -224,6 +247,9 @@ async function boot({ base = BASE } = {}) {
 
   /* ── 兜底边界：任何漏网异常都要给出可见提示与恢复入口 ── */
   window.addEventListener('error', (e) => {
+    // 浏览器的布局提示，不是脚本错误：ResizeObserver 回调里的布局变化顺延到下一帧时会报这条，
+    // 对页面无任何影响（规范行为）。当成崩溃弹「页面出了点问题」反而吓到访客。
+    if (isBenignError(e)) return;
     showErrorBanner('页面脚本遇到一个错误，可以重新加载试试。', { base, detail: String(e.message || '') });
   });
   window.addEventListener('unhandledrejection', (e) => {
@@ -240,6 +266,7 @@ async function boot({ base = BASE } = {}) {
 
   /* ── 恢复本地状态：等待用户点击 ───────────────────── */
   player.restore();
+  cue.ready = true;
   ui.renderVolume({ volume: audio.volume, muted: audio.muted });
   ui.renderQueue(player.queueInfo());
   onPage(parseRoute(location.pathname, base) || { kind: 'home', slug: null });
@@ -278,6 +305,12 @@ async function handleClick(e, app) {
   const act = btn.dataset.act;
   const slug = btn.dataset.slug;
   const { player, ui, lyrics, library, queueUI, share, status, me, store } = app;
+
+  // 访客亲手碰过播放 / 队列，就不再自动预置（即便这次被浏览器拦下没出声）
+  if (/^(play-|queue-)|^(toggle|next|prev|cycle-mode)$/.test(act || '')) {
+    app.cue.touched = true;
+    app.player.cued = false;
+  }
 
   switch (act) {
     case 'play-song':
@@ -363,6 +396,9 @@ async function handleClick(e, app) {
       btn.setAttribute('aria-expanded', String(!!open));
       break;
     }
+    case 'unfold-lyrics':
+      unfoldPageLyrics(btn.closest('.lrcwrap'));
+      break;
     case 'copy-link': {
       const ok = await copyText(btn.dataset.url || location.href);
       toast(ok ? '链接已复制' : '复制失败，请手动复制', ok ? 'ok' : 'bad');

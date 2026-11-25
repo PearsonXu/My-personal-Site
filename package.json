@@ -18,6 +18,7 @@
     "check:assets": "node tools/check-assets.mjs",
     "new:song": "node tools/new-song.mjs",
     "new:note": "node tools/new-note.mjs",
+    "covers": "node tools/make-cover-assets.mjs",
     "demo:audio": "node tools/make-demo-audio.mjs",
     "verify": "npm run typecheck && npm run build:demo && npm test",
     "browser:check": "node tools/browser-check.mjs",

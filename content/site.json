@@ -20,7 +20,7 @@
   },
   "mediaBase": "",
   "mediaBaseNote": "留空 = 音频与封面使用仓库内相对路径。填 https://your-cdn.example.com/music/ 即可把整个曲库迁到对象存储，无需改动任何歌曲文件。",
-  "theme": { "default": "cloud", "options": ["cloud", "forest", "midnight"] },
+  "theme": { "default": "cloud", "options": ["cloud", "forest", "midnight", "film"] },
   "layout": { "default": "auto", "options": ["auto", "desktop", "mobile"] },
   "backends": {
     "admin": {

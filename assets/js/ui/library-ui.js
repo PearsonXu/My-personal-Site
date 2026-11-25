@@ -9,6 +9,7 @@ import { escapeHtml as esc, escapeAttr as attr, formatTime, debounce } from '../
 import { searchSongs, lyricSnippet } from '../core/search.js';
 import { byId, qsa, qs } from './dom.js';
 import { icon } from '../core/icons.js';
+import { songSubline } from '../core/song-meta.js';
 
 export class LibraryUI {
   constructor(player, { catalog, searchIndex, resolve, link }) {
@@ -128,15 +129,15 @@ export class LibraryUI {
     const href = this.link(`songs/${song.slug}/`);
     const album = song.album
       ? `<a class="row__al" href="${attr(this.link(`albums/${song.album}/`))}">${esc(song.albumTitle || song.album)}</a>`
-      : '<span class="row__al c-mute">单曲</span>';
+      : '<span class="row__al" aria-hidden="true"></span>';
     const snippet = this.query.trim() ? lyricSnippet(this.index.find((e) => e.s === song.slug)?.ly, this.query) : '';
     return `<li class="row" data-song="${attr(song.slug)}">
       <button class="row__play" type="button" data-act="play-song" data-slug="${attr(song.slug)}" aria-label="播放 ${attr(song.title)}">${icon('play', { size: 20 })}</button>
       <a class="row__main" href="${attr(href)}">
-        <img class="row__art" src="${attr(this.resolve(song.cover))}" alt="" width="44" height="44" loading="lazy" decoding="async">
+        <img class="row__art" src="${attr(this.resolve(song.thumb || song.cover))}" alt="" width="44" height="44" loading="lazy" decoding="async">
         <span class="row__txt">
           <span class="row__t">${esc(song.title)}${this.demoBadge(song)}</span>
-          <span class="row__a">${esc(snippet || song.artist)}</span>
+          <span class="row__a">${esc(snippet || songSubline(song))}</span>
         </span>
       </a>
       ${album}
@@ -149,9 +150,9 @@ export class LibraryUI {
     const href = this.link(`songs/${song.slug}/`);
     return `<article class="card" data-song="${attr(song.slug)}">
       <a class="card__link" href="${attr(href)}">
-        <span class="card__art"><img src="${attr(this.resolve(song.cover))}" alt="${attr(song.title)} 封面" width="300" height="300" loading="lazy" decoding="async"></span>
+        <span class="card__art"><img src="${attr(this.resolve(song.thumb || song.cover))}" alt="${attr(song.title)} 封面" width="300" height="300" loading="lazy" decoding="async"></span>
         <span class="card__t">${esc(song.title)}${this.demoBadge(song)}</span>
-        <span class="card__s">${esc(song.artist)}</span>
+        <span class="card__s">${esc(songSubline(song))}</span>
       </a>
       <button class="card__play" type="button" data-act="play-song" data-slug="${attr(song.slug)}" aria-label="播放 ${attr(song.title)}">${icon('play', { size: 20 })}</button>
       ${this.actionsHtml(song.slug)}

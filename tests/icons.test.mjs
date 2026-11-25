@@ -115,7 +115,7 @@ test('icons · 主按钮颜色走主题变量，三套主题都有定义', () =>
   assert.match(rule, /color:var\(--on-acc\)/);
   assert.ok(!/#[0-9a-fA-F]{3,8}/.test(rule), '主按钮硬编码颜色');
   const themes = readSrc('assets/css/themes.css');
-  for (const t of ['cloud', 'forest', 'midnight']) {
+  for (const t of ['cloud', 'forest', 'midnight', 'film']) {
     const start = themes.indexOf(`html[data-theme="${t}"]`);
     const block = themes.slice(start, themes.indexOf('}', start));
     assert.match(block, /--acc:/, `${t} 缺 --acc`);

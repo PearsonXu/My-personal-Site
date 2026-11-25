@@ -4,6 +4,7 @@
   "artist": "金石竹青",
   "composer": "银临",
   "lyricist": "慕清明",
+  "originalArtist": "银临、司南",
   "album": null,
   "tags": [
     "翻唱",
@@ -26,5 +27,6 @@
     "作曲：银临",
     "原唱：银临、司南",
     "演唱：金石竹青"
-  ]
+  ],
+  "accent": "#79683e"
 }

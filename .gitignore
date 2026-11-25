@@ -1,5 +1,3 @@
-tools/i18n-keys.json
-tools/i18n-keys.txt
 .DS_Store
 
 # 构建产物（由 GitHub Actions 生成并上传为 Pages artifact）
@@ -21,3 +19,7 @@ assets/audio/_demo/
 .env
 .env.*
 *.secret.json
+
+# 浏览器验收截图：本地生成、按需查看，不进仓库（只留结果 JSON / Markdown 记录）
+docs/screenshots/
+docs/screenshots-live/

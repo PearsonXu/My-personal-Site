@@ -5,9 +5,9 @@
   "date": "2026-11-18",
   "excerpt": "想给这些喜欢找一个长久安放的地方，于是有了这个小屋。",
   "tags": ["日常"],
-  "songs": ["demo-night-ferry"],
+  "songs": ["jimo-de-jijie"],
   "albums": [],
-  "playlists": ["late-night"],
+  "playlists": ["guofeng", "huayu-liuxing"],
   "cover": "auto",
   "draft": false
 }

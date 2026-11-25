@@ -111,7 +111,7 @@ npm run dev          # 含 DEMO 合成音的构建 + 本地服务器（真的支
 | [`docs/BROWSER-RESULTS.md`](docs/BROWSER-RESULTS.md) | 真实 Chrome 逐项验收结果（自动生成，195 项） |
 | [`docs/LIVE-VERIFICATION.md`](docs/LIVE-VERIFICATION.md) | 正式域名 HTTP 复验（自动生成） |
 | [`docs/BROWSER-LIVE-RESULTS.md`](docs/BROWSER-LIVE-RESULTS.md) | 正式域名真实浏览器复验（自动生成） |
-| `docs/screenshots/` | 三主题 × 桌面/手机 共 36 张截图 |
+| `docs/screenshots/` | 浏览器验收截图，`npm run browser:check` 等脚本本地生成，**不进仓库**（已 gitignore） |
 | [`docs/ACCEPTANCE.md`](docs/ACCEPTANCE.md) | 验收记录（NOT_RUN / BLOCKED 如实标注） |
 
 ## 本地预览

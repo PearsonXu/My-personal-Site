@@ -6,6 +6,7 @@
 
 import { escapeHtml as esc, escapeAttr as attr, formatTime } from '../../../assets/js/core/util.js';
 import { icon } from '../../../assets/js/core/icons.js';
+import { songSubline } from '../../../assets/js/core/song-meta.js';
 
 export function demoBadge(item) {
   return item.demo ? '<span class="badge badge--demo" title="工程验证用合成音，非本人作品">DEMO</span>' : '';
@@ -16,9 +17,13 @@ export function tags(list, base) {
   return `<ul class="tags">${list.map((t) => `<li><a class="tag" href="${attr(base)}songs/?tag=${encodeURIComponent(t)}">#${esc(t)}</a></li>`).join('')}</ul>`;
 }
 
-export function sectionHead({ no, kicker, title, lede = '', id = '' }) {
+/**
+ * 区块标题。kicker 是标题上方的一行中文小字（可省略）。
+ * 不再用「§ 01 RECENT」式编号 + 英文等宽大写：那是给开发者看的文档腔，和小屋的气质不合。
+ */
+export function sectionHead({ kicker = '', title, lede = '', id = '' }) {
   return `<header class="sec__head">
-  <p class="sec__no"><span>${esc(no)}</span> ${esc(kicker)}</p>
+  ${kicker ? `<p class="sec__no">${esc(kicker)}</p>` : ''}
   <h2 class="sec__title"${id ? ` id="${attr(id)}"` : ''}>${esc(title)}</h2>
   ${lede ? `<p class="sec__lede">${lede}</p>` : ''}
 </header>`;
@@ -47,13 +52,13 @@ export function songRow(song, base, { index = null } = {}) {
   const href = `${base}songs/${song.slug}/`;
   const album = song.album
     ? `<a class="row__al" href="${attr(base)}albums/${attr(song.album)}/">${esc(song.albumTitle || song.album)}</a>`
-    : '<span class="row__al c-mute">单曲</span>';
+    : '<span class="row__al" aria-hidden="true"></span>';
   return `<li class="row" data-song="${attr(song.slug)}">
   ${index === null ? '' : `<span class="row__no">${index}</span>`}
   <button class="row__play" type="button" data-act="play-song" data-slug="${attr(song.slug)}" aria-label="播放 ${attr(song.title)}">${icon('play', { size: 20 })}</button>
   <a class="row__main" href="${attr(href)}">
-    <img class="row__art" src="${attr(base + song.coverPath)}" alt="" width="44" height="44" loading="lazy" decoding="async">
-    <span class="row__txt"><span class="row__t">${esc(song.title)}${demoBadge(song)}</span><span class="row__a">${esc(song.artist)}</span></span>
+    <img class="row__art" src="${attr(base + (song.thumbPath || song.coverPath))}" alt="" width="44" height="44" loading="lazy" decoding="async">
+    <span class="row__txt"><span class="row__t">${esc(song.title)}${demoBadge(song)}</span><span class="row__a">${esc(songSubline(song))}</span></span>
   </a>
   ${album}
   <span class="row__d">${formatTime(song.duration)}</span>
@@ -72,9 +77,9 @@ export function songCard(song, base) {
   const href = `${base}songs/${song.slug}/`;
   return `<article class="card" data-song="${attr(song.slug)}">
   <a class="card__link" href="${attr(href)}">
-    <span class="card__art"><img src="${attr(base + song.coverPath)}" alt="${attr(song.title)} 封面" width="300" height="300" loading="lazy" decoding="async"></span>
+    <span class="card__art"><img src="${attr(base + (song.thumbPath || song.coverPath))}" alt="${attr(song.title)} 封面" width="300" height="300" loading="lazy" decoding="async"></span>
     <span class="card__t">${esc(song.title)}${demoBadge(song)}</span>
-    <span class="card__s">${esc(song.artist)}</span>
+    <span class="card__s">${esc(songSubline(song))}</span>
   </a>
   <button class="card__play" type="button" data-act="play-song" data-slug="${attr(song.slug)}" aria-label="播放 ${attr(song.title)}">${icon('play', { size: 20 })}</button>
   ${songActions(song.slug, { compact: true })}
@@ -92,7 +97,7 @@ export function collectionCard(item, base, kind) {
       : `${item.date} · ${item.readingMinutes || 1} 分钟`;
   return `<article class="card card--collection">
   <a class="card__link" href="${attr(href)}">
-    <span class="card__art"><img src="${attr(base + item.coverPath)}" alt="${attr(item.title)} 封面" width="300" height="300" loading="lazy" decoding="async"></span>
+    <span class="card__art"><img src="${attr(base + (item.thumbPath || item.coverPath))}" alt="${attr(item.title)} 封面" width="300" height="300" loading="lazy" decoding="async"></span>
     <span class="card__t">${esc(item.title)}${demoBadge(item)}</span>
     <span class="card__s">${esc(sub)}</span>
   </a>

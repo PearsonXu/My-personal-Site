@@ -21,7 +21,7 @@ export function renderHome(model, { base }) {
       </a>
       <div class="hero__pick__row">
         <div class="hero__pick__meta">
-          <p class="hero__pick__label">最近在听</p>
+          <p class="hero__pick__label">最新分享</p>
           <p class="hero__pick__title"><a href="${attr(base)}songs/${attr(pick.slug)}/">${esc(pick.title)}</a>${demoBadge(pick)}</p>
           <p class="hero__pick__artist">${esc(pick.artist)}</p>
         </div>
@@ -48,7 +48,7 @@ export function renderHome(model, { base }) {
 
 <section class="sec sec--near" id="latest">
   <div class="wrap">
-    ${sectionHead({ no: '§ 01', kicker: 'Recent', title: '最近分享', lede: '最近喜欢的，也放在这里与你分享。' })}
+    ${sectionHead({ title: '最近分享', lede: '最近喜欢的，也放在这里与你分享。' })}
     ${latest.length ? `<div class="viewswitch" role="group" aria-label="展示模式">
       <button class="chip is-on" type="button" data-act="set-view" data-view="list" aria-pressed="true">列表</button>
       <button class="chip" type="button" data-act="set-view" data-view="grid" aria-pressed="false">封面墙</button>
@@ -68,7 +68,7 @@ export function renderHome(model, { base }) {
 
 ${hasCollections ? `<section class="sec sec--tint" id="featured">
   <div class="wrap">
-    ${sectionHead({ no: '§ 02', kicker: 'Playlists', title: '常听的歌单', lede: '把合适的歌放在一起，想听的时候整张放。' })}
+    ${sectionHead({ title: '常听的歌单', lede: '把合适的歌放在一起，想听的时候整张放。' })}
     ${collectionGrid(featured, base, 'playlists', '歌单还在慢慢整理。')}
     ${albums.length ? `<h3 class="sub">专辑</h3>${collectionGrid(albums.slice(0, 3), base, 'albums', '')}` : ''}
   </div>
@@ -76,11 +76,11 @@ ${hasCollections ? `<section class="sec sec--tint" id="featured">
 
 <section class="sec${hasCollections ? '' : ' sec--tint'}" id="notes">
   <div class="wrap">
-    ${sectionHead({ no: hasCollections ? '§ 03' : '§ 02', kicker: 'Notes', title: '最近手记', lede: '旋律带来的故事与心情，写下来放在这里。' })}
+    ${sectionHead({ title: '最近手记', lede: '旋律带来的故事与心情，写下来放在这里。' })}
     ${latestNotes.length
     ? `<div class="notes">${latestNotes.map((n) => `<article class="note">
         <a class="note__link" href="${attr(base)}notes/${attr(n.slug)}/">
-          <img class="note__art" src="${attr(base + n.coverPath)}" alt="" width="120" height="120" loading="lazy" decoding="async">
+          <img class="note__art" src="${attr(base + (n.thumbPath || n.coverPath))}" alt="" width="120" height="120" loading="lazy" decoding="async">
           <span class="note__body">
             <span class="note__date">${esc(n.date)}</span>
             <span class="note__title">${esc(n.title)}</span>
@@ -95,7 +95,7 @@ ${hasCollections ? `<section class="sec sec--tint" id="featured">
 
 <section class="sec sec--tint" id="about">
   <div class="wrap wrap--prose">
-    ${sectionHead({ no: hasCollections ? '§ 04' : '§ 03', kicker: 'About', title: '关于我', lede: esc(site.author?.bio || '') })}
+    ${sectionHead({ title: '关于我', lede: esc(site.author?.bio || '') })}
     <p class="hero__cta">
       <a class="btn" href="${attr(base)}about/">${icon('user', { size: 18 })} 关于我</a>
       <button class="btn btn--quiet" type="button" data-act="open-appearance">${icon('palette', { size: 18 })} 换个外观</button>

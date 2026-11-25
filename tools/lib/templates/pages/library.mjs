@@ -10,8 +10,6 @@ export function renderLibrary(model, { base }) {
   const body = `<section class="sec">
   <div class="wrap">
     ${sectionHead({
-    no: '§ 曲库',
-    kicker: 'Library',
     title: '曲库',
     lede: hasSongs
       ? `这里放着 ${songs.length} 首歌。可以按歌名、专辑、标签或歌词找。`

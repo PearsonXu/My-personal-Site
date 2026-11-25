@@ -16,9 +16,48 @@ test('app · 启动后目录、播放器、UI 全部就位', async () => {
   const { window, app, errors } = await makeApp('/');
   assert.ok(app, 'boot 应返回 app');
   assert.equal(app.catalog.songs.length, loadContent(ROOT, { includeDemo: true }).songs.length);
-  assert.equal(app.player.state, 'idle');
+  // 首次访问：播放条预置最新一首（只显示、不出声），不写最近播放、不持久化队列
+  assert.equal(app.player.state, 'paused');
+  assert.equal(app.player.currentSong?.slug, app.catalog.songs[0].slug);
+  assert.equal(window.document.getElementById('plTitle').textContent, app.catalog.songs[0].title);
+  assert.deepEqual(app.store.data.recent || [], [], '预置不算播放过');
+  assert.ok(!(app.store.data.queue?.items || []).length, '预置不应持久化成「上次的队列」');
   assert.equal(window.document.querySelectorAll('audio').length, 1);
   assert.deepEqual(errors, []);
+});
+
+test('app · 歌曲页预置这首歌；访客点过播放后换页不再改动播放条', async () => {
+  const { window, app } = await makeApp('/songs/demo-night-ferry/');
+  assert.equal(app.player.currentSong?.slug, 'demo-night-ferry', '歌曲页应预置当前这首');
+  await app.router.navigate('https://www.xuzhaoqing.com/songs/demo-paper-boat/');
+  await wait(60);
+  assert.equal(app.player.currentSong?.slug, 'demo-paper-boat', '还没听过时，换到另一首歌的页面跟着换');
+  click(window, window.document.querySelector('[data-act="play-song"][data-slug="demo-paper-boat"]'));
+  await wait();
+  await app.router.navigate('https://www.xuzhaoqing.com/songs/demo-night-ferry/');
+  await wait(60);
+  assert.equal(app.player.currentSong?.slug, 'demo-paper-boat', '听过之后换页不能动播放条');
+  window.close();
+});
+
+test('app · 预置不下载音频；第一次按播放才接上音源，点过的歌词进度保留', async () => {
+  const { window, app, audio } = await makeApp('/songs/demo-night-ferry/');
+  assert.equal(app.player.currentSong?.slug, 'demo-night-ferry');
+  assert.ok(!audio.src, '预置时不应给 audio 设音源（不为可能不听的歌白下载）');
+  app.player.seek(12);
+  assert.equal(app.player._pendingSeek, 12, '未接音源时的跳转先记下');
+  click(window, window.document.getElementById('plToggle'));
+  await wait();
+  assert.match(audio.src, /assets\/audio\/_demo\/|demo-night-ferry|night-ferry/, '按下播放后应接上这首的音源');
+  assert.ok((app.store.data.recent || []).some((r) => r.slug === 'demo-night-ferry'), '真正开始听后才算最近播放');
+  assert.equal(app.player.cued, false);
+  window.close();
+});
+
+test('app · 有恢复的队列时不预置，尊重上次听到的歌', async () => {
+  const state = { version: 1, position: 12, queue: { items: [{ slug: 'demo-paper-boat' }], cursor: 0, mode: 'order' } };
+  const { app } = await makeApp('/songs/demo-night-ferry/', { storage: { 'zx.music.v1': JSON.stringify(state) } });
+  assert.equal(app.player.currentSong?.slug, 'demo-paper-boat');
 });
 
 test('app · 点击播放按钮真的换源并进入播放态', async () => {
@@ -92,7 +131,8 @@ test('app · 导航后外壳里不残留任何相对引用（链接 + 图片）'
       if (el.closest('#page-root')) continue;
       const raw = el.getAttribute(el.hasAttribute('href') ? 'href' : 'src');
       if (!raw || raw.startsWith('#') || /^(mailto:|tel:|data:)/.test(raw)) continue;
-      if (!/^(https?:)?\/\//i.test(raw)) out.push(`${el.tagName}:${raw}`);
+      // 绝对 URL 或站点根路径（/assets/…）都与页面深度无关；./ ../ 和裸相对路径才会随 pushState 漂移
+      if (!/^(https?:)?\/\//i.test(raw) && !/^\/(?!\/)/.test(raw)) out.push(`${el.tagName}:${raw}`);
     }
     return out;
   };
@@ -100,9 +140,9 @@ test('app · 导航后外壳里不残留任何相对引用（链接 + 图片）'
   await app.router.navigate('https://www.xuzhaoqing.com/notes/hello-music-house/');
   await wait(60);
   assert.deepEqual(shellRefs(), [], '导航后外壳出现相对引用');
-  // 播放器占位图必须指向站点根下的 assets
+  // 播放器封面（预置歌曲的封面）必须指向站点根下的 assets
   const cover = doc.getElementById('plCover');
-  assert.equal(cover.getAttribute('src'), 'https://www.xuzhaoqing.com/assets/img/placeholder.svg');
+  assert.match(cover.getAttribute('src'), /^(https:\/\/www\.xuzhaoqing\.com)?\/assets\/img\//);
 });
 
 test('app · 从深层页面启动时外壳链接同样正确', async () => {
@@ -140,7 +180,7 @@ test('app · 外观入口可打开，选主题后写入 localStorage', async () 
   click(window, window.document.querySelector('[data-act="open-appearance"]'));
   await wait();
   const cards = window.document.querySelectorAll('[data-ap="theme"]');
-  assert.equal(cards.length, 3, '外观面板应列出三套主题');
+  assert.equal(cards.length, 4, '外观面板应列出四套主题');
   click(window, window.document.querySelector('[data-ap="theme"][data-theme="forest"]'));
   await wait();
   assert.equal(window.document.documentElement.dataset.theme, 'forest');

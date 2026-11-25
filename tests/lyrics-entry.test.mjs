@@ -237,9 +237,14 @@ test('lyrics-entry · 整机：面板内校准生效，读数更新，重置归�
   assert.equal(doc.getElementById('plCalibVal').textContent, '0.0s');
 });
 
-test('lyrics-entry · 整机：未选歌时「词」仍可点，提示「暂无歌词」', async () => {
-  const { window } = await makeApp('/');
+test('lyrics-entry · 整机：当前没有可显示的歌词时「词」仍可点，提示「暂无歌词」', async () => {
+  // 播放条现在会预置最新一首（不出声），「完全没选歌」只在空曲库出现；
+  // 这里等预置歌的歌词落地后，再模拟「这首没有歌词」，覆盖同一条无歌词分支。
+  const { window, app } = await makeApp('/');
   const doc = window.document;
+  await wait(150);
+  app.player.lyrics = { format: 'none', meta: {}, lines: [] };
+  app.player.emit('lyrics', { song: app.player.currentSong, lyrics: app.player.lyrics, pending: false });
   const btn = doc.getElementById('plLyricsBtn');
   assert.equal(btn.disabled, false, '无歌词时按钮必须可发现、可点击');
   click(window, btn);

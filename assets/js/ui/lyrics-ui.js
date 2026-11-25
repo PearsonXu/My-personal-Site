@@ -245,7 +245,20 @@ export class LyricsUI {
 }
 
 /** 单曲页内嵌歌词：点击跳转 + 跟随高亮（与全屏歌词共用同一份时间轴） */
+/** 上一页挂在 player 上的监听：换页先解绑，否则每换一次页就多一份 sync */
+let pageLyricsOff = [];
+
+/** 展开歌曲页的折叠歌词（按钮点击或播放到折叠处时） */
+export function unfoldPageLyrics(wrap) {
+  if (!wrap || wrap.dataset.folded !== 'true') return;
+  wrap.dataset.folded = 'false';
+  const btn = wrap.querySelector('[data-act="unfold-lyrics"]');
+  if (btn) { btn.hidden = true; btn.setAttribute('aria-expanded', 'true'); }
+}
+
 export function bindPageLyrics(player) {
+  for (const off of pageLyricsOff) off();
+  pageLyricsOff = [];
   const list = qs('[data-lrc]');
   if (!list) return;
   list.addEventListener('click', (e) => {
@@ -268,7 +281,8 @@ export function bindPageLyrics(player) {
     if (!active || player.lyricIndex < 0) return;
     const node = list.querySelectorAll('.lrc__line')[player.lyricIndex];
     node?.classList.add('is-active');
+    // 唱到折叠线附近就自动展开，高亮行不能藏在渐隐遮罩后面
+    if (player.lyricIndex >= 9) unfoldPageLyrics(list.closest('.lrcwrap'));
   };
-  player.on('lyric-line', sync);
-  player.on('track', sync);
+  pageLyricsOff = [player.on('lyric-line', sync), player.on('track', sync)];
 }
