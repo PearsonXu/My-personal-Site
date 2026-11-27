@@ -1,0 +1,32 @@
+{
+  "slug": "shui-dong-le-wo-de-qin-xian",
+  "title": "谁动了我的琴弦",
+  "artist": "金石竹青",
+  "composer": "小柯",
+  "lyricist": "小柯",
+  "originalArtist": "周笔畅",
+  "versionNote": "翻唱版本",
+  "versionBy": "演唱：金石竹青",
+  "tools": [
+    "SUNO"
+  ],
+  "album": null,
+  "tags": [
+    "翻唱",
+    "国风"
+  ],
+  "date": "2026-11-27",
+  "duration": 212.28,
+  "cover": "shui-dong-le-wo-de-qin-xian.jpg",
+  "audio": {
+    "src": "audio/shui-dong-le-wo-de-qin-xian.mp3",
+    "mime": "audio/mpeg",
+    "master": null
+  },
+  "lyrics": "shui-dong-le-wo-de-qin-xian.lrc",
+  "instrumental": false,
+  "demo": false,
+  "about": "《谁动了我的琴弦》翻唱：小柯词曲，周笔畅原唱。金石竹青演唱，古琴动机与钢琴铺陈的国风抒情版。",
+  "credits": [],
+  "accent": null
+}

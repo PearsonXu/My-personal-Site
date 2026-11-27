@@ -1,0 +1,31 @@
+{
+  "slug": "an-yong",
+  "title": "暗涌",
+  "artist": "金石竹青",
+  "composer": "陈辉阳",
+  "lyricist": "林夕",
+  "originalArtist": "王菲",
+  "versionNote": "翻唱版本",
+  "versionBy": "演唱：金石竹青",
+  "tools": [
+    "SUNO"
+  ],
+  "album": null,
+  "tags": [
+    "翻唱"
+  ],
+  "date": "2026-11-27",
+  "duration": 227.88,
+  "cover": "an-yong.jpg",
+  "audio": {
+    "src": "audio/an-yong.mp3",
+    "mime": "audio/mpeg",
+    "master": null
+  },
+  "lyrics": "an-yong.lrc",
+  "instrumental": false,
+  "demo": false,
+  "about": "《暗涌》翻唱：林夕词、陈辉阳曲，王菲原唱（国语）。金石竹青演唱，清吉他开场、副歌爆发的流行摇滚版。",
+  "credits": [],
+  "accent": null
+}
