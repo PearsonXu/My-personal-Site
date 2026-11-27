@@ -1,0 +1,31 @@
+{
+  "slug": "bu-ji-yu",
+  "title": "不及雨",
+  "artist": "金石竹青",
+  "composer": "吴青峰",
+  "lyricist": "吴青峰",
+  "originalArtist": "张碧晨",
+  "versionNote": "翻唱版本",
+  "versionBy": "演唱：金石竹青",
+  "tools": [
+    "SUNO"
+  ],
+  "album": null,
+  "tags": [
+    "翻唱"
+  ],
+  "date": "2026-11-27",
+  "duration": 243.264,
+  "cover": "bu-ji-yu.jpg",
+  "audio": {
+    "src": "audio/bu-ji-yu.mp3",
+    "mime": "audio/mpeg",
+    "master": null
+  },
+  "lyrics": "bu-ji-yu.lrc",
+  "instrumental": false,
+  "demo": false,
+  "about": "《不及雨》翻唱：吴青峰词曲，张碧晨原唱。金石竹青演唱，雨声与稀疏钢琴开场、副歌逐遍织体加厚的抒情摇滚版。",
+  "credits": [],
+  "accent": "#3e795b"
+}
