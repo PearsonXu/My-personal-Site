@@ -120,9 +120,12 @@ test('整机 · 点击换一换：数量不变、批内不重复、不与上一�
 
 test('整机 · 连续换批能看完全部曲库，且每批都不同', async () => {
   const { window, app } = ctx;
+  const total = app.catalog.songs.length;
   const shown = new Set(domBatch());
   let prev = domBatch();
-  for (let i = 0; i < 6; i++) {
+  // 未见过优先保证有限轮内覆盖全库，但所需轮数随曲库规模与随机批次变化，
+  // 写死轮数会在某些总数下概率性漏歌——循环到覆盖为止（上限远大于最坏轮数）。
+  for (let i = 0; i < 24 && shown.size < total; i++) {
     click(window, shuffleBtn());
     await wait();
     const cur = domBatch();
@@ -132,7 +135,7 @@ test('整机 · 连续换批能看完全部曲库，且每批都不同', async (
     for (const s of cur) shown.add(s);
     prev = cur;
   }
-  assert.equal(shown.size, app.catalog.songs.length, '多轮换批应覆盖全部歌曲');
+  assert.equal(shown.size, total, '多轮换批应覆盖全部歌曲');
 });
 
 test('整机 · 换批后播放 / 收藏 / 当前高亮都正确，audio 不动', async () => {
