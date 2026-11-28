@@ -1,0 +1,32 @@
+{
+  "slug": "zai-jian-bei-ai",
+  "title": "再见悲哀",
+  "artist": "金石竹青",
+  "composer": "郭伟亮",
+  "lyricist": "林夕",
+  "originalArtist": "林忆莲",
+  "versionNote": "翻唱版本",
+  "versionBy": "演唱：金石竹青",
+  "tools": [
+    "SUNO"
+  ],
+  "album": null,
+  "tags": [
+    "翻唱",
+    "粤语"
+  ],
+  "date": "2026-11-27",
+  "duration": 239.928,
+  "cover": "zai-jian-bei-ai.jpg",
+  "audio": {
+    "src": "audio/zai-jian-bei-ai.mp3",
+    "mime": "audio/mpeg",
+    "master": null
+  },
+  "lyrics": "zai-jian-bei-ai.lrc",
+  "instrumental": false,
+  "demo": false,
+  "about": "《再见悲哀》粤语翻唱：林夕词、郭伟亮（Eric Kwok）曲，林忆莲原唱（2005《本色》）。金石竹青演唱，钢琴与古筝点缀的舒缓抒情版。",
+  "credits": [],
+  "accent": "#6b6a2e"
+}

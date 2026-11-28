@@ -1,0 +1,31 @@
+{
+  "slug": "zhi-mi-bu-hui",
+  "title": "执迷不悔",
+  "artist": "金石竹青",
+  "composer": "袁惟仁",
+  "lyricist": "王菲",
+  "originalArtist": "王菲",
+  "versionNote": "翻唱版本",
+  "versionBy": "演唱：金石竹青",
+  "tools": [
+    "SUNO"
+  ],
+  "album": null,
+  "tags": [
+    "翻唱"
+  ],
+  "date": "2026-11-27",
+  "duration": 272.784,
+  "cover": "zhi-mi-bu-hui.jpg",
+  "audio": {
+    "src": "audio/zhi-mi-bu-hui.mp3",
+    "mime": "audio/mpeg",
+    "master": null
+  },
+  "lyrics": "zhi-mi-bu-hui.lrc",
+  "instrumental": false,
+  "demo": false,
+  "about": "《执迷不悔》翻唱：袁惟仁曲、王菲词并原唱（1993《执迷不悔》）。金石竹青国语演绎，钢琴与大提琴铺陈的抒情版。",
+  "credits": [],
+  "accent": "#696c37"
+}
